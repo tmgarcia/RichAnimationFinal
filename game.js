@@ -26,7 +26,7 @@ var titleContainer, instructionContainer, gameplayContainer, gameOverContainer;
 var gameState;
 var frameCount, gameTimer;
 var mouseX, mouseY;
-var GameStates = { gameTitle:0, gameInstructions:1, gamePlay:2, gameOver:3};
+var GameStates = Object.freeze({ gameTitle:0, gameInstructions:1, gamePlay:2, gameOver:3});
 var queue;
 manifest = [
     {src:"titleScreen.jpg", id:"titleScreen"},
@@ -48,9 +48,13 @@ function setupCanvas()
     stage.on("stagemousemove", function(evt){ mouseX = evt.stageX.toFixed(); mouseY = evt.stageY.toFixed();});
 }   
 
-if (!!(window.addEventListener)) {
+if (!!(window.addEventListener))
+{
     window.addEventListener("DOMContentLoaded", main);
-} else {//if using internet explorer 
+}
+else
+{
+    //if using internet explorer 
     window.attatchEvent("onload", main);
 }
 
@@ -59,9 +63,62 @@ function loadFiles()
     queue = new createjs.LoadQueue(true, "assets/");
     queue.on("complete", loadComplete, this);
     queue.loadManifest(manifest);
+    setupLoadingBar();
 }
+    
+function setupLoadingBar()
+{
+    loadProgressLabel = new createjs.Text("","18px Arial","black");
+    loadProgressLabel.lineWidth = 200;
+    loadProgressLabel.textAlign = "center";
+    loadProgressLabel.x = canvas.width/2;
+    loadProgressLabel.y = canvas.height/2 - 50;
+    stage.addChild(loadProgressLabel);
+    
+    loadingBarContainer = new createjs.Container();
+    loadingBarHeight = 20;
+    loadingBarWidth = 300;
+    loadingBarColor = createjs.Graphics.getRGB(0,0,0);
+    loadingBar = new createjs.Shape();
+    loadingBar.graphics.beginFill(loadingBarColor).drawRect(0, 0, 1, loadingBarHeight).endFill();
+
+    var frame = new createjs.Shape();
+    var padding = 5;
+    frame.graphics.setStrokeStyle(1).beginStroke(loadingBarColor).drawRect( -padding / 2, -padding / 2, loadingBarWidth + padding, loadingBarHeight + padding);
+    
+    loadingBarContainer.addChild(loadingBar, frame);
+    loadingBarContainer.x = Math.round(canvas.width / 2 - loadingBarWidth / 2);
+    loadingBarContainer.y = canvas.height / 2;
+    stage.addChild(loadingBarContainer);
+}
+    
+var loadingBar, loadingBarWidth, loadingBarHeight, progressPercentage, loadProgressLabel, loadingBarContainer, loadingBarColor;
+function loadProgress(evt)
+{
+    if(queue.progress < 0.25)
+    {
+        loadingBar.graphics.clear().beginFill(createjs.Graphics.getRGB(255,0,0)).drawRect(0, 0, 1, loadingBarHeight).endFill();
+    }
+    else if(queue.progress >= 0.25 && queue.progress < 0.75)
+    {
+        loadingBar.graphics.clear().beginFill(createjs.Graphics.getRGB(255,255,0)).drawRect(0, 0, 1, loadingBarHeight).endFill();
+    }
+    else
+    {
+        loadingBar.graphics.clear().beginFill(createjs.Graphics.getRGB(0,255,0)).drawRect(0, 0, 1, loadingBarHeight).endFill();   
+    }
+    
+    loadingBar.scaleX = queue.progress * loadingBarWidth;
+ 
+    progressPercentage = Math.round(queue.progress*100);
+    loadProgressLabel.text = progressPercentage + "% Loaded" ;
+    
+    stage.update();
+}
+    
 function loadComplete(evt)
 {
+    stage.removeChild(loadProgressLabel, loadingBarContainer);
     titleScreen = new createjs.Bitmap(queue.getResult("titleScreen"));
     instructionScreen = new createjs.Bitmap(queue.getResult("instructionScreen"));
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
