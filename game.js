@@ -15,7 +15,7 @@ var KC_J = 74;
 var KC_SPACE = 32;
 var KC_SHIFT = 16;
 var KC_ENTER = 13;
-
+var canvas;
 var canvasWidth = 800;
 var canvasHeight = 600;
 var stage;
@@ -40,7 +40,7 @@ manifest = [
 //region Setup
 function setupCanvas()
 {
-    var canvas = document.getElementById("game");
+    canvas = document.getElementById("game");
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     stage = new createjs.Stage(canvas);
@@ -60,12 +60,14 @@ else
 
 function loadFiles()
 {
+    setupLoadingBar();
     queue = new createjs.LoadQueue(true, "assets/");
+    queue.on("progress", loadProgress, this);
     queue.on("complete", loadComplete, this);
     queue.loadManifest(manifest);
-    setupLoadingBar();
 }
     
+var loadingBar, loadingBarWidth, loadingBarHeight, progressPercentage, loadProgressLabel, loadingBarContainer, loadingBarColor;
 function setupLoadingBar()
 {
     loadProgressLabel = new createjs.Text("","18px Arial","black");
@@ -92,7 +94,6 @@ function setupLoadingBar()
     stage.addChild(loadingBarContainer);
 }
     
-var loadingBar, loadingBarWidth, loadingBarHeight, progressPercentage, loadProgressLabel, loadingBarContainer, loadingBarColor;
 function loadProgress(evt)
 {
     if(queue.progress < 0.25)
@@ -192,6 +193,7 @@ function main()
     setupCanvas();
     loadFiles();
     gameState = GameStates.gameTitle;
+    lastGameState = GameStates.gameTitle;
     frameCount = 0;
     gameTimer = 0;
     gameScore = 0;
