@@ -26,7 +26,10 @@ var titleContainer, instructionContainer, gameplayContainer, gameOverContainer;
 var gameState;
 var frameCount, gameTimer;
 var mouseX, mouseY;
-var GameStates = Object.freeze({ gameTitle:0, gameInstructions:1, gamePlay:2, gameOver:3});
+var GameStates = Object.freeze({gameTitle:0, gameInstructions:1, gamePlay:2, gameOver:3});
+var GameBoard = Object.freeze({tileWidth: 50, tileHeight: 50, startX: 0, startY: 50, width: 16, height: 11});
+var board;
+var levels;
 var queue;
 manifest = [
     {src:"titleScreen.jpg", id:"titleScreen"},
@@ -34,6 +37,10 @@ manifest = [
     {src:"gameOverScreen.jpg", id:"gameOverScreen"},
     {src:"gameplayArea.jpg", id:"gameplayScreen"},
     {src:"buttons.png", id:"button"},
+    {src:"testGrass.png", id:"testGrass"},
+    {src: "level0_BoardContents.csv", id: "level0_BC", type:createjs.LoadQueue.TEXT},
+    {src: "level0_BoardGraphics.csv", id: "level0_BG", type:createjs.LoadQueue.TEXT},
+    {src: "level0_BoardTriggers.csv", id: "level0_BT", type:createjs.LoadQueue.TEXT},    
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -116,7 +123,8 @@ function loadProgress(evt)
     
     stage.update();
 }
-    
+ 
+var testGrass;
 function loadComplete(evt)
 {
     stage.removeChild(loadProgressLabel, loadingBarContainer);
@@ -124,6 +132,19 @@ function loadComplete(evt)
     instructionScreen = new createjs.Bitmap(queue.getResult("instructionScreen"));
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
+
+    var testGrassSheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("testGrass")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            idle: [0, 0, "idle"]
+        }
+    });
+    
+    testGrass = new createjs.Sprite(testGrassSheet);  
+
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
         frames: {width: 93, height: 33, regX: 46, regY: 15},
@@ -146,7 +167,24 @@ function loadComplete(evt)
     btnInstruct = new createjs.Sprite(buttonSheet);
     btnMenu = new createjs.Sprite(buttonSheet);
     btnContinue = new createjs.Sprite(buttonSheet);
+
+    levelRaws = [];
+    levelRaws[0] = [];
+    levelRaws[0][0] = queue.getResult("level0_BC");
+    levelRaws[0][1] = queue.getResult("level0_BG");
+    levelRaws[0][2] = queue.getResult("level0_BT");
+
+
+
+    level0Map = [];
+    level0Map[0] = $.csv.toArrays(levelRaws[0][0]);
+    level0Map[1] = $.csv.toArrays(levelRaws[0][1]);
+    level0Map[2] = $.csv.toArrays(levelRaws[0][2]);
     
+    initLevels();
+    addLevel(0);
+    addLevelMap(0, 0, 0);
+
     setupButtons();
     setupTitleScreen();
     setupGameOverScreen();
@@ -179,6 +217,110 @@ function setupButtons()
     btnContinue.on("mouseout", function(evt) { btnContinue.gotoAndPlay("continueUp");});
     btnContinue.on("mousedown", function(evt) { btnContinue.gotoAndPlay("continueDown");});
 }
+
+function initBoard()
+{
+    board = [];
+    
+    for(var i = 0; i < GameBoard.width; i++)
+    {
+        board[i] = [];
+        for(var j = 0; j < GameBoard.height; j++)
+        {
+            board[i][j] = Tile();
+            board[i][j].graphic.x = GameBoard.startX + (i * GameBoard.tileWidth);
+            board[i][j].graphic.y = GameBoard.startY + (j * GameBoard.tileHeight);
+            gameplayContainer.addChild(board[i][j].graphic);
+        }  
+    }
+}
+
+function initLevels()
+{
+    levels = [];
+}
+
+function addLevel(level)
+{
+    levels[level] = [];
+}
+
+function addLevelMap(level, x, y)
+{
+    levels[level][x] = [];
+    levels[level][x][y] =  [];//a new game board;
+    
+}
+
+function loadLevelMap(level, x, y)
+{
+    console.log("loading level: " + level + "( " + x, + ", " + y + " )");
+}
+    
+function Map(graphicNames, triggers, contents)
+{
+    var gameMap = [];
+    for(var i = 0; i < GameBoard.width; i++)
+    {
+        gameMap[i] = [];
+        for(var j = 0; j < GameBoard.height; j++)
+        {
+            //gameMap[i][j] = testTile.clone();
+            gameMap[i][j].x = GameBoard.startX + (i * GameBoard.tileWidth);
+            gameMap[i][j].y = GameBoard.startY + (j * GameBoard.tileHeight);
+        }  
+    }
+    
+    return gameMap
+}
+
+function populateMap(map, graphics, content, triggers)
+{
+    
+}
+
+function Tile(graphicName, triggr, contentArray)
+{
+    var tileGraphic;
+    switch(graphicName)
+    {
+        case "forestGrass":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forestGrass";
+            break;
+            
+        default:
+            console.log("something broke while parsing graphic");
+            tileGraphic = testGrass.clone();
+             tileGraphic.name = "missing";
+            break;
+    }
+            
+    switch(triggr)
+    {
+        case "enabled":
+            break;
+        case "disabled":
+            break;
+        case "none":
+            break;
+        default:
+            console.log("something broke while parsing trigger");
+            triggr = "none";
+            break;
+    }
+    
+    if(contentArray == null || contentArray.length < 1)
+    {
+        console.log("something broke while parsing content");
+        contentArray = ["none"];   
+    }
+    
+    var tile = {graphic: tileGraphic, contents: contentArray, trigger: triggr};
+    
+    return tile;
+}
+
 //endregion
 /*----------------------------Main Loop----------------------------*/
 //region Main
@@ -361,6 +503,8 @@ function setupGameplayScreen()
 {
     gameplayContainer = new createjs.Container();
     gameplayContainer.addChild(gameplayScreen);
+    initBoard();
+    
     stage.addChild(gameplayContainer);
     gameplayContainer.visible = false;
 }
