@@ -38,9 +38,9 @@ manifest = [
     {src:"gameplayArea.jpg", id:"gameplayScreen"},
     {src:"buttons.png", id:"button"},
     {src:"testGrass.png", id:"testGrass"},
-    {src: "level0_BoardContents.csv", id: "level0_BC", type:createjs.LoadQueue.TEXT},
-    {src: "level0_BoardGraphics.csv", id: "level0_BG", type:createjs.LoadQueue.TEXT},
-    {src: "level0_BoardTriggers.csv", id: "level0_BT", type:createjs.LoadQueue.TEXT},    
+    {src: "level0_TileContents.csv", id: "level0_TC", type:createjs.LoadQueue.TEXT},
+    {src: "level0_TileGraphics.csv", id: "level0_TG", type:createjs.LoadQueue.TEXT},
+    {src: "level0_TileTriggers.csv", id: "level0_TT", type:createjs.LoadQueue.TEXT},    
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -170,11 +170,9 @@ function loadComplete(evt)
 
     levelRaws = [];
     levelRaws[0] = [];
-    levelRaws[0][0] = queue.getResult("level0_BC");
-    levelRaws[0][1] = queue.getResult("level0_BG");
-    levelRaws[0][2] = queue.getResult("level0_BT");
-
-
+    levelRaws[0][0] = queue.getResult("level0_TC");
+    levelRaws[0][1] = queue.getResult("level0_TG");
+    levelRaws[0][2] = queue.getResult("level0_TT");
 
     level0Map = [];
     level0Map[0] = $.csv.toArrays(levelRaws[0][0]);
@@ -245,16 +243,26 @@ function addLevel(level)
     levels[level] = [];
 }
 
-function addLevelMap(level, x, y)
+function addLevelMap(level, x, y, graphicNames, triggers, contents)
 {
     levels[level][x] = [];
-    levels[level][x][y] =  [];//a new game board;
-    
+    levels[level][x][y] = Map(graphicNames, triggers, contents);
 }
 
 function loadLevelMap(level, x, y)
 {
     console.log("loading level: " + level + "( " + x, + ", " + y + " )");
+    for(var i = 0; i < GameBoard.width; i++)
+    {
+        for(var j = 0; j < GameBoard.height; j++)
+        {
+            gameplayContainer.removeChild(board[i][j].graphic);
+            board[i][j] = levels[level][x][y][i][j];
+            board[i][j].graphic.x = GameBoard.startX + (i * GameBoard.tileWidth);
+            board[i][j].graphic.y = GameBoard.startY + (j * GameBoard.tileHeight);
+            gameplayContainer.addChild(board[i][j].graphic);
+        }  
+    }
 }
     
 function Map(graphicNames, triggers, contents)
@@ -265,18 +273,13 @@ function Map(graphicNames, triggers, contents)
         gameMap[i] = [];
         for(var j = 0; j < GameBoard.height; j++)
         {
-            //gameMap[i][j] = testTile.clone();
-            gameMap[i][j].x = GameBoard.startX + (i * GameBoard.tileWidth);
-            gameMap[i][j].y = GameBoard.startY + (j * GameBoard.tileHeight);
+            gameMap[i][j] = new Tile(graphicNames[i][j], triggers[i][j], contents[i][j].split("|"));
+            gameMap[i][j].graphic.x = GameBoard.startX + (i * GameBoard.tileWidth);
+            gameMap[i][j].graphic.y = GameBoard.startY + (j * GameBoard.tileHeight);
         }  
     }
     
-    return gameMap
-}
-
-function populateMap(map, graphics, content, triggers)
-{
-    
+    return gameMap;
 }
 
 function Tile(graphicName, triggr, contentArray)
