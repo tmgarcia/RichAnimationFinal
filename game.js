@@ -28,6 +28,7 @@ var frameCount, gameTimer;
 var mouseX, mouseY;
 var GameStates = Object.freeze({gameTitle:0, gameInstructions:1, gamePlay:2, gameOver:3});
 var GameBoard = Object.freeze({tileWidth: 50, tileHeight: 50, startX: 0, startY: 50, width: 16, height: 11});
+var CollisionTiles = ["forest_DirtTree", "forest_GrassTree"];
 var board;
 var levels;
 var queue;
@@ -140,7 +141,9 @@ function loadComplete(evt)
         frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            idle: [0, 0, "idle"]
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
         }
     });
     
@@ -184,7 +187,7 @@ function loadComplete(evt)
     
     initLevels();
     addLevel(0);
-    addLevelMap(0, 0, 0);
+    addLevelMap(0, 0, 0, level0Map[1], level0Map[2], level0Map[0]);
 
     setupButtons();
     setupTitleScreen();
@@ -223,14 +226,14 @@ function initBoard()
 {
     board = [];
     
-    for(var i = 0; i < GameBoard.width; i++)
+    for(var i = 0; i < GameBoard.height; i++)
     {
         board[i] = [];
-        for(var j = 0; j < GameBoard.height; j++)
+        for(var j = 0; j < GameBoard.width; j++)
         {
-            board[i][j] = Tile();
-            board[i][j].graphic.x = GameBoard.startX + (i * GameBoard.tileWidth);
-            board[i][j].graphic.y = GameBoard.startY + (j * GameBoard.tileHeight);
+            board[i][j] = Tile("default", "none", ["none"]);
+            board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
+            board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
         }  
     }
@@ -254,15 +257,14 @@ function addLevelMap(level, x, y, graphicNames, triggers, contents)
 
 function loadLevelMap(level, x, y)
 {
-    console.log("loading level: " + level + "( " + x, + ", " + y + " )");
-    for(var i = 0; i < GameBoard.width; i++)
+    for(var i = 0; i < GameBoard.height; i++)
     {
-        for(var j = 0; j < GameBoard.height; j++)
+        for(var j = 0; j < GameBoard.width; j++)
         {
             gameplayContainer.removeChild(board[i][j].graphic);
             board[i][j] = levels[level][x][y][i][j];
-            board[i][j].graphic.x = GameBoard.startX + (i * GameBoard.tileWidth);
-            board[i][j].graphic.y = GameBoard.startY + (j * GameBoard.tileHeight);
+            board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
+            board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
         }  
     }
@@ -270,55 +272,123 @@ function loadLevelMap(level, x, y)
     
 function Map(graphicNames, triggers, contents)
 {
+    var isPlayerStartDefined = false;
     var gameMap = [];
-    for(var i = 0; i < GameBoard.width; i++)
+    for(var i = 0; i < GameBoard.height; i++)
     {
         gameMap[i] = [];
-        for(var j = 0; j < GameBoard.height; j++)
-        {
-            gameMap[i][j] = new Tile(graphicNames[i][j], triggers[i][j], contents[i][j].split("|"));
-            gameMap[i][j].graphic.x = GameBoard.startX + (i * GameBoard.tileWidth);
-            gameMap[i][j].graphic.y = GameBoard.startY + (j * GameBoard.tileHeight);
+        for(var j = 0; j < GameBoard.width; j++)
+        {  
+            if(isPlayerStartDefined && graphicNames[i][j] == "forest_PlayerStart")
+            {
+                console.log("Playing starting area is already defined for this map. The first definition will take priority");   
+            }
+            
+            if(graphicNames[i][j] == "forest_PlayerStart")
+            {
+                 isPlayerStartDefined = true;  
+            }
+               
+            gameMap[i][j] = Tile(graphicNames[i][j], triggers[i][j], contents[i][j].split("|"));
+            gameMap[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
+            gameMap[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
         }  
     }
-    
+
     return gameMap;
 }
 
 function Tile(graphicName, triggr, contentArray)
-{
+{    
     var tileGraphic;
     switch(graphicName)
     {
-        case "forestGrass":
+        case "forest_Dirt":
             tileGraphic = testGrass.clone();
-            tileGraphic.name = "forestGrass";
+            tileGraphic.name = "forest_Dirt";
+            break;
+            
+        case "forest_GrassPath":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forest_GrassPath";
+            break;
+            
+        case "forest_DirtPath":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forest_DirtPath";
+            break;
+            
+        case "forest_DirtTree":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forest_DirtTree";
+            break;
+            
+        case "forest_GrassTree":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forest_GrassTree";
+            break;
+            
+        case "forest_Grass":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forest_Grass";
+            break;
+            
+        case "forest_DirtyGrass":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forest_DirtyGrass";
+            break;
+            
+        case "forest_DungeonEntrance":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forest_DungeonEntrance";
+            break;
+            
+        case "forest_PlayerStart":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "forest_PlayerStart";
+            if(triggr != "none")
+            {
+                triggr = "none";
+                console.log("Player starting tile cannot have trigger in it. Changing trigger to none.");
+            }
+            break;
+            
+        case "default":
+            tileGraphic = testGrass.clone();
+            tileGraphic.name = "default";
             break;
             
         default:
-            console.log("something broke while parsing graphic");
+            console.log("Failed to load tile graphic from string");
             tileGraphic = testGrass.clone();
-             tileGraphic.name = "missing";
+            tileGraphic.name = "invalidNameString";
             break;
     }
             
     switch(triggr)
     {
         case "enabled":
+            tileGraphic.gotoAndPlay("enabled");
             break;
         case "disabled":
+            tileGraphic.gotoAndPlay("disabled");
+            break;
+        case "permanent":
+            tileGraphic.gotoAndPlay("enabled");
             break;
         case "none":
+            tileGraphic.gotoAndPlay("none");
             break;
         default:
-            console.log("something broke while parsing trigger");
+            console.log("Failed to load tile trigger from string");
             triggr = "none";
+            tileGraphic.gotoAndPlay("none");
             break;
     }
     
     if(contentArray == null || contentArray.length < 1)
     {
-        console.log("something broke while parsing content");
+        console.log("Failed to load tile contents from string array");
         contentArray = ["none"];   
     }
     
@@ -524,7 +594,8 @@ function setupGameplayScreen()
 }
 function resetGameplayScreen()
 {
-     resetGameTimer();
+    resetGameTimer();
+    loadLevelMap(0, 0, 0);
 }
 //endregion
 /*----------------------------Game Over----------------------------*/
@@ -540,6 +611,51 @@ function setupGameOverScreen()
     gameOverContainer.visible = false;
 }
 function resetGameOverScreen()
+{
+    
+}
+//endregion
+/*----------------------------Collision----------------------------*/
+//region Collision
+function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
+{
+    if(_isFlyingCreature == null)
+    {
+        _isFlyingCreature = false;   
+    }
+    
+    var isAllowed = true;
+    
+    if(boardX < 0 || boardX >= GameBoard.tileWidth || boardY < 0 || boardY >= GameBoard.tileHeight)
+    {
+        isAllowed = false;
+    }
+    
+    if(isAllowed && !_isFlyingCreature && CollisionTiles.contains(board[boardX][boardY].graphic.name))
+    {
+        isAllowed = false;
+    }
+    
+    
+    
+    return isAllowed;
+}
+//endregion
+/*----------------------------Player----------------------------*/
+//region Player Movement
+function up()
+{
+    
+}
+function down()
+{
+    
+}
+function left()
+{
+    
+}
+function right()
 {
     
 }
