@@ -435,25 +435,28 @@ function gameStateSwitch()
     switch(gameState)
     {
         case GameStates.gameOver:
+            resetGameOverScreen();
             titleContainer.visible = false;
             instructionContainer.visible = false;
             gameplayContainer.visible = false;
             gameOverContainer.visible = true;
         break;
         case GameStates.gameTitle:
+            resetTitleScreen();
             titleContainer.visible = true;
             instructionContainer.visible = false;
             gameplayContainer.visible = false;
             gameOverContainer.visible = false;
         break;
         case GameStates.gamePlay:
-            startGameplay();
+            resetGameplayScreen();
             titleContainer.visible = false;
             instructionContainer.visible = false;
             gameplayContainer.visible = true;
             gameOverContainer.visible = false;
         break;
         case GameStates.gameInstructions:
+            resetInstructionScreen();
             titleContainer.visible = false;
             instructionContainer.visible = true;
             gameplayContainer.visible = false;
@@ -478,13 +481,9 @@ function setupTitleScreen()
     stage.addChild(titleContainer);
     titleContainer.visible = true;
 }
-function resetTitle()
+function resetTitleScreen()
 {
-    btnPlay.x = canvasWidth/2;
-    btnPlay.y = canvasHeight/2;
     
-    btnInstruct.x = (canvasWidth/2);
-    btnInstruct.y = (canvasHeight/2)+50;
 }
 //endregion
 /*---------------------------Instructions---------------------------*/
@@ -499,6 +498,10 @@ function setupInstructionScreen()
     stage.addChild(instructionContainer);
     instructionContainer.visible = false;
 }
+function resetInstructionScreen()
+{
+    
+}
 //endregion
 /*----------------------------Game Play----------------------------*/
 //region Title
@@ -511,9 +514,9 @@ function setupGameplayScreen()
     stage.addChild(gameplayContainer);
     gameplayContainer.visible = false;
 }
-function startGameplay()
+function resetGameplayScreen()
 {
-    resetGameTimer();
+     resetGameTimer();
 }
 //endregion
 /*----------------------------Game Over----------------------------*/
@@ -527,5 +530,9 @@ function setupGameOverScreen()
     gameOverContainer.addChild(gameOverScreen, btnContinue);
     stage.addChild(gameOverContainer);
     gameOverContainer.visible = false;
+}
+function resetGameOverScreen()
+{
+    
 }
 //endregion
