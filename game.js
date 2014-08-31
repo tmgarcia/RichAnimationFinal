@@ -31,6 +31,7 @@ var GameBoard = Object.freeze({tileWidth: 50, tileHeight: 50, startX: 0, startY:
 var board;
 var levels;
 var queue;
+var player;
 manifest = [
     {src:"titleScreen.jpg", id:"titleScreen"},
     {src:"instructions.jpg", id:"instructionScreen"},
@@ -167,6 +168,8 @@ function loadComplete(evt)
     btnInstruct = new createjs.Sprite(buttonSheet);
     btnMenu = new createjs.Sprite(buttonSheet);
     btnContinue = new createjs.Sprite(buttonSheet);
+
+    player = Player();
 
     levelRaws = [];
     levelRaws[0] = [];
@@ -322,6 +325,11 @@ function Tile(graphicName, triggr, contentArray)
     var tile = {graphic: tileGraphic, contents: contentArray, trigger: triggr};
     
     return tile;
+}
+
+function Player()
+{
+    var player = {health: 100, fear: 0, level:0, mapX: 0, mapY: 0, tileX: 0, tileY: 0};
 }
 
 //endregion
