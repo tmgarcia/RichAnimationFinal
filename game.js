@@ -60,7 +60,8 @@ manifest = [
     {src:"playerDebug.png", id:"player"},
     {src:"level0_TileContents.csv", id:"level0_TC", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
-    {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT}
+    {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT},
+    {src:"level0_TileEntities.csv", id:"level0_TE", type:createjs.LoadQueue.TEXT},
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -478,7 +479,7 @@ function Map(graphicNames, triggers, contents)
     return gameMap;
 }
 
-function Tile(graphicName, triggr, contentArray)
+function Tile(graphicName, triggr, contentArray, entiti)
 {    
     var tileGraphic;
     switch(graphicName)
@@ -521,16 +522,6 @@ function Tile(graphicName, triggr, contentArray)
         case "forest_Exit":
             tileGraphic = forest_Exit.clone();
             tileGraphic.name = "forest_Exit";
-            break;
-            
-        case "forest_PlayerStart":
-            tileGraphic = forest_Grass.clone();
-            tileGraphic.name = "forest_PlayerStart";
-            if(triggr != "none")
-            {
-                triggr = "none";
-                console.log("Player starting tile cannot have trigger in it. Changing trigger to none.");
-            }
             break;
             
         case "default":
@@ -577,7 +568,26 @@ function Tile(graphicName, triggr, contentArray)
         contentArray = ["none"];   
     }
     
-    var tile = {graphic: tileGraphic, contents: contentArray, trigger: triggr};
+    switch(entiti)
+    {
+        case "player":    
+            if(triggr != "none")
+            {
+                triggr = "none";
+                console.log("Player starting tile cannot have trigger in it. Changing trigger to none.");
+            }
+            break;
+        case "wisp":
+            break;    
+        case "none":
+            break;
+        default:
+            console.log("Failed to load tile entity from string. Setting to none.");
+            entiti = "none";
+            break;
+    }
+    
+    var tile = {graphic: tileGraphic, contents: contentArray, trigger: triggr, entity: entiti};
     
     return tile;
 }
