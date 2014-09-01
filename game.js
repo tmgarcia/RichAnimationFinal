@@ -423,7 +423,11 @@ function loadLevelMap(level, x, y)
         for(var j = 0; j < GameBoard.width; j++)
         {
             gameplayContainer.removeChild(board[i][j].graphic);
-            board[i][j] = levels[level][x][y][i][j];
+            //board[i][j] = levels[level][x][y][i][j];
+            board[i][j].contents = $.extend(true, [], levels[level][x][y][i][j].contents);
+            board[i][j].trigger = levels[level][x][y][i][j].trigger;
+            board[i][j].graphic = levels[level][x][y][i][j].graphic.clone();
+            
             board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
@@ -930,6 +934,10 @@ function resetGameplayScreen()
 {
     resetGameTimer();
     loadLevelMap(0, 0, 0);
+    player.fear = 0;
+    player.health = 100;
+    player.state = PlayerStates.idle;
+    player.graphic.gotoAndPlay("up");
 }
 //endregion
 /*----------------------------Game Over----------------------------*/
