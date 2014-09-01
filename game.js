@@ -29,10 +29,11 @@ var mouseX, mouseY;
 var GameStates = Object.freeze({gameTitle:0, gameInstructions:1, gamePlay:2, gameOver:3});
 var GameBoard = Object.freeze({tileWidth: 50, tileHeight: 50, startX: 0, startY: 50, width: 16, height: 11});
 var CollisionTiles = ["forest_DirtTree", "forest_GrassTree"];
+var PlayerStates = Object.freeze({idle:0, movingUp:1, movingDown: 2, movingLeft:3, movingRight:4, attacking:5});
 var board;
 var levels;
 var queue;
-var player;
+var player = Player();
 manifest = [
     {src:"titleScreen.jpg", id:"titleScreen"},
     {src:"instructions.jpg", id:"instructionScreen"},
@@ -50,6 +51,7 @@ manifest = [
     {src:"Textures/unavailable.png", id:"unavailable"},
     {src:"Textures/default.png", id:"default"},
     {src:"Textures/forest_Exit.png", id:"forest_Exit"},
+    {src:"playerDebug.png", id:"player"},
     {src:"level0_TileContents.csv", id:"level0_TC", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT}
@@ -288,6 +290,21 @@ function loadComplete(evt)
     });
     unavailableTile = new createjs.Sprite(unavailableTile_Sheet);  
 
+    var player_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("player")],
+        frames: [[0,0,51,50,0,-0.3,0],[51,0,51,50,0,-0.3,0],[0,50,51,50,0,-0.3,0],[51,50,51,50,0,-0.3,0]],
+        animations:
+        {
+            up: [0, 0, "up"],
+            right: [1, 1, "right"],
+            down: [2, 2, "down"],
+            left: [3, 3, "left"]
+        }
+    });
+    player.graphic = new createjs.Sprite(player_Sheet);
+    stage.addChild(player.graphic);
+    
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
         frames: {width: 93, height: 33, regX: 46, regY: 15},
@@ -310,8 +327,6 @@ function loadComplete(evt)
     btnInstruct = new createjs.Sprite(buttonSheet);
     btnMenu = new createjs.Sprite(buttonSheet);
     btnContinue = new createjs.Sprite(buttonSheet);
-
-    player = Player();
 
     levelRaws = [];
     levelRaws[0] = [];
@@ -396,6 +411,7 @@ function addLevelMap(level, x, y, graphicNames, triggers, contents)
 
 function loadLevelMap(level, x, y)
 {
+    var isPlayeStartFound = false;
     for(var i = 0; i < GameBoard.height; i++)
     {
         for(var j = 0; j < GameBoard.width; j++)
@@ -405,8 +421,20 @@ function loadLevelMap(level, x, y)
             board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
+            if(!isPlayeStartFound && board[i][j].graphic.name == "forest_PlayerStart")
+            {
+                isPlayeStartFound = true;
+                player.graphic.x = board[i][j].graphic.x;
+                player.graphic.y = board[i][j].graphic.y;
+                player.tileX = i;
+                player.tileY = j;
+                player.tile = board[i][j];
+            }
         }  
     }
+    
+    stage.removeChild(player.graphic);
+    stage.addChild(player.graphic);
 }
     
 function Map(graphicNames, triggers, contents)
@@ -417,22 +445,25 @@ function Map(graphicNames, triggers, contents)
     {
         gameMap[i] = [];
         for(var j = 0; j < GameBoard.width; j++)
-        {  
+        {                 
+            gameMap[i][j] = Tile(graphicNames[i][j], triggers[i][j], contents[i][j].split("|"));
+            gameMap[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
+            gameMap[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             if(isPlayerStartDefined && graphicNames[i][j] == "forest_PlayerStart")
             {
                 console.log("Player starting area is already defined for this map. The first definition will take priority.");   
             }
-            
-            if(graphicNames[i][j] == "forest_PlayerStart")
+            else if(graphicNames[i][j] == "forest_PlayerStart")
             {
-                 isPlayerStartDefined = true;  
+                isPlayerStartDefined = true;
             }
-               
-            gameMap[i][j] = Tile(graphicNames[i][j], triggers[i][j], contents[i][j].split("|"));
-            gameMap[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
-            gameMap[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
         }  
     }
+    
+   if(!isPlayerStartDefined)
+   {
+    throw "Map_With_Undefined_Player_Starting_Tile_Exception";
+   }
 
     return gameMap;
 }
@@ -499,9 +530,6 @@ function Tile(graphicName, triggr, contentArray)
             
         default:
             console.log("Failed to load tile graphic from string.");
-            console.log("Failed to load tile graphic from string.");
-            console.log("Failed to load tile graphic from string.");
-            console.log("Failed to load tile graphic from string.");
             tileGraphic = invalidTile.clone();
             tileGraphic.name = "invalidNameString";
             break;
@@ -546,7 +574,9 @@ function Tile(graphicName, triggr, contentArray)
 
 function Player()
 {
-    var player = {health: 100, fear: 0, level:0, mapX: 0, mapY: 0, tileX: 0, tileY: 0};
+    var player = {health: 100, fear: 0, tileX: 0, tileY: 0, state: PlayerStates.idle, graphic: null, tile:null};
+    
+    return player;
 }
 
 //endregion
@@ -571,6 +601,10 @@ function main()
     createjs.Ticker.setFPS(FPS);
 }
 
+var movementKeys = [];
+var movementTicks;
+
+var wDown, aDown, sDown, dDown = false;
 function handleKeyDown(evt)
 {
     if(!evt){ var evt = window.event; }  //browser compatibility
@@ -580,10 +614,58 @@ function handleKeyDown(evt)
         case KC_RIGHT: console.log("RIGHT ("+evt.keyCode+") down"); return false;
         case KC_UP:    console.log("UP ("+evt.keyCode+") down"); return false;
         case KC_DOWN:  console.log("DOWN ("+evt.keyCode+") down"); return false;
-        case KC_W: console.log("W ("+evt.keyCode+") down"); return false;
-        case KC_A: console.log("A ("+evt.keyCode+") down"); return false;
-        case KC_S: console.log("S ("+evt.keyCode+") down"); return false;
-        case KC_D: console.log("D ("+evt.keyCode+") down"); return false;
+        case KC_W:
+            if(movementKeys.length < 1)
+            {
+                movementTicks = 0;
+            }
+            
+            if(!wDown)
+            {  
+                wDown = true;
+                movementKeys.push("W");
+                player.graphic.gotoAndPlay("up");
+                return false;
+            }
+        case KC_A:
+            if(movementKeys.length < 1)
+            {
+                movementTicks = 0;
+            }
+            
+            if(!aDown)
+            {
+                movementKeys.push("A");
+                player.graphic.gotoAndPlay("left");
+                return false;
+                aDown = true;
+            }
+        case KC_S:
+            if(movementKeys.length < 1)
+            {
+                movementTicks = 0;
+            }
+            
+            if(!sDown)
+            {
+                movementKeys.push("S");
+                player.graphic.gotoAndPlay("down");
+                return false;
+                sDown = true;
+            }
+        case KC_D:
+            if(movementKeys.length < 1)
+            {
+                movementTicks = 0;
+            }
+            
+            if(!dDown)
+            {
+                movementKeys.push("D");
+                player.graphic.gotoAndPlay("right");
+                return false;
+                dDown = true;
+            }
         case KC_J: console.log("J ("+evt.keyCode+") down"); return false;
         case KC_SPACE:  console.log("SPACE ("+evt.keyCode+") down"); return false;
         case KC_SHIFT:  console.log("SHIFT ("+evt.keyCode+") down"); return false;
@@ -600,10 +682,38 @@ function handleKeyUp(evt)
         case KC_RIGHT: console.log("RIGHT ("+evt.keyCode+") up"); break;
         case KC_UP:	console.log("UP ("+evt.keyCode+") up"); break;
         case KC_DOWN:	console.log("DOWN ("+evt.keyCode+") up"); break;
-        case KC_W:	console.log("W ("+evt.keyCode+") up"); break;
-        case KC_A:	console.log("A ("+evt.keyCode+") up"); break;
-        case KC_S:	console.log("S ("+evt.keyCode+") up"); break;
-        case KC_D:	console.log("D ("+evt.keyCode+") up"); break;
+        case KC_W:
+            movementKeys.splice(movementKeys.indexOf("W"), 1);
+            wDown = false;
+            if(movementKeys.length < 1)
+            {
+                movementTicks = null;
+            }
+            break;
+        case KC_A:
+            aDown = false;
+            movementKeys.splice(movementKeys.indexOf("A"), 1);
+            if(movementKeys.length < 1)
+            {
+                movementTicks = null;
+            }
+            break;
+        case KC_S:
+            sDown = false;
+            movementKeys.splice(movementKeys.indexOf("S"), 1);
+            if(movementKeys.length < 1)
+            {
+                movementTicks = null;
+            }
+            break;
+        case KC_D:
+            dDown = false;
+            movementKeys.splice(movementKeys.indexOf("D"), 1);
+            if(movementKeys.length < 1)
+            {
+                movementTicks = null;
+            }
+            break;
         case KC_J:  console.log("J ("+evt.keyCode+") up"); break;
         case KC_SPACE:	console.log("SPACE ("+evt.keyCode+") up"); break;
         case KC_SHIFT:	console.log("SHIFT ("+evt.keyCode+") up"); break;
@@ -622,6 +732,10 @@ function runGameTimer()
     if(frameCount%(FPS/10) === 0)
     {
         gameTimer = frameCount/(FPS);
+    }
+    if(movementTicks != null)
+    {
+        movementTicks++;
     }
 }
 
@@ -643,6 +757,7 @@ function gameStateAction()
         break;
         case GameStates.gamePlay:
             runGameTimer();
+            handlePlayerMovement();
             //if(end game condition)
             //{
             // gameState = GameStates.gameOver;
@@ -766,6 +881,7 @@ function resetGameOverScreen()
 //region Collision
 function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
 {
+    console.log(boardX + ", " + boardY);
     if(_isFlyingCreature == null)
     {
         _isFlyingCreature = false;   
@@ -778,7 +894,7 @@ function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
         isAllowed = false;
     }
     
-    if(isAllowed && !_isFlyingCreature && CollisionTiles.contains(board[boardX][boardY].graphic.name))
+    if(isAllowed && !_isFlyingCreature && CollisionTiles.indexOf(board[boardX][boardY].graphic.name) > -1)
     {
         isAllowed = false;
     }
@@ -788,20 +904,100 @@ function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
 //endregion
 /*----------------------------Player----------------------------*/
 //region Player Movement
+function handlePlayerMovement()
+{
+    switch(player.state)
+    {
+        case PlayerStates.idle:
+            if(movementKeys.length > 0 && movementTicks >= 15) 
+            {
+                switch(movementKeys[movementKeys.length - 1])
+                {
+                    case "W":
+                        up();
+                        break;
+                    case "A":
+                        left();
+                        break;
+                    case "S":
+                        down();
+                        break;
+                    case "D":
+                        right();
+                        break;
+                }
+            }
+            break;
+        case PlayerStates.movingDown:
+            player.graphic.y++;
+            if(player.graphic.y == board[player.tileX][player.tileY + 1].graphic.y)
+            {
+                player.tile = board[player.tileX][player.tileY + 1];
+                player.tileY++;
+                player.state = PlayerStates.idle;
+            }
+            break;
+        case PlayerStates.movingLeft:
+            player.graphic.x--;
+            if(player.graphic.y == board[player.tileX - 1][player.tileY].graphic.x)
+            {
+                player.tile = board[player.tileX - 1][player.tileY];
+                player.tileX--;
+                player.state = PlayerStates.idle;
+            }
+            break;
+        case PlayerStates.movingRight:
+            player.graphic.x++;
+            if(player.graphic.y == board[player.tileX + 1][player.tileY].graphic.x)
+            {
+                player.tile = board[player.tileX + 1][player.tileY];
+                player.tileX++;
+                player.state = PlayerStates.idle;
+            }
+            break;
+        case PlayerStates.movingUp:
+            player.graphic.y--;
+            
+            //console.log("Player: " + player.graphic.x + ", " + player.graphic.y);
+            //console.log("Board Y - 1: " + board[player.tileX][player.tileY - 1].graphic.x + ", " + board[player.tileX][player.tileY - 1].graphic.y);
+            if(player.graphic.y == board[player.tileX - 1][player.tileY].graphic.y)
+            {
+                player.tile = board[player.tileX - 1][player.tileY];
+                player.tileX--;
+                player.state = PlayerStates.idle;
+            }
+            break;
+        case PlayerStates.attacking:
+            break;
+    }
+}
 function up()
 {
-    
+    console.log("p: " + player.graphic.x + " , " + player.graphic.y + " b: " + board[player.tileX][player.tileY].graphic.x + " , " + board[player.tileX][player.tileY].graphic.y);
+    if(isTileMoveAllowed(player.tileX, player.tileY - 1))
+    {
+        player.state = PlayerStates.movingUp;
+    }
 }
 function down()
 {
-    
+    if(isTileMoveAllowed(player.tileX, player.tileY + 1))
+    {
+        player.state = PlayerStates.movingDown;
+    }
 }
 function left()
 {
-    
+    if(isTileMoveAllowed(player.tileX - 1, player.tileY))
+    {
+        player.state = PlayerStates.movingLeft;
+    }
 }
 function right()
 {
-    
+    if(isTileMoveAllowed(player.tileX + 1, player.tileY ))
+    {
+        player.state = PlayerStates.movingRight;
+    }
 }
 //endregion
