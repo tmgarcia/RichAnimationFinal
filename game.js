@@ -3,6 +3,12 @@
 document.onkeydown = handleKeyDown;
 document.onkeyup = handleKeyUp;
 
+//----------------//
+var health = 100;
+var MAX_HEALTH = 100;
+var fear = 0;
+var MAX_FEAR = 100;
+//-------------------//
 var KC_LEFT = 37;
 var KC_UP = 38;
 var KC_RIGHT = 39;
@@ -16,6 +22,7 @@ var KC_SPACE = 32;
 var KC_SHIFT = 16;
 var KC_ENTER = 13;
 var canvas;
+var context;
 var canvasWidth = 800;
 var canvasHeight = 600;
 var stage;
@@ -66,6 +73,7 @@ function setupCanvas()
     canvas.height = canvasHeight;
     stage = new createjs.Stage(canvas);
     stage.enableMouseOver();
+    context = canvas.getContext('2d');
     stage.on("stagemousemove", function(evt){ mouseX = evt.stageX.toFixed(); mouseY = evt.stageY.toFixed();});
 }   
 
@@ -579,6 +587,63 @@ function Player()
     return player;
 }
 
+
+
+//---------------------------Health and Fear Bars----------------------------//
+
+var healthBar=
+    {
+        x: 0,
+        y: 0,
+        width: 275,
+        height: 50
+    };
+var fearBar=
+    {
+        x: 275,
+        y: 0,
+        width: 275,
+        height: 50
+    };
+
+
+setInterval(onTimerTick, 33);
+
+function onTimerTick()
+{
+    
+    //HEALTH
+    var percentHealth = health/MAX_HEALTH;
+    
+    context.fillStyle = "Black";
+    context.fillRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
+    
+    context.fillStyle = "Red";
+    context.fillRect(healthBar.x, healthBar.y, healthBar.width * percentHealth, healthBar.height);
+    
+    context.fillStyle = "White";
+    context.font = "18px sans-serif";
+    context.fillText("Life: " + health + "/" + MAX_HEALTH, 20, 25);
+    
+    //FEAR
+    var percentFear = fear/MAX_FEAR;
+    
+    context.fillStyle = "Black";
+    context.fillRect(fearBar.x, fearBar.y, fearBar.width, fearBar.height);
+    
+    context.fillStyle = "Yellow";
+    context.fillRect(healthBar.x, healthBar.y, healthBar.width * percentFear, healthBar.height);
+    
+    context.fillStyle = "Red";
+    context.font = "18px sans-serif";
+    context.fillText("Fear: " +fear+"/"+MAX_FEAR, 295, 25);
+    
+}
+//gameplayContainer.addChild(healthBar, fearBar);
+
+
+//---------------------------------------------------------------------------//
+
 //endregion
 /*----------------------------Main Loop----------------------------*/
 //region Main
@@ -850,7 +915,7 @@ function setupGameplayScreen()
     gameplayContainer = new createjs.Container();
     gameplayContainer.addChild(gameplayScreen);
     initBoard();
-    
+    gameplayContainer.addChild(healthBar, fearBar);
     stage.addChild(gameplayContainer);
     gameplayContainer.visible = false;
 }
