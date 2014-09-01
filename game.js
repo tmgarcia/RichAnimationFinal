@@ -39,10 +39,20 @@ manifest = [
     {src:"gameOverScreen.jpg", id:"gameOverScreen"},
     {src:"gameplayArea.jpg", id:"gameplayScreen"},
     {src:"buttons.png", id:"button"},
-    {src:"testGrass.png", id:"testGrass"},
-    {src: "level0_TileContents.csv", id: "level0_TC", type:createjs.LoadQueue.TEXT},
-    {src: "level0_TileGraphics.csv", id: "level0_TG", type:createjs.LoadQueue.TEXT},
-    {src: "level0_TileTriggers.csv", id: "level0_TT", type:createjs.LoadQueue.TEXT},    
+    {src:"Textures/forest_Dirt.png", id:"forest_Dirt"},
+    {src:"Textures/forest_DirtPath.png", id:"forest_DirtPath"},
+    {src:"Textures/forest_DirtTree.png", id:"forest_DirtTree"},
+    {src:"Textures/forest_DirtyGrass.png", id:"forest_DirtyGrass"},
+    {src:"Textures/forest_Grass.png", id:"forest_Grass"},
+    {src:"Textures/forest_GrassPath.png", id:"forest_GrassPath"},
+    {src:"Textures/forest_GrassTree.png", id:"forest_GrassTree"},
+    {src:"Textures/invalid.png", id:"invalid"},
+    {src:"Textures/unavailable.png", id:"unavailable"},
+    {src:"Textures/default.png", id:"default"},
+    {src:"Textures/forest_Exit.png", id:"forest_Exit"},
+    {src:"level0_TileContents.csv", id:"level0_TC", type:createjs.LoadQueue.TEXT},
+    {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
+    {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT}
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -121,12 +131,12 @@ function loadProgress(evt)
     loadingBar.scaleX = queue.progress * loadingBarWidth;
  
     progressPercentage = Math.round(queue.progress*100);
-    loadProgressLabel.text = progressPercentage + "% Loaded" ;
+    loadProgressLabel.text = progressPercentage + "% Loaded";
     
     stage.update();
 }
  
-var testGrass;
+var defaultTile, invalidTile, unavailableTile ,forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
 function loadComplete(evt)
 {
     stage.removeChild(loadProgressLabel, loadingBarContainer);
@@ -135,10 +145,10 @@ function loadComplete(evt)
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
 
-    var testGrassSheet = new createjs.SpriteSheet(
+    var defaultTile_Sheet = new createjs.SpriteSheet(
     {
-        images: [queue.getResult("testGrass")],
-        frames: [[0,0,50,50,0,0,0]],
+        images: [queue.getResult("default")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 0, "none"],
@@ -146,8 +156,137 @@ function loadComplete(evt)
             disabled: [2, 2, "disabled"]
         }
     });
+    defaultTile = new createjs.Sprite(defaultTile_Sheet); 
     
-    testGrass = new createjs.Sprite(testGrassSheet);  
+    var forest_Dirt_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("forest_Dirt")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    forest_Dirt = new createjs.Sprite(forest_Dirt_Sheet); 
+
+    var forest_DirtPath_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("forest_DirtPath")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    forest_DirtPath = new createjs.Sprite(forest_DirtPath_Sheet); 
+
+    var forest_DirtTree_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("forest_DirtTree")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    forest_DirtTree = new createjs.Sprite(forest_DirtTree_Sheet); 
+
+    var forest_DirtyGrass_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("forest_DirtyGrass")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    forest_DirtyGrass = new createjs.Sprite(forest_DirtyGrass_Sheet); 
+
+    var forest_Grass_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("forest_Grass")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    forest_Grass = new createjs.Sprite(forest_Grass_Sheet); 
+
+    var forest_GrassPath_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("forest_GrassPath")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    forest_GrassPath = new createjs.Sprite(forest_GrassPath_Sheet); 
+
+    var forest_GrassTree_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("forest_GrassTree")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    forest_GrassTree = new createjs.Sprite(forest_GrassTree_Sheet); 
+
+    var forest_Exit_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("forest_Exit")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    forest_Exit = new createjs.Sprite(forest_Exit_Sheet); 
+
+    var invalidTile_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("invalid")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    invalidTile = new createjs.Sprite(invalidTile_Sheet); 
+
+    var unavailableTile_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("unavailable")],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "none"],
+            enabled: [1, 1, "enabled"],
+            disabled: [2, 2, "disabled"]
+        }
+    });
+    unavailableTile = new createjs.Sprite(unavailableTile_Sheet);  
 
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
@@ -281,7 +420,7 @@ function Map(graphicNames, triggers, contents)
         {  
             if(isPlayerStartDefined && graphicNames[i][j] == "forest_PlayerStart")
             {
-                console.log("Playing starting area is already defined for this map. The first definition will take priority");   
+                console.log("Player starting area is already defined for this map. The first definition will take priority.");   
             }
             
             if(graphicNames[i][j] == "forest_PlayerStart")
@@ -304,47 +443,47 @@ function Tile(graphicName, triggr, contentArray)
     switch(graphicName)
     {
         case "forest_Dirt":
-            tileGraphic = testGrass.clone();
+            tileGraphic = forest_Dirt.clone();
             tileGraphic.name = "forest_Dirt";
             break;
             
         case "forest_GrassPath":
-            tileGraphic = testGrass.clone();
+            tileGraphic = forest_GrassPath.clone();
             tileGraphic.name = "forest_GrassPath";
             break;
             
         case "forest_DirtPath":
-            tileGraphic = testGrass.clone();
+            tileGraphic = forest_DirtPath.clone();
             tileGraphic.name = "forest_DirtPath";
             break;
             
         case "forest_DirtTree":
-            tileGraphic = testGrass.clone();
+            tileGraphic = forest_DirtTree.clone();
             tileGraphic.name = "forest_DirtTree";
             break;
             
         case "forest_GrassTree":
-            tileGraphic = testGrass.clone();
+            tileGraphic = forest_GrassTree.clone();
             tileGraphic.name = "forest_GrassTree";
             break;
             
         case "forest_Grass":
-            tileGraphic = testGrass.clone();
+            tileGraphic = forest_Grass.clone();
             tileGraphic.name = "forest_Grass";
             break;
             
         case "forest_DirtyGrass":
-            tileGraphic = testGrass.clone();
+            tileGraphic = forest_DirtyGrass.clone();
             tileGraphic.name = "forest_DirtyGrass";
             break;
             
-        case "forest_DungeonEntrance":
-            tileGraphic = testGrass.clone();
-            tileGraphic.name = "forest_DungeonEntrance";
+        case "forest_Exit":
+            tileGraphic = forest_Exit.clone();
+            tileGraphic.name = "forest_Exit";
             break;
             
         case "forest_PlayerStart":
-            tileGraphic = testGrass.clone();
+            tileGraphic = forest_Grass.clone();
             tileGraphic.name = "forest_PlayerStart";
             if(triggr != "none")
             {
@@ -354,13 +493,16 @@ function Tile(graphicName, triggr, contentArray)
             break;
             
         case "default":
-            tileGraphic = testGrass.clone();
+            tileGraphic = defaultTile.clone();
             tileGraphic.name = "default";
             break;
             
         default:
-            console.log("Failed to load tile graphic from string");
-            tileGraphic = testGrass.clone();
+            console.log("Failed to load tile graphic from string.");
+            console.log("Failed to load tile graphic from string.");
+            console.log("Failed to load tile graphic from string.");
+            console.log("Failed to load tile graphic from string.");
+            tileGraphic = invalidTile.clone();
             tileGraphic.name = "invalidNameString";
             break;
     }
@@ -379,8 +521,13 @@ function Tile(graphicName, triggr, contentArray)
         case "none":
             tileGraphic.gotoAndPlay("none");
             break;
+        case "hidden":
+            console.log("Hidden trigger enum not yet supported. Changing to none.");
+            triggr = "none";
+            tileGraphic.gotoAndPlay("none");
+            break;
         default:
-            console.log("Failed to load tile trigger from string");
+            console.log("Failed to load tile trigger from string. Setting to none.");
             triggr = "none";
             tileGraphic.gotoAndPlay("none");
             break;
@@ -388,7 +535,7 @@ function Tile(graphicName, triggr, contentArray)
     
     if(contentArray == null || contentArray.length < 1)
     {
-        console.log("Failed to load tile contents from string array");
+        console.log("Failed to load tile contents from string array. Setting to none.");
         contentArray = ["none"];   
     }
     
@@ -635,8 +782,6 @@ function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
     {
         isAllowed = false;
     }
-    
-    
     
     return isAllowed;
 }
