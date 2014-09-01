@@ -8,6 +8,7 @@ var health = 100;
 var MAX_HEALTH = 100;
 var fear = 0;
 var MAX_FEAR = 100;
+var statContainer;
 var fogOfWar;
 //-------------------//
 var KC_LEFT = 37;
@@ -62,7 +63,7 @@ manifest = [
     {src:"level0_TileContents.csv", id:"level0_TC", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT},
-    {src:"comfortSheepSmall.png", id:"fogOfWar"}
+    {src:"fog.png", id:"fogOfWar"}
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -156,7 +157,6 @@ function loadComplete(evt)
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
     fogOfWar = new createjs.Bitmap(queue.getResult("fogOfWar"));
-
 
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
@@ -454,7 +454,7 @@ function loadLevelMap(level, x, y)
     }
     
     gameplayContainer.removeChild(player.graphic);
-    gameplayContainer.addChild(player.graphic, fogOfWar);
+    gameplayContainer.addChild(player.graphic);
 }
     
 function Map(graphicNames, triggers, contents)
@@ -602,6 +602,7 @@ function Player()
 
 
 //---------------------------Health and Fear Bars----------------------------//
+statContainer = new createjs.Container();
 var healthBar =
 {
     x: 0,
@@ -651,7 +652,7 @@ function setupBars()
     fearText.y = 25;
     
     
-    gameplayContainer.addChild(healthBarBack, healthFill, healthText, fearBarBack, fearFill, fearText);
+    statContainer.addChild(healthBarBack, healthFill, healthText, fearBarBack, fearFill, fearText);
 }
 
 
@@ -939,8 +940,8 @@ function setupGameplayScreen()
     gameplayContainer = new createjs.Container();
     gameplayContainer.addChild(gameplayScreen);
     initBoard();
+    gameplayContainer.addChild(fogOfWar);
     setupBars();
-    //gameplayContainer.addChild(statContainer);
     stage.addChild(gameplayContainer);
     gameplayContainer.visible = false;
 }
@@ -948,6 +949,9 @@ function resetGameplayScreen()
 {
     resetGameTimer();
     loadLevelMap(0, 0, 0);
+    gameplayContainer.removeChild(fogOfWar);
+    gameplayContainer.addChild(fogOfWar);
+    gameplayContainer.addChild(statContainer);
     player.health = 100;
     player.state = PlayerStates.idle;
     player.graphic.gotoAndPlay("up");
@@ -1054,6 +1058,8 @@ function handlePlayerMovement()
         case PlayerStates.attacking:
             break;
     }
+    
+    controlFog();
 }
 function up()
 {
@@ -1187,18 +1193,19 @@ function onTileEntrance(tile)
 
 function controlFog()
 {   
-    fogOfWar.regX = fogOfWar.width/2;
-    fogOfWar.regY = fogOfWar.height/2;
+    fogOfWar.regX = 780;
+    fogOfWar.regY = 580;
     fogOfWar.x = player.graphic.x;
     fogOfWar.y = player.graphic.y;
+    fogOfWar.alpha = 0.8;
 }
 
 //endregion
 
 function updateHealth()
 {
-    gameplayContainer.getChildByName("healthText").text = "Life: " + player.health+"/"+100;
-    gameplayContainer.getChildByName("healthFill").graphics.clear().beginFill("#F00").drawRect(healthBar.x, healthBar.y, healthBar.width * player.health / MAX_HEALTH, healthBar.height);  
+    statContainer.getChildByName("healthText").text = "Life: " + player.health+"/"+100;
+    statContainer.getChildByName("healthFill").graphics.clear().beginFill("#F00").drawRect(healthBar.x, healthBar.y, healthBar.width * player.health / MAX_HEALTH, healthBar.height);  
 }
 
 function addFear(percent)
@@ -1209,13 +1216,13 @@ function addFear(percent)
         player.fear = 100;
     }
     
-    gameplayContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
-    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("yellowgreen").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
+    statContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
+    statContainer.getChildByName("fearFill").graphics.clear().beginFill("yellowgreen").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
 }
 
 function resetFear()
 {
     player.fear = 0;    
-    gameplayContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
-    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("yellowgreen").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
+    statContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
+    statContainer.getChildByName("fearFill").graphics.clear().beginFill("yellowgreen").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
 }
