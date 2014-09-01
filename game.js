@@ -8,6 +8,7 @@ var health = 100;
 var MAX_HEALTH = 100;
 var fear = 0;
 var MAX_FEAR = 100;
+var fogOfWar;
 //-------------------//
 var KC_LEFT = 37;
 var KC_UP = 38;
@@ -60,7 +61,8 @@ manifest = [
     {src:"playerDebug.png", id:"player"},
     {src:"level0_TileContents.csv", id:"level0_TC", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
-    {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT}
+    {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT},
+    {src:"comfortSheepSmall.png", id:"fogOfWar"}
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -153,6 +155,8 @@ function loadComplete(evt)
     instructionScreen = new createjs.Bitmap(queue.getResult("instructionScreen"));
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
+    fogOfWar = new createjs.Bitmap(queue.getResult("fogOfWar"));
+
 
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
@@ -354,6 +358,12 @@ function loadComplete(evt)
     setupGameOverScreen();
     setupGameplayScreen();
     setupInstructionScreen();
+    
+        
+    fogOfWar.regX = fogOfWar.width/2;
+    fogOfWar.regY = fogOfWar.height/2;
+    fogOfWar.x = player.graphic.x;
+    fogOfWar.y = player.graphic.y;
 }
 function setupButtons()
 {
@@ -444,7 +454,7 @@ function loadLevelMap(level, x, y)
     }
     
     gameplayContainer.removeChild(player.graphic);
-    gameplayContainer.addChild(player.graphic);
+    gameplayContainer.addChild(player.graphic, fogOfWar);
 }
     
 function Map(graphicNames, triggers, contents)
@@ -1174,6 +1184,15 @@ function onTileEntrance(tile)
             break;
     }
 }
+
+function controlFog()
+{   
+    fogOfWar.regX = fogOfWar.width/2;
+    fogOfWar.regY = fogOfWar.height/2;
+    fogOfWar.x = player.graphic.x;
+    fogOfWar.y = player.graphic.y;
+}
+
 //endregion
 
 function updateHealth()
