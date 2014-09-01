@@ -792,10 +792,12 @@ function handleKeyUp(evt)
     }
 }
 
+var fearTimer;
 function resetGameTimer()
 {
     frameCount = 0;
     gameTimer = 0;
+    fearTimer = 0;
 }
 function runGameTimer()
 {
@@ -807,6 +809,12 @@ function runGameTimer()
     if(movementTicks != null)
     {
         movementTicks++;
+    }
+    
+    fearTimer += 1;
+    if(fearTimer%(150) === 0)
+    {
+        addFear(1);
     }
 }
 
