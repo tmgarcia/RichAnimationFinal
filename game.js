@@ -608,7 +608,6 @@ function setupBars()
     var percentHealth = health/MAX_HEALTH;
     
     var healthBarBack = new createjs.Shape();
-    healthBarBack.fillStyle = "Black"
     healthBarBack.graphics.beginFill("#000").drawRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
     
     var healthFill = new createjs.Shape();
@@ -632,17 +631,10 @@ function setupBars()
     var percentFear = fear/MAX_FEAR;
     
     var fearBarBack = new createjs.Shape();
-    fearBarBack.fillStyle = "Black"
     fearBarBack.graphics.beginFill("#000").drawRect(fearBar.x, fearBar.y, fearBar.width, fearBar.height);
     
     var fearFill = new createjs.Shape();
-<<<<<<< HEAD
-    fearFill.name = "fearFill";
-    fearFill.graphics.beginFill("#ee0").drawRect(fearBar.x, fearBar.y, fearBar.width * percentFear, fearBar.height);
-=======
-    fearFill.fillStyle = "Yellow"
-    fearFill.graphics.beginFill("#FF0").drawRect(fearBar.x, fearBar.y, fearBar.width * percentFear, fearBar.height);
->>>>>>> 3754ab19547a98f77e94591a6dadabaef5d96d2b
+    fearFill.graphics.beginFill("#EE0").drawRect(fearBar.x, fearBar.y, fearBar.width * percentFear, fearBar.height);
     
     var fearText = new createjs.Text("Fear: " + fear + "/" + MAX_FEAR, "18px sans-serif", "Red");
     fearText.x = 295;
@@ -800,12 +792,10 @@ function handleKeyUp(evt)
     }
 }
 
-var fearTimer;
 function resetGameTimer()
 {
     frameCount = 0;
     gameTimer = 0;
-    fearTimer = 0;
 }
 function runGameTimer()
 {
@@ -817,12 +807,6 @@ function runGameTimer()
     if(movementTicks != null)
     {
         movementTicks++;
-    }
-    
-    fearTimer += 1;
-    if(fearTimer%(150) === 0 && fear < 100)
-    {
-        addFear(1);
     }
 }
 
@@ -1174,33 +1158,4 @@ function onTileEntrance(tile)
             break;
     }
 }
-<<<<<<< HEAD
-
-function updateHealth()
-{
-    gameplayContainer.getChildByName("healthText").text = "Life: " + player.health+"/"+100;
-    gameplayContainer.getChildByName("healthFill").graphics.clear().beginFill("#F00").drawRect(healthBar.x, healthBar.y, healthBar.width * player.health / MAX_HEALTH, healthBar.height);  
-}
-
-function addFear(percent)
-{
-    player.fear += percent;
-    if(player.fear > 100)
-    {
-        player.fear = 100;
-    }
-    
-    gameplayContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
-    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("#ee0").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
-}
-
-function resetFear()
-{
-    player.fear = 0;    
-    gameplayContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
-    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("#ee0").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
-}
-
-=======
->>>>>>> 3754ab19547a98f77e94591a6dadabaef5d96d2b
 //endregion
