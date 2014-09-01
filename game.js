@@ -423,7 +423,11 @@ function loadLevelMap(level, x, y)
         for(var j = 0; j < GameBoard.width; j++)
         {
             gameplayContainer.removeChild(board[i][j].graphic);
-            board[i][j] = levels[level][x][y][i][j];
+            //board[i][j] = levels[level][x][y][i][j];
+            board[i][j].contents = $.extend(true, [], levels[level][x][y][i][j].contents);
+            board[i][j].trigger = levels[level][x][y][i][j].trigger;
+            board[i][j].graphic = levels[level][x][y][i][j].graphic.clone();
+            
             board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
@@ -589,10 +593,6 @@ function Player()
 
 //---------------------------Health and Fear Bars----------------------------//
 
-function setupBars()
-{
-    
-    //HEALTH
     var healthBar=
     {
         x: 0,
@@ -600,6 +600,18 @@ function setupBars()
         width: 275,
         height: 50
     };
+    var fearBar=
+    {
+        x: 275,
+        y: 0,
+        width: 275,
+        height: 50
+    };
+function setupBars()
+{
+    
+    //HEALTH
+
     
     var percentHealth = health/MAX_HEALTH;
     
@@ -610,22 +622,15 @@ function setupBars()
     var healthFill = new createjs.Shape();
     healthFill.fillStyle = "Red";
     healthFill.graphics.beginFill("#F00").drawRect(healthBar.x, healthBar.y, healthBar.width * percentHealth, healthBar.height);
+    healthFill.name = "healthFill";
     
     var healthText = new createjs.Text("Life: " + health + "/" + MAX_HEALTH, "18px sans-serif", "White");
     healthText.x = 20;
     healthText.y = 25;
-    
-   
-    
+    healthText.name = "healthText";
     
     //FEAR
-    var fearBar=
-    {
-        x: 275,
-        y: 0,
-        width: 275,
-        height: 50
-    };
+
     var percentFear = fear/MAX_FEAR;
     
     var fearBarBack = new createjs.Shape();
@@ -633,10 +638,12 @@ function setupBars()
     fearBarBack.graphics.beginFill("#000").drawRect(fearBar.x, fearBar.y, fearBar.width, fearBar.height);
     
     var fearFill = new createjs.Shape();
+    fearFill.name = "fearFill";
     fearFill.fillStyle = "Yellow"
     fearFill.graphics.beginFill("#FF0").drawRect(fearBar.x, fearBar.y, fearBar.width * percentFear, fearBar.height);
     
     var fearText = new createjs.Text("Fear: " + fear + "/" + MAX_FEAR, "18px sans-serif", "Red");
+    fearText.name = "fearText";
     fearText.x = 295;
     fearText.y = 25;
     
@@ -938,6 +945,12 @@ function resetGameplayScreen()
 {
     resetGameTimer();
     loadLevelMap(0, 0, 0);
+    player.fear = 0;
+    player.health = 100;
+    resetFear();
+    updateHealth();
+    player.state = PlayerStates.idle;
+    player.graphic.gotoAndPlay("up");
 }
 //endregion
 /*----------------------------Game Over----------------------------*/
@@ -1128,6 +1141,8 @@ function onTileEntrance(tile)
             player.health -= 10;
             player.tile.trigger = "disabled";
             player.tile.graphic.gotoAndPlay("disabled");
+            updateHealth();
+            addFear(5);
             if(player.health <= 0)
             {
                 //gameover
@@ -1136,6 +1151,8 @@ function onTileEntrance(tile)
             break;
         case "permanent":
             player.health -= 10;
+            updateHealth();
+            addFear(5);
             if(player.health <= 0)
             {
                 //gameover
@@ -1144,6 +1161,8 @@ function onTileEntrance(tile)
             break;
         case "hidden":
             player.health -= 10;
+            updateHealth();
+            addFear(5);
             player.tile.trigger = "disabled";
             player.tile.graphic.gotoAndPlay("disabled");
             if(player.health <= 0)
@@ -1162,4 +1181,30 @@ function onTileEntrance(tile)
             break;
     }
 }
+
+function updateHealth()
+{
+    gameplayContainer.getChildByName("healthText").text = "Life: " + player.health+"/"+100;
+    gameplayContainer.getChildByName("healthFill").graphics.clear().beginFill("#F00").drawRect(healthBar.x, healthBar.y, healthBar.width * player.health / MAX_HEALTH, healthBar.height);  
+}
+
+function addFear(percent)
+{
+    player.fear += percent;
+    if(player.fear > 100)
+    {
+        player.fear = 100;
+    }
+    
+    gameplayContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
+    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("#FF0").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
+}
+
+function resetFear()
+{
+    player.fear = 0;    
+    gameplayContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
+    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("#FF0").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
+}
+
 //endregion
