@@ -426,8 +426,8 @@ function loadLevelMap(level, x, y)
                 isPlayeStartFound = true;
                 player.graphic.x = board[i][j].graphic.x;
                 player.graphic.y = board[i][j].graphic.y;
-                player.tileX = i;
-                player.tileY = j;
+                player.tileX = j;
+                player.tileY = i;
                 player.tile = board[i][j];
             }
         }  
@@ -604,7 +604,10 @@ function main()
 var movementKeys = [];
 var movementTicks;
 
-var wDown, aDown, sDown, dDown = false;
+var wDown = false;
+var aDown = false;
+var sDown = false;
+var dDown = false;
 function handleKeyDown(evt)
 {
     if(!evt){ var evt = window.event; }  //browser compatibility
@@ -625,8 +628,8 @@ function handleKeyDown(evt)
                 wDown = true;
                 movementKeys.push("W");
                 player.graphic.gotoAndPlay("up");
-                return false;
             }
+            return false;
         case KC_A:
             if(movementKeys.length < 1)
             {
@@ -637,9 +640,9 @@ function handleKeyDown(evt)
             {
                 movementKeys.push("A");
                 player.graphic.gotoAndPlay("left");
-                return false;
                 aDown = true;
             }
+            return false;
         case KC_S:
             if(movementKeys.length < 1)
             {
@@ -650,9 +653,9 @@ function handleKeyDown(evt)
             {
                 movementKeys.push("S");
                 player.graphic.gotoAndPlay("down");
-                return false;
                 sDown = true;
             }
+            return false;
         case KC_D:
             if(movementKeys.length < 1)
             {
@@ -663,9 +666,9 @@ function handleKeyDown(evt)
             {
                 movementKeys.push("D");
                 player.graphic.gotoAndPlay("right");
-                return false;
                 dDown = true;
             }
+            return false;
         case KC_J: console.log("J ("+evt.keyCode+") down"); return false;
         case KC_SPACE:  console.log("SPACE ("+evt.keyCode+") down"); return false;
         case KC_SHIFT:  console.log("SHIFT ("+evt.keyCode+") down"); return false;
@@ -879,7 +882,7 @@ function resetGameOverScreen()
 //endregion
 /*----------------------------Collision----------------------------*/
 //region Collision
-function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
+function isTileMoveAllowed(boardY, boardX, _isFlyingCreature)
 {
     console.log(boardX + ", " + boardY);
     if(_isFlyingCreature == null)
@@ -909,62 +912,46 @@ function handlePlayerMovement()
     switch(player.state)
     {
         case PlayerStates.idle:
-            if(movementKeys.length > 0 && movementTicks >= 15) 
-            {
-                switch(movementKeys[movementKeys.length - 1])
-                {
-                    case "W":
-                        up();
-                        break;
-                    case "A":
-                        left();
-                        break;
-                    case "S":
-                        down();
-                        break;
-                    case "D":
-                        right();
-                        break;
-                }
-            }
+            pickMovementState();
             break;
         case PlayerStates.movingDown:
-            player.graphic.y++;
-            if(player.graphic.y == board[player.tileX][player.tileY + 1].graphic.y)
+            player.graphic.y += 5;
+            if(player.graphic.y == board[player.tileY + 1][player.tileX].graphic.y)
             {
-                player.tile = board[player.tileX][player.tileY + 1];
+                player.tile = board[player.tileY + 1][player.tileX];
                 player.tileY++;
                 player.state = PlayerStates.idle;
+                pickMovementState();
             }
             break;
         case PlayerStates.movingLeft:
-            player.graphic.x--;
-            if(player.graphic.y == board[player.tileX - 1][player.tileY].graphic.x)
+            player.graphic.x -= 5;
+            if(player.graphic.x == board[player.tileY][player.tileX - 1].graphic.x)
             {
-                player.tile = board[player.tileX - 1][player.tileY];
+                player.tile = board[player.tileY][player.tileX - 1];
                 player.tileX--;
                 player.state = PlayerStates.idle;
+                pickMovementState();
             }
             break;
         case PlayerStates.movingRight:
-            player.graphic.x++;
-            if(player.graphic.y == board[player.tileX + 1][player.tileY].graphic.x)
+            player.graphic.x += 5;
+            if(player.graphic.x == board[player.tileY][player.tileX + 1].graphic.x)
             {
-                player.tile = board[player.tileX + 1][player.tileY];
+                player.tile = board[player.tileY][player.tileX + 1];
                 player.tileX++;
                 player.state = PlayerStates.idle;
+                pickMovementState();
             }
             break;
         case PlayerStates.movingUp:
-            player.graphic.y--;
-            
-            //console.log("Player: " + player.graphic.x + ", " + player.graphic.y);
-            //console.log("Board Y - 1: " + board[player.tileX][player.tileY - 1].graphic.x + ", " + board[player.tileX][player.tileY - 1].graphic.y);
-            if(player.graphic.y == board[player.tileX - 1][player.tileY].graphic.y)
+            player.graphic.y -= 5;
+            if(player.graphic.y == board[player.tileY - 1][player.tileX].graphic.y)
             {
-                player.tile = board[player.tileX - 1][player.tileY];
-                player.tileX--;
+                player.tile = board[player.tileY - 1][player.tileX];
+                player.tileY--;
                 player.state = PlayerStates.idle;
+                pickMovementState();
             }
             break;
         case PlayerStates.attacking:
@@ -973,7 +960,6 @@ function handlePlayerMovement()
 }
 function up()
 {
-    console.log("p: " + player.graphic.x + " , " + player.graphic.y + " b: " + board[player.tileX][player.tileY].graphic.x + " , " + board[player.tileX][player.tileY].graphic.y);
     if(isTileMoveAllowed(player.tileX, player.tileY - 1))
     {
         player.state = PlayerStates.movingUp;
@@ -998,6 +984,45 @@ function right()
     if(isTileMoveAllowed(player.tileX + 1, player.tileY ))
     {
         player.state = PlayerStates.movingRight;
+    }
+}
+
+function pickMovementState()
+{
+    if(movementKeys.length > 0 && movementTicks >= 8) 
+    {
+        switch(movementKeys[movementKeys.length - 1])
+        {
+            case "W":
+                up();
+                break;
+            case "A":
+                left();
+                break;
+            case "S":
+                down();
+                break;
+            case "D":
+                right();
+                break;
+        }
+    }            if(movementKeys.length > 0 && movementTicks >= 8) 
+    {
+        switch(movementKeys[movementKeys.length - 1])
+        {
+            case "W":
+                up();
+                break;
+            case "A":
+                left();
+                break;
+            case "S":
+                down();
+                break;
+            case "D":
+                right();
+                break;
+        }
     }
 }
 //endregion
