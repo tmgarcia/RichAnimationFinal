@@ -86,6 +86,7 @@ else
     window.attatchEvent("onload", main);
 }
 
+//region File Loading
 function loadFiles()
 {
     setupLoadingBar();
@@ -154,6 +155,7 @@ function loadComplete(evt)
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
 
+    //region Terrain Sprites
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("default")],
@@ -309,6 +311,7 @@ function loadComplete(evt)
             left: [3, 3, "left"]
         }
     });
+    //endregion
     player.graphic = new createjs.Sprite(player_Sheet);
     
     var buttonSheet = new createjs.SpriteSheet({
@@ -355,6 +358,7 @@ function loadComplete(evt)
     setupGameplayScreen();
     setupInstructionScreen();
 }
+//endregion
 function setupButtons()
 {
     btnPlay.gotoAndPlay("playUp");
@@ -382,6 +386,8 @@ function setupButtons()
     btnContinue.on("mousedown", function(evt) { btnContinue.gotoAndPlay("continueDown");});
 }
 
+/*------------------------------Levels And Boards------------------------------*/
+//region Levels Boards
 function initBoard()
 {
     board = [];
@@ -581,6 +587,7 @@ function Tile(graphicName, triggr, contentArray)
     
     return tile;
 }
+//endregion
 
 function Player()
 {
@@ -592,7 +599,7 @@ function Player()
 
 
 //---------------------------Health and Fear Bars----------------------------//
-
+//region Bars
 function setupBars()
 {
     
@@ -647,9 +654,8 @@ function setupBars()
     
     gameplayContainer.addChild(healthBarBack, healthFill, healthText, fearBarBack, fearFill, fearText);
 }
+//endregion
 
-
-//---------------------------------------------------------------------------//
 
 //endregion
 /*----------------------------Main Loop----------------------------*/
