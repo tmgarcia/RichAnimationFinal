@@ -620,7 +620,6 @@ function setupBars()
     healthBarBack.graphics.beginFill("#000").drawRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
     
     var healthFill = new createjs.Shape();
-    healthFill.fillStyle = "Red";
     healthFill.graphics.beginFill("#F00").drawRect(healthBar.x, healthBar.y, healthBar.width * percentHealth, healthBar.height);
     healthFill.name = "healthFill";
     
@@ -639,8 +638,7 @@ function setupBars()
     
     var fearFill = new createjs.Shape();
     fearFill.name = "fearFill";
-    fearFill.fillStyle = "Yellow"
-    fearFill.graphics.beginFill("#FF0").drawRect(fearBar.x, fearBar.y, fearBar.width * percentFear, fearBar.height);
+    fearFill.graphics.beginFill("#ee0").drawRect(fearBar.x, fearBar.y, fearBar.width * percentFear, fearBar.height);
     
     var fearText = new createjs.Text("Fear: " + fear + "/" + MAX_FEAR, "18px sans-serif", "Red");
     fearText.name = "fearText";
@@ -819,9 +817,9 @@ function runGameTimer()
     }
     
     fearTimer += 1;
-    if(fearTimer%(30) === 0 && fear < 100)
+    if(fearTimer%(150) === 0 && fear < 100)
     {
-        fear += 1;
+        addFear(1);
     }
 }
 
@@ -1197,14 +1195,14 @@ function addFear(percent)
     }
     
     gameplayContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
-    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("#FF0").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
+    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("#ee0").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
 }
 
 function resetFear()
 {
     player.fear = 0;    
     gameplayContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
-    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("#FF0").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
+    gameplayContainer.getChildByName("fearFill").graphics.clear().beginFill("#ee0").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
 }
 
 //endregion
