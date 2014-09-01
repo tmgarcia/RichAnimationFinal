@@ -590,6 +590,10 @@ function Player()
 
 //---------------------------Health and Fear Bars----------------------------//
 
+//statContainer = new createjs.Container();
+
+
+
 var healthBar=
     {
         x: 0,
@@ -917,7 +921,7 @@ function setupGameplayScreen()
     gameplayContainer = new createjs.Container();
     gameplayContainer.addChild(gameplayScreen);
     initBoard();
-    gameplayContainer.addChild(healthBar, fearBar);
+    //gameplayContainer.addChild(healthBar, fearBar);
     stage.addChild(gameplayContainer);
     gameplayContainer.visible = false;
 }
