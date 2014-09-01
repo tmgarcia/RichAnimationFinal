@@ -311,7 +311,6 @@ function loadComplete(evt)
         }
     });
     player.graphic = new createjs.Sprite(player_Sheet);
-    stage.addChild(player.graphic);
     
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
@@ -441,8 +440,8 @@ function loadLevelMap(level, x, y)
         }  
     }
     
-    stage.removeChild(player.graphic);
-    stage.addChild(player.graphic);
+    gameplayContainer.removeChild(player.graphic);
+    gameplayContainer.addChild(player.graphic);
 }
     
 function Map(graphicNames, triggers, contents)
@@ -987,6 +986,7 @@ function handlePlayerMovement()
                 player.tileY++;
                 player.state = PlayerStates.idle;
                 pickMovementState();
+                onTileEntrance(player.tile);
             }
             break;
         case PlayerStates.movingLeft:
@@ -997,6 +997,7 @@ function handlePlayerMovement()
                 player.tileX--;
                 player.state = PlayerStates.idle;
                 pickMovementState();
+                onTileEntrance(player.tile);
             }
             break;
         case PlayerStates.movingRight:
@@ -1007,6 +1008,7 @@ function handlePlayerMovement()
                 player.tileX++;
                 player.state = PlayerStates.idle;
                 pickMovementState();
+                onTileEntrance(player.tile);
             }
             break;
         case PlayerStates.movingUp:
@@ -1017,6 +1019,7 @@ function handlePlayerMovement()
                 player.tileY--;
                 player.state = PlayerStates.idle;
                 pickMovementState();
+                onTileEntrance(player.tile);
             }
             break;
         case PlayerStates.attacking:
@@ -1088,6 +1091,62 @@ function pickMovementState()
                 right();
                 break;
         }
+    }
+}
+
+function onTileEntrance(tile)
+{
+    for(var i = 0; i < tile.contents.length; i++)
+    {
+        switch(tile.contents[i])   
+        {
+            case "comfortSheep":
+                break;
+            case "healthPotion":
+                break;
+            case "bones":
+                break;
+        }
+    }
+    
+    switch(tile.trigger)
+    {
+        case "enabled":
+            player.health -= 10;
+            player.tile.trigger = "disabled";
+            player.tile.graphic.gotoAndPlay("disabled");
+            if(player.health <= 0)
+            {
+                //gameover
+                gameState = GameStates.gameOver;
+            }
+            break;
+        case "permanent":
+            player.health -= 10;
+            if(player.health <= 0)
+            {
+                //gameover
+                gameState = GameStates.gameOver;
+            }
+            break;
+        case "hidden":
+            player.health -= 10;
+            player.tile.trigger = "disabled";
+            player.tile.graphic.gotoAndPlay("disabled");
+            if(player.health <= 0)
+            {
+                //gameover
+                gameState = GameStates.gameOver;
+            }
+            break;
+    }
+    
+    switch(tile.graphic.name)
+    {
+        case "forest_Exit":
+            //next level
+            gameState = GameStates.gameOver;
+            break;
     }
 }
 //endregion
