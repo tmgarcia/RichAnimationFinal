@@ -65,7 +65,11 @@ manifest = [
     {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileEntities.csv", id:"level0_TE", type:createjs.LoadQueue.TEXT},
-    {src:"fog.png", id:"fogOfWar"}
+    {src:"fog.png", id:"fogOfWar"}, 
+    {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
+    {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
+    {src:"Sounds/UpbeatFight.mp3", id:"upbeat"}
+    
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -1000,6 +1004,7 @@ function resetGameplayScreen()
     player.graphic.gotoAndPlay("idleUp");
     resetFear();
     updateHealth();
+    createjs.Sound.play("backGroundMus", {loop:-1});
     
 }
 //endregion
@@ -1149,6 +1154,7 @@ function handlePlayerMovement()
             }
             break;
         case PlayerStates.attacking:
+            createjs.Sound.play("atkSound", {loop: -1});
             break;
     }
     
