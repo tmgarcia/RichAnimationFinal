@@ -42,6 +42,7 @@ var board;
 var levels;
 var queue;
 var player = Player();
+var enemies = [];
 manifest = [
 
     {src:"titleScreen.jpg", id:"titleScreen"},
@@ -69,8 +70,8 @@ manifest = [
     {src:"fog.png", id:"fogOfWar"},
     {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
     {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
-    {src:"Sounds/UpbeatFight.mp3", id:"upbeat"}
-    
+    {src:"Sounds/UpbeatFight.mp3", id:"upbeat"},
+    {src:"weaponBar.png", id:"weaponBar"}
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -158,6 +159,8 @@ function loadProgress(evt)
 }
  
 var defaultTile, invalidTile, unavailableTile, forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
+var wispTemplate;
+var weaponBarGraphic;
 function loadComplete(evt)
 {
     stage.removeChild(loadProgressLabel, loadingBarContainer);
@@ -166,6 +169,7 @@ function loadComplete(evt)
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
     fogOfWar = new createjs.Bitmap(queue.getResult("fogOfWar"));
+    weaponBarGraphic = new createjs.Bitmap(queue.getResult("weaponBar"));
     
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
@@ -352,6 +356,7 @@ function loadComplete(evt)
             attackLeft: [15, 29, "attackLeft"],
         }
     });
+    wispTemplate = new createjs.Sprite(wisp_Sheet);
     
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
@@ -399,7 +404,6 @@ function loadComplete(evt)
     setupGameplayScreen();
     setupInstructionScreen();
     
-        
     fogOfWar.regX = fogOfWar.width/2;
     fogOfWar.regY = fogOfWar.height/2;
     fogOfWar.x = player.graphic.x;
@@ -492,7 +496,23 @@ function loadLevelMap(level, x, y)
                 player.tileY = i;
                 player.tile = board[i][j];
             }
+            
+            if(board[i][j].entity == "wisp")
+            {
+                enemies.push(new Enemy(board[i][j].entity));
+                enemies[enemies.length-1].graphic.x = board[i][j].graphic.x;
+                enemies[enemies.length-1].graphic.y = board[i][j].graphic.y;
+                enemies[enemies.length-1].tileX = j;
+                enemies[enemies.length-1].tileY = i;
+                enemies[enemies.length-1].tile = board[i][j];
+            }
         }  
+    }
+    
+    for(var i = 0; i < enemies.length; i++)
+    {
+        //gameplayContainer.removeChild(player.graphic);
+        gameplayContainer.addChild(enemies[i].graphic);
     }
     
     gameplayContainer.removeChild(player.graphic);
@@ -645,12 +665,33 @@ function Tile(graphicName, triggr, contentArray, entiti)
 
 function Player()
 {
-    var player = {health: 100, fear: 0, tileX: 0, tileY: 0, state: PlayerStates.idle, graphic: null, tile:null};
+    var player = {health: 100, attack: 5, fear: 0, tileX: 0, tileY: 0, state: PlayerStates.idle, graphic: null, tile:null};
     
     return player;
 }
 
+function Enemy(enemyName)
+{
+    var enemy = {health: 0, attack: 0, tileX:0, tileY:0, state: PlayerStates.idle, graphic:null, tile:null};
+    
+    if(enemyName != null)
+    {
+        switch(enemyName)
+        {
+            case "wisp":
+                enemy = Wisp();
+                break;
+        }
+    }
+    
+    return enemy;
+}
 
+function Wisp()
+{
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispTemplate.clone(), tile:null};
+    return wisp;
+}
 
 //---------------------------Health and Fear Bars----------------------------//
 statContainer = new createjs.Container();
@@ -702,8 +743,10 @@ function setupBars()
     fearText.x = 295;
     fearText.y = 25;
     
+    weaponBarGraphic.x = 800-250;
     
-    statContainer.addChild(healthBarBack, healthFill, healthText, fearBarBack, fearFill, fearText);
+    
+    statContainer.addChild(healthBarBack, healthFill, healthText, fearBarBack, fearFill, fearText, weaponBarGraphic);
 }
 
 
