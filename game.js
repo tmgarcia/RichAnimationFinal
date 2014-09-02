@@ -44,7 +44,6 @@ var levels;
 var queue;
 var player = Player();
 var enemies = [];
-var items = [];
 manifest = [
 
     {src:"titleScreen.jpg", id:"titleScreen"},
@@ -73,9 +72,7 @@ manifest = [
     {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
     {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
     {src:"Sounds/UpbeatFight.mp3", id:"upbeat"},
-    {src:"weaponBar.png", id:"weaponBar"},
-    {src:"healthPotion.png", id:"healthPotion"},
-    {src:"bone.png", id:"bones"}
+    {src:"weaponBar.png", id:"weaponBar"}
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -166,7 +163,7 @@ function loadProgress(evt)
  
 var defaultTile, invalidTile, unavailableTile, forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
 var wispTemplate;
-var weaponBarGraphic, healthPotion, bones;
+var weaponBarGraphic;
 function loadComplete(evt)
 {
     stage.removeChild(loadProgressLabel, loadingBarContainer);
@@ -176,8 +173,6 @@ function loadComplete(evt)
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
     fogOfWar = new createjs.Bitmap(queue.getResult("fogOfWar"));
     weaponBarGraphic = new createjs.Bitmap(queue.getResult("weaponBar"));
-    bones = new createjs.Bitmap(queue.getResult("bones"));
-    healthPotion = new createjs.Bitmap(queue.getResult("healthPotion"));
     
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
@@ -507,24 +502,6 @@ function loadLevelMap(level, x, y)
                 player.tile = board[i][j];
             }
             
-            for(var k = 0; k < board[i][j].contents.length; k++)
-            {
-                if(board[i][j].contents[k] == "healthPotion")
-                {
-                    items.push(healthPotion.clone());
-                    items[items.length-1].x = board[i][j].graphic.x;
-                    items[items.length-1].y = board[i][j].graphic.y;
-                    gameplayContainer.addChild(items[items.length-1]);
-                }
-                else if(board[i][j].contents[k] == "bones")
-                {
-                    items.push(bones.clone());
-                    items[items.length-1].x = board[i][j].graphic.x;
-                    items[items.length-1].y = board[i][j].graphic.y;
-                    gameplayContainer.addChild(items[items.length-1]);
-                }
-            }
-            
             if(board[i][j].entity == "wisp")
             {
                 enemies.push(new Enemy(board[i][j].entity));
@@ -737,8 +714,6 @@ var fearBar =
     width: 275,
     height: 50
 };
-
-var score = 0;
 function setupBars()
 {
     
@@ -775,13 +750,8 @@ function setupBars()
     
     weaponBarGraphic.x = 800-250;
     
-    var scoreText = new createjs.Text(score, "36px sans-serif", "Red");
-    scoreText.name = "scoreText";
-    scoreText.x = weaponBarGraphic.x + 20;
-    scoreText.y = weaponBarGraphic.y + 5;
     
-    
-    statContainer.addChild(healthBarBack, healthFill, healthText, fearBarBack, fearFill, fearText, weaponBarGraphic, scoreText);
+    statContainer.addChild(healthBarBack, healthFill, healthText, fearBarBack, fearFill, fearText, weaponBarGraphic);
 }
 
 
@@ -1246,20 +1216,6 @@ function setupGameplayScreen()
 }
 function resetGameplayScreen()
 {
-    for(var i = 0; i < enemies.length; i++)
-    {
-        gameplayContainer.removeChild(enemies[i].graphic);  
-    }
-    enemies = [];
-    
-    for(var i = 0; i < items.length; i++)
-    {
-        gameplayContainer.removeChild(items[i]);  
-    }
-    items = [];
-    
-    console.log(items);
-    
     resetGameTimer();
     loadLevelMap(0, 0, 0);
     gameplayContainer.removeChild(fogOfWar);
@@ -1271,6 +1227,10 @@ function resetGameplayScreen()
     resetFear();
     updateHealth();
     createjs.Sound.play("backGroundMus", {loop:-1});
+
+    
+
+
 }
 //endregion
 /*----------------------------Game Over----------------------------*/
@@ -1547,27 +1507,9 @@ function onTileEntrance(tile)
             case "comfortSheep":
                 break;
             case "healthPotion":
-                tile.contents[i] = "none";
-                player.health += 50;
-                if(player.health > 100)
-                {
-                    player.health = 100;   
-                }
-                updateHealth();
                 break;
             case "bones":
-                addScore(1);
-                tile.contents[i] = "none";
                 break;
-        }
-    }
-    
-    for(var j = 0; j < items.length; j++)
-    {
-        if(items[j].x == tile.graphic.x && items[j].y == tile.graphic.y)
-        {
-            gameplayContainer.removeChild(items[j]);
-            items.splice(j, 1);
         }
     }
     
@@ -1652,16 +1594,6 @@ function resetFear()
     player.fear = 0;    
     statContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
     statContainer.getChildByName("fearFill").graphics.clear().beginFill("yellowgreen").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
-}
-
-function addScore(number)
-{
-    score += number;
-    if(score >= 10)
-    {
-        statContainer.getChildByName("scoreText").x -= 12;
-    }
-    statContainer.getChildByName("scoreText").text = score;
 }
 
 /*----------------------------Enemy----------------------------*/
