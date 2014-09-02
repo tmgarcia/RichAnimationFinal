@@ -673,7 +673,7 @@ function Player()
 
 function Enemy(enemyName)
 {
-    var enemy = {health: 0, attack: 0, tileX:0, tileY:0, state: PlayerStates.idle, graphic:null, tile:null};
+    var enemy = {health: 0, attack: 0, tileX:0, tileY:0, state: PlayerStates.idle, graphic:null, tile:null, wantsToMove:false, isFlying: false};
     
     if(enemyName != null)
     {
@@ -690,7 +690,7 @@ function Enemy(enemyName)
 
 function Wisp()
 {
-     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispTemplate.clone(), tile:null};
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispTemplate.clone(), tile:null, wantsToMove:false, isFlying: true};
     return wisp;
 }
 
@@ -891,10 +891,10 @@ function handleKeyDown(evt)
                 dDown = true;
             }
             return false;
-        case KC_J: console.log("J ("+evt.keyCode+") down"); return false;
-        case KC_SPACE:  console.log("SPACE ("+evt.keyCode+") down"); return false;
-        case KC_SHIFT:  console.log("SHIFT ("+evt.keyCode+") down"); return false;
-        case KC_ENTER:  console.log("ENTER ("+evt.keyCode+") down"); return false;
+        case KC_J: return false;
+        case KC_SPACE: return false;
+        case KC_SHIFT: return false;
+        case KC_ENTER: return false;
     }
 }
 
@@ -967,16 +967,15 @@ function handleKeyUp(evt)
                 movementTicks = null;
             }
             break;
-        case KC_J:  console.log("J ("+evt.keyCode+") up"); break;
-        case KC_SPACE:	console.log("SPACE ("+evt.keyCode+") up"); break;
-        case KC_SHIFT:	console.log("SHIFT ("+evt.keyCode+") up"); break;
-        case KC_ENTER:  console.log("ENTER ("+evt.keyCode+") up"); break;
+        case KC_J: break;
+        case KC_SPACE: break;
+        case KC_SHIFT: break;
+        case KC_ENTER: break;
     }
 }
 
 var fearTimer;
 var enemyTimer;
-var enemiesWantToMove = false;
 function resetGameTimer()
 {
     frameCount = 0;
@@ -1006,7 +1005,10 @@ function runGameTimer()
     if(enemyTimer%(30) == 0)
     {
         enemyTimer = 0;
-        enemiesWantToMove = true;
+        for(var i = 0; i < enemies.length; i++)
+        {
+            enemies[i].wantsToMove = true;   
+        }
     }
 }
 
@@ -1174,7 +1176,7 @@ function isTileMoveAllowed(boardY, boardX, _isFlyingCreature)
     
     var isAllowed = true;
     
-    if(boardX < 0 || boardX >= GameBoard.tileWidth || boardY < 0 || boardY >= GameBoard.tileHeight)
+    if(boardX < 0 || boardX > GameBoard.tileWidth || boardY < 0 || boardY > GameBoard.tileHeight)
     {
         isAllowed = false;
     }
@@ -1191,7 +1193,6 @@ function isTileMoveAllowed(boardY, boardX, _isFlyingCreature)
 //region Player Movement
 function handlePlayerMovement()
 {
-    console.log(player.state);
     switch(player.state)
     {
         case PlayerStates.idle:
@@ -1450,9 +1451,118 @@ function resetFear()
 
 /*----------------------------Enemy----------------------------*/
 //functioning only for wisps right now
+
+
 function handleEnemyMovement()
 {
-    //Math.floor((Math.random() * 4));
-    
-    
+	for(var i = 0; i < enemies.length; i++)
+	{
+        switch(enemies[i].state)
+        {
+            case PlayerStates.idle:
+				if(enemies[i].wantsToMove)
+				{
+					if(Math.floor((Math.random() * 10) + 1) > 7)
+					{
+						switch(Math.floor((Math.random() * 4)))
+						{
+							case 0:
+								enemyDown(enemies[i]);
+								break;
+							case 1:
+								enemyLeft(enemies[i]);
+								break;
+							case 2:
+								enemyRight(enemies[i]);
+								break;
+							case 3:
+								enemyUp(enemies[i]);
+								break;
+						}
+					}
+				}
+                break;
+            case PlayerStates.movingDown:
+                enemies[i].graphic.y += 5;
+                if(enemies[i].graphic.y == board[enemies[i].tileY + 1][enemies[i].tileX].graphic.y)
+                {
+                    enemies[i].tile = board[enemies[i].tileY + 1][enemies[i].tileX];
+                    enemies[i].tileY++;
+                    enemies[i].state = PlayerStates.idle;
+                    enemies[i].graphic.gotoAndPlay("idleDown");
+                }
+                break;
+            case PlayerStates.movingLeft:
+                enemies[i].graphic.x -= 5;
+                if(enemies[i].graphic.x == board[enemies[i].tileY][enemies[i].tileX - 1].graphic.x)
+                {
+                    enemies[i].tile = board[enemies[i].tileY][enemies[i].tileX - 1];
+                    enemies[i].tileX--;
+                    enemies[i].state = PlayerStates.idle;
+                    enemies[i].graphic.gotoAndPlay("idleLeft");  
+                }
+                break;
+            case PlayerStates.movingRight:
+                console.log("!!!");
+                enemies[i].graphic.x += 5;
+                if(enemies[i].graphic.x == board[enemies[i].tileY][enemies[i].tileX + 1].graphic.x)
+                {
+                    enemies[i].tile = board[enemies[i].tileY][enemies[i].tileX + 1];
+                    enemies[i].tileX++;
+					enemies[i].state = PlayerStates.idle;
+                    enemies[i].graphic.gotoAndPlay("idleRight");
+                }
+                break;
+            case PlayerStates.movingUp:
+                enemies[i].graphic.y -= 5;
+                if(enemies[i].graphic.y == board[enemies[i].tileY - 1][enemies[i].tileX].graphic.y)
+                {
+                    enemies[i].tile = board[enemies[i].tileY - 1][enemies[i].tileX];
+                    enemies[i].tileY--;
+                    enemies[i].state = PlayerStates.idle;
+                    enemies[i].graphic.gotoAndPlay("idleUp");
+                }
+                break;
+            case PlayerStates.attacking:
+                createjs.Sound.play("atkSound", {loop: -1});
+                break;
+        }
+    }
+}
+	
+function enemyUp(enemy)
+{
+    if(isTileMoveAllowed(enemy.tileX, enemy.tileY - 1, enemy.isFlying))
+    {
+        enemy.state = PlayerStates.movingUp;
+        enemy.graphic.gotoAndPlay("walkUp");
+		enemy.wantsToMove = false;
+    }
+}
+function enemyDown(enemy)
+{
+    if(isTileMoveAllowed(enemy.tileX, enemy.tileY + 1, enemy.isFlying))
+    {
+        enemy.state = PlayerStates.movingDown;
+        enemy.graphic.gotoAndPlay("walkDown");
+		enemy.wantsToMove = false;
+    }
+}
+function enemyLeft(enemy)
+{
+    if(isTileMoveAllowed(enemy.tileX - 1, enemy.tileY, enemy.isFlying))
+    {
+        enemy.state = PlayerStates.movingLeft;
+        enemy.graphic.gotoAndPlay("walkLeft");
+		enemy.wantsToMove = false;
+    }
+}
+function enemyRight(enemy)
+{
+    if(isTileMoveAllowed(enemy.tileX + 1, enemy.tileY, enemy.isFlying))
+    {
+        enemy.state = PlayerStates.movingRight;
+        enemy.graphic.gotoAndPlay("walkRight");
+		enemy.wantsToMove = false;
+    }
 }
