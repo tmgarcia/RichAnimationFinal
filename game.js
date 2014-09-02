@@ -43,6 +43,7 @@ var levels;
 var queue;
 var player = Player();
 manifest = [
+
     {src:"titleScreen.jpg", id:"titleScreen"},
     {src:"instructions.jpg", id:"instructionScreen"},
     {src:"gameOverScreen.jpg", id:"gameOverScreen"},
@@ -65,7 +66,7 @@ manifest = [
     {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileEntities.csv", id:"level0_TE", type:createjs.LoadQueue.TEXT},
-    {src:"fog.png", id:"fogOfWar"}, 
+    {src:"fog.png", id:"fogOfWar"},
     {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
     {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
     {src:"Sounds/UpbeatFight.mp3", id:"upbeat"}
@@ -99,6 +100,8 @@ function loadFiles()
 {
     setupLoadingBar();
     queue = new createjs.LoadQueue(true, "assets/");
+    createjs.Sound.alternateExtensions = ["mp3"];
+    queue.installPlugin(createjs.Sound);
     queue.on("progress", loadProgress, this);
     queue.on("complete", loadComplete, this);
     queue.loadManifest(manifest);
@@ -163,7 +166,7 @@ function loadComplete(evt)
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
     fogOfWar = new createjs.Bitmap(queue.getResult("fogOfWar"));
-
+    
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("default")],
@@ -401,6 +404,7 @@ function loadComplete(evt)
     fogOfWar.regY = fogOfWar.height/2;
     fogOfWar.x = player.graphic.x;
     fogOfWar.y = player.graphic.y;
+        
 }
 function setupButtons()
 {
@@ -430,7 +434,7 @@ function setupButtons()
 }
 
 function initBoard()
-{
+{   
     board = [];
     
     for(var i = 0; i < GameBoard.height; i++)
@@ -1005,7 +1009,10 @@ function resetGameplayScreen()
     resetFear();
     updateHealth();
     createjs.Sound.play("backGroundMus", {loop:-1});
+
     
+
+
 }
 //endregion
 /*----------------------------Game Over----------------------------*/
@@ -1283,7 +1290,7 @@ function controlFog()
     fogOfWar.regY = 580;
     fogOfWar.x = player.graphic.x;
     fogOfWar.y = player.graphic.y;
-    fogOfWar.alpha = 0.1;
+    fogOfWar.alpha = 0.4;
 }
 
 //endregion
