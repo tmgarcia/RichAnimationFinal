@@ -350,7 +350,7 @@ function loadComplete(evt)
         frames: {width:50, height:50, count:30, regX:0, regY:0},
         animations:
         {
-            idleUp: [0, 14, "idleUp", .55],
+            idleUp: [0, 14, "idleUp"],
             walkUp: [0, 14, "walkUp"],
             attackUp: [15, 29, "attackUp"],
             idleRight: [0, 14, "idleRight"],
@@ -1684,8 +1684,14 @@ function handleEnemyMovement()
                     enemies[i].state = PlayerStates.attacking;
                     enemies[i].graphic.gotoAndPlay("attackUp");
                     var en = enemies[i];
-                    enemies[i].graphic.on("animationend", function(evt){en.state = PlayerStates.idle; en.graphic.gotoAndPlay("idleUp"); evt.remove();});
-                    player.health-=enemies[i].attack;
+                    enemies[i].graphic.on("animationend", function(evt){console.log(evt);en.state = PlayerStates.idle; en.graphic.gotoAndPlay("idleUp"); evt.remove();                     if((player.state == PlayerStates.idle || player.state == PlayerStates.attacking) && (playerAtTile(en.tileY-1,en.tileX) != null || playerAtTile(en.tileY,en.tileX+1) != null || playerAtTile(en.tileY+1,en.tileX) != null || playerAtTile(en.tileY,en.tileX-1)))
+                    {
+                        player.health-=en.attack;
+                    }});
+                    //if((player.state == PlayerStates.idle || player.state == PlayerStates.attacking) && (playerAtTile(enemies[i].tileY-1,enemies[i].tileX) != null || playerAtTile(enemies[i].tileY,enemies[i].tileX+1) != null || playerAtTile(enemies[i].tileY+1,enemies[i].tileX) != null || playerAtTile(enemies[i].tileY,enemies[i].tileX-1)))
+                    //{
+                        //player.health-=enemies[i].attack;
+                    //}
                 }
 				else if(enemies[i].wantsToMove)
 				{
