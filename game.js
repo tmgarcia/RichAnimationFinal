@@ -787,10 +787,58 @@ function handleKeyDown(evt)
     if(!evt){ var evt = window.event; }  //browser compatibility
     switch(evt.keyCode) 
     {
-        case KC_LEFT:  console.log("LEFT ("+evt.keyCode+") down"); return false;
-        case KC_RIGHT: console.log("RIGHT ("+evt.keyCode+") down"); return false;
-        case KC_UP:    console.log("UP ("+evt.keyCode+") down"); return false;
-        case KC_DOWN:  console.log("DOWN ("+evt.keyCode+") down"); return false;
+        case KC_LEFT:  
+            if(movementKeys.length < 1)
+            {
+                movementTicks = 0;
+            }
+            
+            if(!aDown)
+            {
+                movementKeys.push("A");
+                //player.graphic.gotoAndPlay("left");
+                aDown = true;
+            }
+            return false;
+        case KC_RIGHT:
+            if(movementKeys.length < 1)
+            {
+                movementTicks = 0;
+            }
+            
+            if(!dDown)
+            {
+                movementKeys.push("D");
+                //player.graphic.gotoAndPlay("right");
+                dDown = true;
+            }
+            return false;
+        case KC_UP:
+            if(movementKeys.length < 1)
+            {
+                movementTicks = 0;
+            }
+            
+            if(!wDown)
+            {  
+                wDown = true;
+                movementKeys.push("W");
+                //player.graphic.gotoAndPlay("up");
+            }
+            return false;
+        case KC_DOWN:
+            if(movementKeys.length < 1)
+            {
+                movementTicks = 0;
+            }
+            
+            if(!sDown)
+            {
+                movementKeys.push("S");
+                //player.graphic.gotoAndPlay("down");
+                sDown = true;
+            }
+            return false;
         case KC_W:
             if(movementKeys.length < 1)
             {
@@ -855,10 +903,38 @@ function handleKeyUp(evt)
     if(!evt){ var evt = window.event; }  //browser compatibility
     switch(evt.keyCode) 
     {
-        case KC_LEFT:console.log("LEFT ("+evt.keyCode+") up"); break;
-        case KC_RIGHT: console.log("RIGHT ("+evt.keyCode+") up"); break;
-        case KC_UP:	console.log("UP ("+evt.keyCode+") up"); break;
-        case KC_DOWN:	console.log("DOWN ("+evt.keyCode+") up"); break;
+        case KC_LEFT:
+            aDown = false;
+            movementKeys.splice(movementKeys.indexOf("A"), 1);
+            if(movementKeys.length < 1)
+            {
+                movementTicks = null;
+            }
+            break;
+        case KC_RIGHT: 
+            dDown = false;
+            movementKeys.splice(movementKeys.indexOf("D"), 1);
+            if(movementKeys.length < 1)
+            {
+                movementTicks = null;
+            }
+            break;
+        case KC_UP:	
+            movementKeys.splice(movementKeys.indexOf("W"), 1);
+            wDown = false;
+            if(movementKeys.length < 1)
+            {
+                movementTicks = null;
+            }
+            break;
+        case KC_DOWN:	
+            sDown = false;
+            movementKeys.splice(movementKeys.indexOf("S"), 1);
+            if(movementKeys.length < 1)
+            {
+                movementTicks = null;
+            }
+            break;
         case KC_W:
             movementKeys.splice(movementKeys.indexOf("W"), 1);
             wDown = false;
@@ -1115,6 +1191,7 @@ function isTileMoveAllowed(boardY, boardX, _isFlyingCreature)
 //region Player Movement
 function handlePlayerMovement()
 {
+    console.log(player.state);
     switch(player.state)
     {
         case PlayerStates.idle:
@@ -1153,7 +1230,6 @@ function handlePlayerMovement()
                 else
                 {
                     player.state = PlayerStates.idle;
-                    pickMovementState();
                     player.graphic.gotoAndPlay("idleDown");
                 }
             }
@@ -1172,7 +1248,6 @@ function handlePlayerMovement()
                 else
                 {
                     player.state = PlayerStates.idle;
-                    pickMovementState();
                     player.graphic.gotoAndPlay("idleLeft");
                 }
             }
@@ -1191,7 +1266,6 @@ function handlePlayerMovement()
                 else
                 {
                     player.state = PlayerStates.idle;
-                    pickMovementState();
                     player.graphic.gotoAndPlay("idleRight");
                 }
             }
@@ -1210,7 +1284,6 @@ function handlePlayerMovement()
                 else
                 {
                     player.state = PlayerStates.idle;
-                    pickMovementState();
                     player.graphic.gotoAndPlay("idleUp");
                 }
             }
