@@ -1518,7 +1518,7 @@ function right()
 
 function pickMovementState()
 {
-    if(movementKeys.length > 0 && movementTicks >= 8) 
+    if(movementKeys.length > 0 && movementTicks >= 6) 
     {
         switch(movementKeys[movementKeys.length - 1])
         {
