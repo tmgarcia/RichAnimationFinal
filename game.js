@@ -1675,7 +1675,19 @@ function handleEnemyMovement()
         switch(enemies[i].state)
         {
             case PlayerStates.idle:
-				if(enemies[i].wantsToMove)
+                var up = playerAtTile(enemies[i].tileY-1,enemies[i].tileX);
+                var right = playerAtTile(enemies[i].tileY,enemies[i].tileX+1);
+                var down = playerAtTile(enemies[i].tileY+1,enemies[i].tileX);
+                var left = playerAtTile(enemies[i].tileY,enemies[i].tileX-1);
+                if(up!==null || right!==null || down!==null || left!==null)
+                {
+                    enemies[i].state = PlayerStates.attacking;
+                    enemies[i].graphic.gotoAndPlay("attackUp");
+                    var en = enemies[i];
+                    enemies[i].graphic.on("animationend", function(evt){en.state = PlayerStates.idle; en.graphic.gotoAndPlay("idleUp"); evt.remove();});
+                    player.health-=enemies[i].attack;
+                }
+				else if(enemies[i].wantsToMove)
 				{
 					if(Math.floor((Math.random() * 10) + 1) > 7)
 					{
