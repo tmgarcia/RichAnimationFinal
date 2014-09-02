@@ -85,6 +85,7 @@ function setupCanvas()
     stage.enableMouseOver();
     //context = canvas.getContext('2d');
     stage.on("stagemousemove", function(evt){ mouseX = evt.stageX.toFixed(); mouseY = evt.stageY.toFixed();});
+    
 }   
 
 if (!!(window.addEventListener))
