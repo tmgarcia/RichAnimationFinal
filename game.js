@@ -1209,7 +1209,7 @@ function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
     }
     else if(board[boardY][boardX].isEntityMovingTo)
     {
-        console.log("safty check callled");
+        console.log("Tile move safety check called");
         isAllowed = false;
     }
     return isAllowed;
