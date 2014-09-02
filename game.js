@@ -1167,7 +1167,7 @@ function resetGameOverScreen()
 //endregion
 /*----------------------------Collision----------------------------*/
 //region Collision
-function isTileMoveAllowed(boardY, boardX, _isFlyingCreature)
+function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
 {
     if(_isFlyingCreature == null)
     {
@@ -1176,17 +1176,57 @@ function isTileMoveAllowed(boardY, boardX, _isFlyingCreature)
     
     var isAllowed = true;
     
-    if(boardX < 0 || boardX > GameBoard.tileWidth || boardY < 0 || boardY > GameBoard.tileHeight)
+    if(boardX < 0 || boardX >= GameBoard.width || boardY < 0 || boardY >= GameBoard.height)
     {
         isAllowed = false;
     }
-    
-    if(isAllowed && !_isFlyingCreature && CollisionTiles.indexOf(board[boardX][boardY].graphic.name) > -1)
+    else if(isAllowed && !_isFlyingCreature && CollisionTiles.indexOf(board[boardY][boardX].graphic.name) > -1)
+    {
+        isAllowed = false;
+    }
+    else if(playerAtTile(boardY, boardX) != null)
+    {
+        isAllowed = false;
+    }
+    else if(enemyAtTile(boardY, boardX) != null)
     {
         isAllowed = false;
     }
     
     return isAllowed;
+}
+
+function playerAtTile(boardY, boardX)
+{
+    var playerAtTile = null;
+    
+    if(player.tileY == boardY && player.tileX == boardX)
+    {
+        playerAtTile = player;
+    }
+    
+    console.log("Player tiles: " + player.tileX + ", " + player.tileY + " passed in tiles: " + boardX + ", " +boardY);
+    
+    return playerAtTile;
+}
+
+function enemyAtTile(boardY, boardX)
+{
+    var enemyAtTile = null;
+    
+    for(var i = 0; i < enemies.length; i++)
+    {
+        if(enemies[i].tileY == boardY && enemies[i].tileX == boardX)
+        {
+            console.log("umm");
+            enemyAtTile = enemies[i];
+            break;
+        }
+    }
+    
+    console.log(enemyAtTile);
+        
+    return enemyAtTile;
 }
 //endregion
 /*----------------------------Player----------------------------*/
@@ -1503,7 +1543,6 @@ function handleEnemyMovement()
                 }
                 break;
             case PlayerStates.movingRight:
-                console.log("!!!");
                 enemies[i].graphic.x += 5;
                 if(enemies[i].graphic.x == board[enemies[i].tileY][enemies[i].tileX + 1].graphic.x)
                 {
