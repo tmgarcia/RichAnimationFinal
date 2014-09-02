@@ -38,6 +38,7 @@ var GameStates = Object.freeze({gameTitle:0, gameInstructions:1, gamePlay:2, gam
 var GameBoard = Object.freeze({tileWidth: 50, tileHeight: 50, startX: 0, startY: 50, width: 16, height: 11});
 var CollisionTiles = ["forest_DirtTree", "forest_GrassTree"];
 var PlayerStates = Object.freeze({idle:0, movingUp:1, movingDown: 2, movingLeft:3, movingRight:4, attacking:5});
+var Directions = Object.freeze({Up:0, Right:1, Down:2, Left:3});
 var board;
 var levels;
 var queue;
@@ -85,7 +86,8 @@ function setupCanvas()
     stage.enableMouseOver();
     //context = canvas.getContext('2d');
     stage.on("stagemousemove", function(evt){ mouseX = evt.stageX.toFixed(); mouseY = evt.stageY.toFixed();});
-    
+    //stage.on("stagemousedown", handleMouseDown(evt));
+    stage.onstagemousedown = handleMouseDown;
 }   
 
 if (!!(window.addEventListener))
@@ -973,6 +975,17 @@ function handleKeyUp(evt)
         case KC_SPACE: break;
         case KC_SHIFT: break;
         case KC_ENTER: break;
+    }
+}
+
+function handleMouseDown(evt)
+{
+    if(gameState === GameStates.gamePlay)
+    {
+        switch(player.state)
+        {
+                
+        }
     }
 }
 
