@@ -87,7 +87,7 @@ function setupCanvas()
     //context = canvas.getContext('2d');
     stage.on("stagemousemove", function(evt){ mouseX = evt.stageX.toFixed(); mouseY = evt.stageY.toFixed();});
     //stage.on("stagemousedown", handleMouseDown(evt));
-    stage.onstagemousedown = handleMouseDown;
+    stage.on("stagemousedown", function(evt){handleMouseDown(evt);});
 }   
 
 if (!!(window.addEventListener))
@@ -670,7 +670,7 @@ function Tile(graphicName, triggr, contentArray, entiti)
 
 function Player()
 {
-    var player = {health: 100, attack: 5, fear: 0, tileX: 0, tileY: 0, state: PlayerStates.idle, graphic: null, tile:null};
+    var player = {health: 100, attack: 5, fear: 0, tileX: 0, tileY: 0, state: PlayerStates.idle, graphic: null, tile:null, direction: Directions.Up};
     
     return player;
 }
@@ -777,6 +777,34 @@ function main()
     gameScore = 0;
     createjs.Ticker.addEventListener("tick", loop);
     createjs.Ticker.setFPS(FPS);
+}
+
+function updateEntityHealth()
+{
+    updateHealth();
+    if(player.health <= 0)
+    {
+        killPlayer();
+    }
+    for(var i = 0; i < enemies.length; i++)
+    {
+        if(enemies[i].health <= 0)
+        {
+            killEnemy(enemies[i]);
+            enemies.splice(i, 1);
+            i-=1;
+        }
+    }
+}
+function killEnemy(enemy)
+{
+    console.log("enemy DEAD");
+    enemy.graphic.visible = false;
+    gameplayContainer.removeChild(enemy.graphic);
+}
+function killPlayer()
+{
+    gameState = GameStates.gameOver;
 }
 
 var movementKeys = [];
@@ -982,9 +1010,50 @@ function handleMouseDown(evt)
 {
     if(gameState === GameStates.gamePlay)
     {
-        switch(player.state)
+        if(player.state === PlayerStates.idle)
         {
-                
+            player.state = PlayerStates.attacking;
+            //player.tileX
+            //player.tileY
+            switch(player.direction)
+            {
+                case Directions.Up:
+                    player.graphic.gotoAndPlay("attackUp");
+                    player.graphic.on("animationend", function(evt){player.state = PlayerStates.idle; player.graphic.gotoAndPlay("idleUp"); evt.remove();});
+                    var target = enemyAtTile(player.tileY-1, player.tileX);
+                    if(target!==null)
+                    {
+                        target.health-=player.attack;
+                    }
+                    break;
+                case Directions.Right:
+                    player.graphic.gotoAndPlay("attackRight");
+                    player.graphic.on("animationend", function(evt){player.state = PlayerStates.idle; player.graphic.gotoAndPlay("idleRight"); evt.remove();});
+                    var target = enemyAtTile(player.tileY, player.tileX+1);
+                    if(target!==null)
+                    {
+                        target.health-=player.attack;
+                    }
+                    break;
+                case Directions.Down:
+                    player.graphic.gotoAndPlay("attackDown");
+                    player.graphic.on("animationend", function(evt){player.state = PlayerStates.idle; player.graphic.gotoAndPlay("idleDown"); evt.remove();});
+                    var target = enemyAtTile(player.tileY+1, player.tileX);
+                    if(target!==null)
+                    {
+                        target.health-=player.attack;
+                    }
+                    break;
+                case Directions.Left:
+                    player.graphic.gotoAndPlay("attackLeft");
+                    player.graphic.on("animationend", function(evt){player.state = PlayerStates.idle; player.graphic.gotoAndPlay("idleLeft"); evt.remove();});
+                    var target = enemyAtTile(player.tileY, player.tileX-1);
+                    if(target!==null)
+                    {
+                        target.health-=player.attack;
+                    }
+                    break;
+            }
         }
     }
 }
@@ -1045,6 +1114,7 @@ function gameStateAction()
         break;
         case GameStates.gamePlay:
             runGameTimer();
+            updateEntityHealth();
             handlePlayerMovement();
             handleEnemyMovement();
             //if(end game condition)
@@ -1256,15 +1326,19 @@ function handlePlayerMovement()
                 {
                     case "W":
                         player.graphic.gotoAndPlay("idleUp");
+                        player.direction = Directions.Up;
                         break;
                     case "A":
                         player.graphic.gotoAndPlay("idleLeft");
+                        player.direction = Directions.Left;
                         break;
                     case "S":
                         player.graphic.gotoAndPlay("idleDown");
+                        player.direction = Directions.Down;
                         break;
                     case "D":
                         player.graphic.gotoAndPlay("idleRight");
+                        player.direction = Directions.Right;
                         break;
                 }
             }
@@ -1280,11 +1354,13 @@ function handlePlayerMovement()
                 onTileEntrance(player.tile);
                 if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX, player.tileY + 1))
                 {
-                    player.state = PlayerStates.movingDown;     
+                    player.state = PlayerStates.movingDown;    
+                    player.direction = Directions.Down;
                 }
                 else
                 {
                     player.state = PlayerStates.idle;
+                    player.direction = Directions.Down;
                     player.graphic.gotoAndPlay("idleDown");
                 }
             }
@@ -1299,11 +1375,13 @@ function handlePlayerMovement()
                 onTileEntrance(player.tile);
                 if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "A" && isTileMoveAllowed(player.tileX - 1, player.tileY))
                 {
-                    player.state = PlayerStates.movingLeft;     
+                    player.state = PlayerStates.movingLeft;
+                    player.direction = Directions.Left;
                 }
                 else
                 {
                     player.state = PlayerStates.idle;
+                    player.direction = Directions.Left;
                     player.graphic.gotoAndPlay("idleLeft");
                 }
             }
@@ -1318,11 +1396,13 @@ function handlePlayerMovement()
                 onTileEntrance(player.tile);
                 if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "D" && isTileMoveAllowed(player.tileX + 1, player.tileY))
                 {
-                    player.state = PlayerStates.movingRight;     
+                    player.state = PlayerStates.movingRight;
+                    player.direction = Directions.Right;
                 }
                 else
                 {
                     player.state = PlayerStates.idle;
+                    player.direction = Directions.Right;
                     player.graphic.gotoAndPlay("idleRight");
                 }
             }
@@ -1337,11 +1417,13 @@ function handlePlayerMovement()
                 onTileEntrance(player.tile);
                 if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "W" && isTileMoveAllowed(player.tileX, player.tileY - 1))
                 {
-                    player.state = PlayerStates.movingUp;     
+                    player.state = PlayerStates.movingUp;
+                    player.direction = Directions.Up;
                 }
                 else
                 {
                     player.state = PlayerStates.idle;
+                    player.direction = Directions.Up;
                     player.graphic.gotoAndPlay("idleUp");
                 }
             }
@@ -1358,6 +1440,7 @@ function up()
     if(isTileMoveAllowed(player.tileX, player.tileY - 1))
     {
         player.state = PlayerStates.movingUp;
+        player.direction = Directions.Up;
         player.graphic.gotoAndPlay("walkUp");
         board[player.tileY - 1][player.tileX].isEntityMovingTo = true;
     }
@@ -1367,6 +1450,7 @@ function down()
     if(isTileMoveAllowed(player.tileX, player.tileY + 1))
     {
         player.state = PlayerStates.movingDown;
+        player.direction = Directions.Down;
         player.graphic.gotoAndPlay("walkDown");
         board[player.tileY + 1][player.tileX].isEntityMovingTo = true;
     }
@@ -1376,6 +1460,7 @@ function left()
     if(isTileMoveAllowed(player.tileX - 1, player.tileY))
     {
         player.state = PlayerStates.movingLeft;
+        player.direction = Directions.Left;
         player.graphic.gotoAndPlay("walkLeft");
         board[player.tileY][player.tileX - 1].isEntityMovingTo = true;
     }
@@ -1385,6 +1470,7 @@ function right()
     if(isTileMoveAllowed(player.tileX + 1, player.tileY ))
     {
         player.state = PlayerStates.movingRight;
+        player.direction = Directions.Right;
         player.graphic.gotoAndPlay("walkRight");
         board[player.tileY][player.tileX + 1].isEntityMovingTo = true;
     }
