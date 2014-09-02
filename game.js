@@ -59,7 +59,8 @@ manifest = [
     {src:"Textures/unavailable.png", id:"unavailable"},
     {src:"Textures/default.png", id:"default"},
     {src:"Textures/forest_Exit.png", id:"forest_Exit"},
-    {src:"playerDebug.png", id:"player"},
+    {src:"playerKnight.png", id:"player"},
+    {src:"wispSprite.png", id:"wisp"},
     {src:"level0_TileContents.csv", id:"level0_TC", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
     {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT},
@@ -149,7 +150,7 @@ function loadProgress(evt)
     stage.update();
 }
  
-var defaultTile, invalidTile, unavailableTile ,forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
+var defaultTile, invalidTile, unavailableTile, forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
 function loadComplete(evt)
 {
     stage.removeChild(loadProgressLabel, loadingBarContainer);
@@ -305,16 +306,45 @@ function loadComplete(evt)
     var player_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("player")],
-        frames: [[0,0,51,50,0,-0.3,0],[51,0,51,50,0,-0.3,0],[0,50,51,50,0,-0.3,0],[51,50,51,50,0,-0.3,0]],
+        frames: [[0,0,64,64,0,6.6,5.65],[64,0,64,64,0,6.6,5.65],[128,0,64,64,0,6.6,5.65],[192,0,64,64,0,6.6,5.65],[256,0,64,64,0,6.6,5.65],[320,0,64,64,0,6.6,5.65],[384,0,64,64,0,6.6,5.65],[448,0,64,64,0,6.6,5.65],[0,64,64,64,0,6.6,5.65],[64,64,64,64,0,6.6,5.65],[128,64,64,64,0,6.6,5.65],[192,64,64,64,0,6.6,5.65],[256,64,64,64,0,6.6,5.65],[320,64,64,64,0,6.6,5.65],[384,64,64,64,0,6.6,5.65],[448,64,64,64,0,6.6,5.65],[0,128,64,64,0,6.6,5.65],[64,128,64,64,0,6.6,5.65],[128,128,64,64,0,6.6,5.65],[192,128,64,64,0,6.6,5.65],[256,128,64,64,0,6.6,5.65],[320,128,64,64,0,6.6,5.65],[384,128,64,64,0,6.6,5.65],[448,128,64,64,0,6.6,5.65],[0,192,64,64,0,6.6,5.65],[64,192,64,64,0,6.6,5.65],[128,192,64,64,0,6.6,5.65],[192,192,64,64,0,6.6,5.65],[256,192,64,64,0,6.6,5.65],[320,192,64,64,0,6.6,5.65],[384,192,64,64,0,6.6,5.65],[448,192,64,64,0,6.6,5.65],[0,256,64,64,0,6.6,5.65],[64,256,64,64,0,6.6,5.65],[128,256,64,64,0,6.6,5.65],[192,256,64,64,0,6.6,5.65],[256,256,64,64,0,6.6,5.65],[320,256,64,64,0,6.6,5.65],[384,256,64,64,0,6.6,5.65],[448,256,64,64,0,6.6,5.65],[0,320,64,64,0,6.6,5.65],[64,320,64,64,0,6.6,5.65],[128,320,64,64,0,6.6,5.65],[192,320,64,64,0,6.6,5.65],[256,320,64,64,0,6.6,5.65],[320,320,64,64,0,6.6,5.65],[384,320,64,64,0,6.6,5.65],[448,320,64,64,0,6.6,5.65],[0,384,64,64,0,6.6,5.65],[64,384,64,64,0,6.6,5.65],[128,384,64,64,0,6.6,5.65],[192,384,64,64,0,6.6,5.65],[256,384,64,64,0,6.6,5.65],[320,384,64,64,0,6.6,5.65],[384,384,64,64,0,6.6,5.65],[448,384,64,64,0,6.6,5.65],[0,448,64,64,0,6.6,5.65],[64,448,64,64,0,6.6,5.65],[128,448,64,64,0,6.6,5.65],[192,448,64,64,0,6.6,5.65],[256,448,64,64,0,6.6,5.65],[320,448,64,64,0,6.6,5.65],[384,448,64,64,0,6.6,5.65],[448,448,64,64,0,6.6,5.65],[0,512,64,64,0,6.6,5.65],[64,512,64,64,0,6.6,5.65],[128,512,64,64,0,6.6,5.65],[192,512,64,64,0,6.6,5.65],[256,512,64,64,0,6.6,5.65],[320,512,64,64,0,6.6,5.65],[384,512,64,64,0,6.6,5.65],[448,512,64,64,0,6.6,5.65],[0,576,64,64,0,6.6,5.65],[64,576,64,64,0,6.6,5.65],[128,576,64,64,0,6.6,5.65],[192,576,64,64,0,6.6,5.65],[256,576,64,64,0,6.6,5.65],[320,576,64,64,0,6.6,5.65],[384,576,64,64,0,6.6,5.65],[448,576,64,64,0,6.6,5.65],[0,640,64,64,0,6.6,5.65],[64,640,64,64,0,6.6,5.65],[128,640,64,64,0,6.6,5.65],[192,640,64,64,0,6.6,5.65],[256,640,64,64,0,6.6,5.65],[320,640,64,64,0,6.6,5.65],[384,640,64,64,0,6.6,5.65],[448,640,64,64,0,6.6,5.65],[0,704,64,64,0,6.6,5.65],[64,704,64,64,0,6.6,5.65],[128,704,64,64,0,6.6,5.65],[192,704,64,64,0,6.6,5.65],[256,704,64,64,0,6.6,5.65],[320,704,64,64,0,6.6,5.65],[384,704,64,64,0,6.6,5.65],[448,704,64,64,0,6.6,5.65],[0,768,64,64,0,6.6,5.65],[64,768,64,64,0,6.6,5.65],[128,768,64,64,0,6.6,5.65],[192,768,64,64,0,6.6,5.65],[256,768,64,64,0,6.6,5.65],[320,768,64,64,0,6.6,5.65],[384,768,64,64,0,6.6,5.65],[448,768,64,64,0,6.6,5.65],[0,832,64,64,0,6.6,5.65],[64,832,64,64,0,6.6,5.65],[128,832,64,64,0,6.6,5.65],[192,832,64,64,0,6.6,5.65],[256,832,64,64,0,6.6,5.65],[320,832,64,64,0,6.6,5.65],[384,832,64,64,0,6.6,5.65],[448,832,64,64,0,6.6,5.65],[0,896,64,64,0,6.6,5.65],[64,896,64,64,0,6.6,5.65],[128,896,64,64,0,6.6,5.65],[192,896,64,64,0,6.6,5.65],[256,896,64,64,0,6.6,5.65],[320,896,64,64,0,6.6,5.65],[384,896,64,64,0,6.6,5.65],[448,896,64,64,0,6.6,5.65],[0,960,64,64,0,6.6,5.65],[64,960,64,64,0,6.6,5.65],[128,960,64,64,0,6.6,5.65],[192,960,64,64,0,6.6,5.65],[256,960,64,64,0,6.6,5.65],[320,960,64,64,0,6.6,5.65],[384,960,64,64,0,6.6,5.65],[448,960,64,64,0,6.6,5.65]],
         animations:
         {
-            up: [0, 0, "up"],
-            right: [1, 1, "right"],
-            down: [2, 2, "down"],
-            left: [3, 3, "left"]
+            idleUp: [0, 0, "idleUp", 1],
+            walkUp: [2, 20, "walkUp", 1],
+            attackUp: [22, 31, "attackUp", 1],
+            idleRight: [32, 32, "idleRight", 1],
+            walkRight: [34, 52, "walkRight", 1],
+            attackRight: [54, 63, "attackRight", 1],
+            idleDown: [64, 64, "idleDown", 1],
+            walkDown: [66, 84, "walkDown", 1],
+            attackDown: [86, 95, "attackDown", 1],
+            idleLeft: [96, 96, "idleLeft", 1],
+            walkLeft: [98, 116, "walkLeft", 1],
+            attackLeft: [118, 127, "attackLeft", 1],
         }
     });
     player.graphic = new createjs.Sprite(player_Sheet);
+
+    var wisp_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("wisp")],
+        frames: {width:50, height:50, count:30, regX:0, regY:0},
+        animations:
+        {
+            idleUp: [0, 14, "idleUp"],
+            walkUp: [0, 14, "walkUp"],
+            attackUp: [15, 29, "attackUp"],
+            idleRight: [0, 14, "idleRight"],
+            walkRight: [0, 14, "walkRight"],
+            attackRight: [15, 29, "attackRight"],
+            idleDown: [0, 14, "idleDown"],
+            walkDown: [0, 14, "walkDown"],
+            attackDown: [15, 29, "attackDown"],
+            idleLeft: [0, 14, "idleLeft"],
+            walkLeft: [0, 14, "walkLeft"],
+            attackLeft: [15, 29, "attackLeft"],
+        }
+    });
     
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
@@ -344,15 +374,17 @@ function loadComplete(evt)
     levelRaws[0][0] = queue.getResult("level0_TC");
     levelRaws[0][1] = queue.getResult("level0_TG");
     levelRaws[0][2] = queue.getResult("level0_TT");
+    levelRaws[0][3] = queue.getResult("level0_TE");
 
     level0Map = [];
     level0Map[0] = $.csv.toArrays(levelRaws[0][0]);
     level0Map[1] = $.csv.toArrays(levelRaws[0][1]);
     level0Map[2] = $.csv.toArrays(levelRaws[0][2]);
+    level0Map[3] = $.csv.toArrays(levelRaws[0][3]);
     
     initLevels();
     addLevel(0);
-    addLevelMap(0, 0, 0, level0Map[1], level0Map[2], level0Map[0]);
+    addLevelMap(0, 0, 0, level0Map[1], level0Map[2], level0Map[0], level0Map[3]);
 
     setupButtons();
     setupTitleScreen();
@@ -402,7 +434,7 @@ function initBoard()
         board[i] = [];
         for(var j = 0; j < GameBoard.width; j++)
         {
-            board[i][j] = Tile("default", "none", ["none"]);
+            board[i][j] = Tile("default", "none", ["none"], "none");
             board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
@@ -420,10 +452,10 @@ function addLevel(level)
     levels[level] = [];
 }
 
-function addLevelMap(level, x, y, graphicNames, triggers, contents)
+function addLevelMap(level, x, y, graphicNames, triggers, contents, entities)
 {
     levels[level][x] = [];
-    levels[level][x][y] = Map(graphicNames, triggers, contents);
+    levels[level][x][y] = Map(graphicNames, triggers, contents, entities);
 }
 
 function loadLevelMap(level, x, y)
@@ -438,11 +470,12 @@ function loadLevelMap(level, x, y)
             board[i][j].contents = $.extend(true, [], levels[level][x][y][i][j].contents);
             board[i][j].trigger = levels[level][x][y][i][j].trigger;
             board[i][j].graphic = levels[level][x][y][i][j].graphic.clone();
+            board[i][j].entity = levels[level][x][y][i][j].entity;
             
             board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
-            if(!isPlayeStartFound && board[i][j].graphic.name == "forest_PlayerStart")
+            if(!isPlayeStartFound && board[i][j].entity == "player")
             {
                 isPlayeStartFound = true;
                 player.graphic.x = board[i][j].graphic.x;
@@ -458,7 +491,7 @@ function loadLevelMap(level, x, y)
     gameplayContainer.addChild(player.graphic);
 }
     
-function Map(graphicNames, triggers, contents)
+function Map(graphicNames, triggers, contents, entities)
 {
     var isPlayerStartDefined = false;
     var gameMap = [];
@@ -467,14 +500,14 @@ function Map(graphicNames, triggers, contents)
         gameMap[i] = [];
         for(var j = 0; j < GameBoard.width; j++)
         {                 
-            gameMap[i][j] = Tile(graphicNames[i][j], triggers[i][j], contents[i][j].split("|"));
+            gameMap[i][j] = Tile(graphicNames[i][j], triggers[i][j], contents[i][j].split("|"), entities[i][j]);
             gameMap[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             gameMap[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
-            if(isPlayerStartDefined && graphicNames[i][j] == "forest_PlayerStart")
+            if(isPlayerStartDefined && gameMap[i][j].entity == "player")
             {
                 console.log("Player starting area is already defined for this map. The first definition will take priority.");   
             }
-            else if(graphicNames[i][j] == "forest_PlayerStart")
+            else if(gameMap[i][j].entity == "player")
             {
                 isPlayerStartDefined = true;
             }
@@ -716,7 +749,7 @@ function handleKeyDown(evt)
             {  
                 wDown = true;
                 movementKeys.push("W");
-                player.graphic.gotoAndPlay("up");
+                //player.graphic.gotoAndPlay("up");
             }
             return false;
         case KC_A:
@@ -728,7 +761,7 @@ function handleKeyDown(evt)
             if(!aDown)
             {
                 movementKeys.push("A");
-                player.graphic.gotoAndPlay("left");
+                //player.graphic.gotoAndPlay("left");
                 aDown = true;
             }
             return false;
@@ -741,7 +774,7 @@ function handleKeyDown(evt)
             if(!sDown)
             {
                 movementKeys.push("S");
-                player.graphic.gotoAndPlay("down");
+                //player.graphic.gotoAndPlay("down");
                 sDown = true;
             }
             return false;
@@ -754,7 +787,7 @@ function handleKeyDown(evt)
             if(!dDown)
             {
                 movementKeys.push("D");
-                player.graphic.gotoAndPlay("right");
+                //player.graphic.gotoAndPlay("right");
                 dDown = true;
             }
             return false;
@@ -964,7 +997,7 @@ function resetGameplayScreen()
     gameplayContainer.addChild(statContainer);
     player.health = 100;
     player.state = PlayerStates.idle;
-    player.graphic.gotoAndPlay("up");
+    player.graphic.gotoAndPlay("idleUp");
     resetFear();
     updateHealth();
     
@@ -991,7 +1024,6 @@ function resetGameOverScreen()
 //region Collision
 function isTileMoveAllowed(boardY, boardX, _isFlyingCreature)
 {
-    console.log(boardX + ", " + boardY);
     if(_isFlyingCreature == null)
     {
         _isFlyingCreature = false;   
@@ -1019,6 +1051,24 @@ function handlePlayerMovement()
     switch(player.state)
     {
         case PlayerStates.idle:
+            if(movementKeys.length > 0)
+            {
+                switch(movementKeys[movementKeys.length - 1])
+                {
+                    case "W":
+                        player.graphic.gotoAndPlay("idleUp");
+                        break;
+                    case "A":
+                        player.graphic.gotoAndPlay("idleLeft");
+                        break;
+                    case "S":
+                        player.graphic.gotoAndPlay("idleDown");
+                        break;
+                    case "D":
+                        player.graphic.gotoAndPlay("idleRight");
+                        break;
+                }
+            }
             pickMovementState();
             break;
         case PlayerStates.movingDown:
@@ -1027,9 +1077,18 @@ function handlePlayerMovement()
             {
                 player.tile = board[player.tileY + 1][player.tileX];
                 player.tileY++;
-                player.state = PlayerStates.idle;
-                pickMovementState();
+        
                 onTileEntrance(player.tile);
+                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX, player.tileY + 1))
+                {
+                    player.state = PlayerStates.movingDown;     
+                }
+                else
+                {
+                    player.state = PlayerStates.idle;
+                    pickMovementState();
+                    player.graphic.gotoAndPlay("idleDown");
+                }
             }
             break;
         case PlayerStates.movingLeft:
@@ -1038,9 +1097,17 @@ function handlePlayerMovement()
             {
                 player.tile = board[player.tileY][player.tileX - 1];
                 player.tileX--;
-                player.state = PlayerStates.idle;
-                pickMovementState();
                 onTileEntrance(player.tile);
+                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX - 1, player.tileY))
+                {
+                    player.state = PlayerStates.movingLeft;     
+                }
+                else
+                {
+                    player.state = PlayerStates.idle;
+                    pickMovementState();
+                    player.graphic.gotoAndPlay("idleLeft");
+                }
             }
             break;
         case PlayerStates.movingRight:
@@ -1049,9 +1116,17 @@ function handlePlayerMovement()
             {
                 player.tile = board[player.tileY][player.tileX + 1];
                 player.tileX++;
-                player.state = PlayerStates.idle;
-                pickMovementState();
                 onTileEntrance(player.tile);
+                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX + 1, player.tileY))
+                {
+                    player.state = PlayerStates.movingRight;     
+                }
+                else
+                {
+                    player.state = PlayerStates.idle;
+                    pickMovementState();
+                    player.graphic.gotoAndPlay("idleRight");
+                }
             }
             break;
         case PlayerStates.movingUp:
@@ -1060,9 +1135,17 @@ function handlePlayerMovement()
             {
                 player.tile = board[player.tileY - 1][player.tileX];
                 player.tileY--;
-                player.state = PlayerStates.idle;
-                pickMovementState();
                 onTileEntrance(player.tile);
+                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX, player.tileY - 1))
+                {
+                    player.state = PlayerStates.movingUp;     
+                }
+                else
+                {
+                    player.state = PlayerStates.idle;
+                    pickMovementState();
+                    player.graphic.gotoAndPlay("idleUp");
+                }
             }
             break;
         case PlayerStates.attacking:
@@ -1076,6 +1159,7 @@ function up()
     if(isTileMoveAllowed(player.tileX, player.tileY - 1))
     {
         player.state = PlayerStates.movingUp;
+        player.graphic.gotoAndPlay("walkUp");
     }
 }
 function down()
@@ -1083,6 +1167,7 @@ function down()
     if(isTileMoveAllowed(player.tileX, player.tileY + 1))
     {
         player.state = PlayerStates.movingDown;
+        player.graphic.gotoAndPlay("walkDown");
     }
 }
 function left()
@@ -1090,6 +1175,7 @@ function left()
     if(isTileMoveAllowed(player.tileX - 1, player.tileY))
     {
         player.state = PlayerStates.movingLeft;
+        player.graphic.gotoAndPlay("walkLeft");
     }
 }
 function right()
@@ -1097,29 +1183,13 @@ function right()
     if(isTileMoveAllowed(player.tileX + 1, player.tileY ))
     {
         player.state = PlayerStates.movingRight;
+        player.graphic.gotoAndPlay("walkRight");
     }
 }
 
 function pickMovementState()
 {
     if(movementKeys.length > 0 && movementTicks >= 8) 
-    {
-        switch(movementKeys[movementKeys.length - 1])
-        {
-            case "W":
-                up();
-                break;
-            case "A":
-                left();
-                break;
-            case "S":
-                down();
-                break;
-            case "D":
-                right();
-                break;
-        }
-    }            if(movementKeys.length > 0 && movementTicks >= 8) 
     {
         switch(movementKeys[movementKeys.length - 1])
         {
@@ -1207,7 +1277,7 @@ function controlFog()
     fogOfWar.regY = 580;
     fogOfWar.x = player.graphic.x;
     fogOfWar.y = player.graphic.y;
-    fogOfWar.alpha = 0.8;
+    fogOfWar.alpha = 0.1;
 }
 
 //endregion
