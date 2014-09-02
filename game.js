@@ -342,7 +342,7 @@ function loadComplete(evt)
         frames: {width:50, height:50, count:30, regX:0, regY:0},
         animations:
         {
-            idleUp: [0, 14, "idleUp"],
+            idleUp: [0, 14, "idleUp", .55],
             walkUp: [0, 14, "walkUp"],
             attackUp: [15, 29, "attackUp"],
             idleRight: [0, 14, "idleRight"],
@@ -357,6 +357,7 @@ function loadComplete(evt)
         }
     });
     wispTemplate = new createjs.Sprite(wisp_Sheet);
+    wispTemplate.gotoAndPlay("idleUp");
     
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
@@ -898,11 +899,14 @@ function handleKeyUp(evt)
 }
 
 var fearTimer;
+var enemyTimer;
+var enemiesWantToMove = false;
 function resetGameTimer()
 {
     frameCount = 0;
     gameTimer = 0;
     fearTimer = 0;
+    enemyTimer = 0;
 }
 function runGameTimer()
 {
@@ -920,6 +924,13 @@ function runGameTimer()
     if(fearTimer%(150) === 0)
     {
         addFear(1);
+    }
+    
+    enemyTimer++;
+    if(enemyTimer%(30) == 0)
+    {
+        enemyTimer = 0;
+        enemiesWantToMove = true;
     }
 }
 
@@ -942,6 +953,7 @@ function gameStateAction()
         case GameStates.gamePlay:
             runGameTimer();
             handlePlayerMovement();
+            handleEnemyMovement();
             //if(end game condition)
             //{
             // gameState = GameStates.gameOver;
@@ -1153,7 +1165,7 @@ function handlePlayerMovement()
                 player.tile = board[player.tileY][player.tileX - 1];
                 player.tileX--;
                 onTileEntrance(player.tile);
-                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX - 1, player.tileY))
+                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "A" && isTileMoveAllowed(player.tileX - 1, player.tileY))
                 {
                     player.state = PlayerStates.movingLeft;     
                 }
@@ -1172,7 +1184,7 @@ function handlePlayerMovement()
                 player.tile = board[player.tileY][player.tileX + 1];
                 player.tileX++;
                 onTileEntrance(player.tile);
-                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX + 1, player.tileY))
+                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "D" && isTileMoveAllowed(player.tileX + 1, player.tileY))
                 {
                     player.state = PlayerStates.movingRight;     
                 }
@@ -1191,7 +1203,7 @@ function handlePlayerMovement()
                 player.tile = board[player.tileY - 1][player.tileX];
                 player.tileY--;
                 onTileEntrance(player.tile);
-                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX, player.tileY - 1))
+                if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "W" && isTileMoveAllowed(player.tileX, player.tileY - 1))
                 {
                     player.state = PlayerStates.movingUp;     
                 }
@@ -1361,4 +1373,13 @@ function resetFear()
     player.fear = 0;    
     statContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
     statContainer.getChildByName("fearFill").graphics.clear().beginFill("yellowgreen").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
+}
+
+/*----------------------------Enemy----------------------------*/
+//functioning only for wisps right now
+function handleEnemyMovement()
+{
+    //Math.floor((Math.random() * 4));
+    
+    
 }
