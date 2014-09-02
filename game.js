@@ -487,6 +487,7 @@ function loadLevelMap(level, x, y)
             board[i][j].trigger = levels[level][x][y][i][j].trigger;
             board[i][j].graphic = levels[level][x][y][i][j].graphic.clone();
             board[i][j].entity = levels[level][x][y][i][j].entity;
+            board[i][j].isEntityMovingTo = levels[level][x][y][i][j].isEntityMovingTo;
             
             board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
@@ -662,7 +663,7 @@ function Tile(graphicName, triggr, contentArray, entiti)
             break;
     }
     
-    var tile = {graphic: tileGraphic, contents: contentArray, trigger: triggr, entity: entiti};
+    var tile = {graphic: tileGraphic, contents: contentArray, trigger: triggr, entity: entiti, isEntityMovingTo: false};
     
     return tile;
 }
@@ -1206,7 +1207,11 @@ function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
     {
         isAllowed = false;
     }
-    
+    else if(board[boardY][boardX].isEntityMovingTo)
+    {
+        console.log("safty check callled");
+        isAllowed = false;
+    }
     return isAllowed;
 }
 
@@ -1219,8 +1224,6 @@ function playerAtTile(boardY, boardX)
         playerAtTile = player;
     }
     
-    console.log("Player tiles: " + player.tileX + ", " + player.tileY + " passed in tiles: " + boardX + ", " +boardY);
-    
     return playerAtTile;
 }
 
@@ -1232,13 +1235,10 @@ function enemyAtTile(boardY, boardX)
     {
         if(enemies[i].tileY == boardY && enemies[i].tileX == boardX)
         {
-            console.log("umm");
             enemyAtTile = enemies[i];
             break;
         }
     }
-    
-    console.log(enemyAtTile);
         
     return enemyAtTile;
 }
@@ -1276,7 +1276,7 @@ function handlePlayerMovement()
             {
                 player.tile = board[player.tileY + 1][player.tileX];
                 player.tileY++;
-        
+                board[player.tileY][player.tileX].isEntityMovingTo = false;
                 onTileEntrance(player.tile);
                 if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "S" && isTileMoveAllowed(player.tileX, player.tileY + 1))
                 {
@@ -1295,6 +1295,7 @@ function handlePlayerMovement()
             {
                 player.tile = board[player.tileY][player.tileX - 1];
                 player.tileX--;
+                board[player.tileY][player.tileX].isEntityMovingTo = false;
                 onTileEntrance(player.tile);
                 if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "A" && isTileMoveAllowed(player.tileX - 1, player.tileY))
                 {
@@ -1313,6 +1314,7 @@ function handlePlayerMovement()
             {
                 player.tile = board[player.tileY][player.tileX + 1];
                 player.tileX++;
+                board[player.tileY][player.tileX].isEntityMovingTo = false;
                 onTileEntrance(player.tile);
                 if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "D" && isTileMoveAllowed(player.tileX + 1, player.tileY))
                 {
@@ -1331,6 +1333,7 @@ function handlePlayerMovement()
             {
                 player.tile = board[player.tileY - 1][player.tileX];
                 player.tileY--;
+                board[player.tileY][player.tileX].isEntityMovingTo = false;
                 onTileEntrance(player.tile);
                 if(movementKeys.length > 0 && movementKeys[movementKeys.length - 1] == "W" && isTileMoveAllowed(player.tileX, player.tileY - 1))
                 {
@@ -1356,6 +1359,7 @@ function up()
     {
         player.state = PlayerStates.movingUp;
         player.graphic.gotoAndPlay("walkUp");
+        board[player.tileY - 1][player.tileX].isEntityMovingTo = true;
     }
 }
 function down()
@@ -1364,6 +1368,7 @@ function down()
     {
         player.state = PlayerStates.movingDown;
         player.graphic.gotoAndPlay("walkDown");
+        board[player.tileY + 1][player.tileX].isEntityMovingTo = true;
     }
 }
 function left()
@@ -1372,6 +1377,7 @@ function left()
     {
         player.state = PlayerStates.movingLeft;
         player.graphic.gotoAndPlay("walkLeft");
+        board[player.tileY][player.tileX - 1].isEntityMovingTo = true;
     }
 }
 function right()
@@ -1380,6 +1386,7 @@ function right()
     {
         player.state = PlayerStates.movingRight;
         player.graphic.gotoAndPlay("walkRight");
+        board[player.tileY][player.tileX + 1].isEntityMovingTo = true;
     }
 }
 
@@ -1542,6 +1549,7 @@ function handleEnemyMovement()
                 {
                     enemies[i].tile = board[enemies[i].tileY + 1][enemies[i].tileX];
                     enemies[i].tileY++;
+                    board[enemies[i].tileY][enemies[i].tileX].isEntityMovingTo = false;
                     enemies[i].state = PlayerStates.idle;
                     enemies[i].graphic.gotoAndPlay("idleDown");
                 }
@@ -1552,6 +1560,7 @@ function handleEnemyMovement()
                 {
                     enemies[i].tile = board[enemies[i].tileY][enemies[i].tileX - 1];
                     enemies[i].tileX--;
+                    board[enemies[i].tileY][enemies[i].tileX].isEntityMovingTo = false;
                     enemies[i].state = PlayerStates.idle;
                     enemies[i].graphic.gotoAndPlay("idleLeft");  
                 }
@@ -1562,6 +1571,7 @@ function handleEnemyMovement()
                 {
                     enemies[i].tile = board[enemies[i].tileY][enemies[i].tileX + 1];
                     enemies[i].tileX++;
+                    board[enemies[i].tileY][enemies[i].tileX].isEntityMovingTo = false;
 					enemies[i].state = PlayerStates.idle;
                     enemies[i].graphic.gotoAndPlay("idleRight");
                 }
@@ -1572,6 +1582,7 @@ function handleEnemyMovement()
                 {
                     enemies[i].tile = board[enemies[i].tileY - 1][enemies[i].tileX];
                     enemies[i].tileY--;
+                    board[enemies[i].tileY][enemies[i].tileX].isEntityMovingTo = false;
                     enemies[i].state = PlayerStates.idle;
                     enemies[i].graphic.gotoAndPlay("idleUp");
                 }
@@ -1590,6 +1601,7 @@ function enemyUp(enemy)
         enemy.state = PlayerStates.movingUp;
         enemy.graphic.gotoAndPlay("walkUp");
 		enemy.wantsToMove = false;
+        board[enemy.tileY - 1][enemy.tileX].isEntityMovingTo = true;
     }
 }
 function enemyDown(enemy)
@@ -1599,6 +1611,7 @@ function enemyDown(enemy)
         enemy.state = PlayerStates.movingDown;
         enemy.graphic.gotoAndPlay("walkDown");
 		enemy.wantsToMove = false;
+        board[enemy.tileY + 1][enemy.tileX].isEntityMovingTo = true;
     }
 }
 function enemyLeft(enemy)
@@ -1608,6 +1621,7 @@ function enemyLeft(enemy)
         enemy.state = PlayerStates.movingLeft;
         enemy.graphic.gotoAndPlay("walkLeft");
 		enemy.wantsToMove = false;
+        board[enemy.tileY][enemy.tileX - 1].isEntityMovingTo = true;
     }
 }
 function enemyRight(enemy)
@@ -1617,5 +1631,6 @@ function enemyRight(enemy)
         enemy.state = PlayerStates.movingRight;
         enemy.graphic.gotoAndPlay("walkRight");
 		enemy.wantsToMove = false;
+        board[enemy.tileY][enemy.tileX + 1].isEntityMovingTo = true;
     }
 }
