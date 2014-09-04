@@ -1246,6 +1246,8 @@ function setupGameplayScreen()
 }
 function resetGameplayScreen()
 {
+	score = -1;
+	addScore(1);
     for(var i = 0; i < enemies.length; i++)
     {
         gameplayContainer.removeChild(enemies[i].graphic);  
@@ -1469,7 +1471,7 @@ function handlePlayerMovement()
             }
             break;
         case PlayerStates.attacking:
-            createjs.Sound.play("atkSound", {loop: -1});
+            //createjs.Sound.play("atkSound", {loop: -1});
             break;
     }
     
@@ -1657,7 +1659,7 @@ function resetFear()
 function addScore(number)
 {
     score += number;
-    if(score >= 10)
+    if(score == 10)
     {
         statContainer.getChildByName("scoreText").x -= 12;
     }
@@ -1760,7 +1762,7 @@ function handleEnemyMovement()
                 }
                 break;
             case PlayerStates.attacking:
-                createjs.Sound.play("atkSound", {loop: -1});
+                //createjs.Sound.play("atkSound", {loop: -1});
                 break;
         }
     }
