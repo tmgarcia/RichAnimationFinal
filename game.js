@@ -45,6 +45,7 @@ var queue;
 var player = Player();
 var enemies = [];
 var items = [];
+var triggers = [];
 manifest = [
 
     {src:"titleScreen.jpg", id:"titleScreen"},
@@ -65,10 +66,11 @@ manifest = [
     {src:"Textures/forest_Exit.png", id:"forest_Exit"},
     {src:"playerKnight.png", id:"player"},
     {src:"wispSprite.png", id:"wisp"},
-    {src:"level0_TileContents.csv", id:"level0_TC", type:createjs.LoadQueue.TEXT},
-    {src:"level0_TileGraphics.csv", id:"level0_TG", type:createjs.LoadQueue.TEXT},
-    {src:"level0_TileTriggers.csv", id:"level0_TT", type:createjs.LoadQueue.TEXT},
-    {src:"level0_TileEntities.csv", id:"level0_TE", type:createjs.LoadQueue.TEXT},
+    {src:"currentLevel_TileContents.csv", id:"currentLevel_TC", type:createjs.LoadQueue.TEXT},
+    {src:"currentLevel_TileGraphics.csv", id:"currentLevel_TG", type:createjs.LoadQueue.TEXT},
+    {src:"currentLevel_TileTriggerStates.csv", id:"currentLevel_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"currentLevel_TileTriggerTypes.csv", id:"currentLevel_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"currentLevel_TileEntities.csv", id:"level0_TE", type:createjs.LoadQueue.TEXT},
     {src:"fog.png", id:"fogOfWar"},
     {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
     {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
@@ -392,20 +394,22 @@ function loadComplete(evt)
 
     levelRaws = [];
     levelRaws[0] = [];
-    levelRaws[0][0] = queue.getResult("level0_TC");
-    levelRaws[0][1] = queue.getResult("level0_TG");
-    levelRaws[0][2] = queue.getResult("level0_TT");
-    levelRaws[0][3] = queue.getResult("level0_TE");
+	levelRaws[0][0] = queue.getResult("currentLevel_TG");
+	levelRaws[0][1] = queue.getResult("currentLevel_TC");
+    levelRaws[0][2] = queue.getResult("currentLevel_TTT");
+	levelRaws[0][3] = queue.getResult("currentLevel_TTS");
+    levelRaws[0][4] = queue.getResult("currentLevel_TE");
 
     level0Map = [];
     level0Map[0] = $.csv.toArrays(levelRaws[0][0]);
     level0Map[1] = $.csv.toArrays(levelRaws[0][1]);
     level0Map[2] = $.csv.toArrays(levelRaws[0][2]);
     level0Map[3] = $.csv.toArrays(levelRaws[0][3]);
+	level0Map[3] = $.csv.toArrays(levelRaws[0][4]);
     
     initLevels();
     addLevel(0);
-    addLevelMap(0, 0, 0, level0Map[1], level0Map[2], level0Map[0], level0Map[3]);
+    addLevelMap(0, 0, 0, level0Map[0], level0Map[1], level0Map[2], level0Map[3], level0Map[4]);
 
     setupButtons();
     setupTitleScreen();
@@ -473,10 +477,10 @@ function addLevel(level)
     levels[level] = [];
 }
 
-function addLevelMap(level, x, y, graphicNames, triggers, contents, entities)
+function addLevelMap(level, x, y, graphicNames, contents, triggerTypes, triggerStates, entities)
 {
     levels[level][x] = [];
-    levels[level][x][y] = Map(graphicNames, triggers, contents, entities);
+    levels[level][x][y] = Map(graphicNames, contents, triggerTypes, triggerStates, entities);
 }
 
 function loadLevelMap(level, x, y)
@@ -489,7 +493,8 @@ function loadLevelMap(level, x, y)
             gameplayContainer.removeChild(board[i][j].graphic);
             //board[i][j] = levels[level][x][y][i][j];
             board[i][j].contents = $.extend(true, [], levels[level][x][y][i][j].contents);
-            board[i][j].trigger = levels[level][x][y][i][j].trigger;
+            board[i][j].triggerState = levels[level][x][y][i][j].triggerState;
+			board[i][j].triggerType = levels[level][x][y][i][j].triggerType;
             board[i][j].graphic = levels[level][x][y][i][j].graphic.clone();
             board[i][j].entity = levels[level][x][y][i][j].entity;
             board[i][j].isEntityMovingTo = levels[level][x][y][i][j].isEntityMovingTo;
@@ -507,6 +512,7 @@ function loadLevelMap(level, x, y)
                 player.tile = board[i][j];
             }
             
+			///////ITEMS/////////
             for(var k = 0; k < board[i][j].contents.length; k++)
             {
                 if(board[i][j].contents[k] == "healthPotion")
@@ -524,7 +530,18 @@ function loadLevelMap(level, x, y)
                     gameplayContainer.addChild(items[items.length-1]);
                 }
             }
-            
+			
+            ///////TRIGGERS/////////
+			if(board[i][j].triggerType == "bearTrap")
+			{
+				triggers.push(bearTrap.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			
+			///////ENEMIES/////////
             if(board[i][j].entity == "wisp")
             {
                 enemies.push(new Enemy(board[i][j].entity));
@@ -547,7 +564,7 @@ function loadLevelMap(level, x, y)
     gameplayContainer.addChild(player.graphic);
 }
     
-function Map(graphicNames, triggers, contents, entities)
+function Map(graphicNames, contents, triggerTypes, triggerStates, entities)
 {
     var isPlayerStartDefined = false;
     var gameMap = [];
@@ -556,7 +573,7 @@ function Map(graphicNames, triggers, contents, entities)
         gameMap[i] = [];
         for(var j = 0; j < GameBoard.width; j++)
         {                 
-            gameMap[i][j] = Tile(graphicNames[i][j], triggers[i][j], contents[i][j].split("|"), entities[i][j]);
+            gameMap[i][j] = Tile(graphicNames[i][j], contents[i][j].split("|"), triggerTypes[i][j], triggerStates[i][j], entities[i][j]);
             gameMap[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             gameMap[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             if(isPlayerStartDefined && gameMap[i][j].entity == "player")
@@ -572,13 +589,13 @@ function Map(graphicNames, triggers, contents, entities)
     
    if(!isPlayerStartDefined)
    {
-    throw "Map_With_Undefined_Player_Starting_Tile_Exception";
+		throw "Map_With_Undefined_Player_Starting_Tile_Exception";
    }
 
     return gameMap;
 }
 
-function Tile(graphicName, triggr, contentArray, entiti)
+function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
 {    
     var tileGraphic;
     switch(graphicName)
@@ -635,31 +652,38 @@ function Tile(graphicName, triggr, contentArray, entiti)
             break;
     }
             
-    switch(triggr)
+    switch(triggrState)
     {
         case "enabled":
-            tileGraphic.gotoAndPlay("enabled");
             break;
         case "disabled":
-            tileGraphic.gotoAndPlay("disabled");
             break;
         case "permanent":
-            tileGraphic.gotoAndPlay("enabled");
-            break;
-        case "none":
-            tileGraphic.gotoAndPlay("none");
             break;
         case "hidden":
-            console.log("Hidden trigger enum not yet supported. Changing to none.");
-            triggr = "none";
-            tileGraphic.gotoAndPlay("none");
+            break;
+		case "none":
+			triggrType = "none";
             break;
         default:
-            console.log("Failed to load tile trigger from string. Setting to none.");
-            triggr = "none";
-            tileGraphic.gotoAndPlay("none");
+            console.log("Failed to load tile trigger state from string. Setting to none.");
+            triggrState = "none";
+			triggrType = "none";
             break;
     }
+	if(triggrState != "none")
+	{
+		switch(triggrType)
+		{
+			case "bearTrap":
+				break;
+			default:
+				console.log("Failed to load tile trigger type from string. Setting to none.");
+				triggrState = "none";
+				triggrType = "none";
+				break;
+		}
+	}
     
     if(contentArray == null || contentArray.length < 1)
     {
@@ -670,10 +694,11 @@ function Tile(graphicName, triggr, contentArray, entiti)
     switch(entiti)
     {
         case "player":    
-            if(triggr != "none")
+            if(triggrState != "none" || triggrType != "none")
             {
-                triggr = "none";
-                console.log("Player starting tile cannot have trigger in it. Changing trigger to none.");
+                triggrState = "none";
+				triggrType = "none";
+                console.log("Player starting tile cannot have trigger in it. Changing trigger type and state to none.");
             }
             break;
         case "wisp":
@@ -686,9 +711,18 @@ function Tile(graphicName, triggr, contentArray, entiti)
             break;
     }
     
-    var tile = {graphic: tileGraphic, contents: contentArray, trigger: triggr, entity: entiti, isEntityMovingTo: false};
+    var tile = {graphic: tileGraphic, contents: contentArray, triggerType: triggrType, triggerState: triggrState, entity: entiti, isEntityMovingTo: false};
     
     return tile;
+}
+
+function Trigger(triggerState, triggerType)
+{
+	//var trigger = {state: triggerState, type: triggerType, graphic: null};
+	
+
+	
+	return trigger;
 }
 
 function Player()
@@ -1258,8 +1292,16 @@ function resetGameplayScreen()
     {
         gameplayContainer.removeChild(items[i]);  
     }
+	
     items = [];
+	
+	for(var i = 0; i < triggers.length; i++)
+	{
+		gameplayContainer.removeChild(triggers[i]);  
+	}
     
+	trigger = [];
+	
     console.log(items);
     
     resetGameTimer();
@@ -1573,14 +1615,24 @@ function onTileEntrance(tile)
         }
     }
     
-    switch(tile.trigger)
+	////////////DOES NOT YET CHECK TRIGGER TYPE/////////////////////
+    switch(tile.triggerState)
     {
         case "enabled":
             player.health -= 10;
             addFear(5);
             updateHealth();
-            player.tile.trigger = "disabled";
-            player.tile.graphic.gotoAndPlay("disabled");
+            //player.tile.trigger = "disabled";
+            //player.tile.graphic.gotoAndPlay("disabled");
+			player.tile.triggerState = "disabled";
+			for(var i = 0; i < triggers.length; i++)
+			{
+				if(triggers[i].x == player.graphic.x && triggers[i].y == player.graphic.y)
+				{
+					trigger[i].gotoAndPlay("disabled");
+					break;
+				}
+			}
             if(player.health <= 0)
             {
                 //gameover
@@ -1601,8 +1653,17 @@ function onTileEntrance(tile)
             player.health -= 10;
             addFear(5);
             updateHealth();
-            player.tile.trigger = "disabled";
-            player.tile.graphic.gotoAndPlay("disabled");
+            //player.tile.trigger = "disabled";
+            //player.tile.graphic.gotoAndPlay("disabled");
+			player.tile.triggerState = "disabled";
+			for(var i = 0; i < triggers.length; i++)
+			{
+				if(triggers[i].x == player.graphic.x && triggers[i].y == player.graphic.y)
+				{
+					trigger[i].gotoAndPlay("disabled");
+					break;
+				}
+			}
             if(player.health <= 0)
             {
                 //gameover
