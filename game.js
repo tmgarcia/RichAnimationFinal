@@ -66,18 +66,19 @@ manifest = [
     {src:"Textures/forest_Exit.png", id:"forest_Exit"},
     {src:"playerKnight.png", id:"player"},
     {src:"wispSprite.png", id:"wisp"},
-    {src:"currentLevel_TileContents.csv", id:"currentLevel_TC", type:createjs.LoadQueue.TEXT},
-    {src:"currentLevel_TileGraphics.csv", id:"currentLevel_TG", type:createjs.LoadQueue.TEXT},
-    {src:"currentLevel_TileTriggerStates.csv", id:"currentLevel_TTS", type:createjs.LoadQueue.TEXT},
-    {src:"currentLevel_TileTriggerTypes.csv", id:"currentLevel_TTT", type:createjs.LoadQueue.TEXT},
-    {src:"currentLevel_TileEntities.csv", id:"level0_TE", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/currentLevel_TileContents.csv", id:"currentLevel_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/currentLevel_TileGraphics.csv", id:"currentLevel_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/currentLevel_TileTriggerStates.csv", id:"currentLevel_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/currentLevel_TileTriggerTypes.csv", id:"currentLevel_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/currentLevel_TileEntities.csv", id:"currentLevel_TE", type:createjs.LoadQueue.TEXT},
     {src:"fog.png", id:"fogOfWar"},
     {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
     {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
     {src:"Sounds/UpbeatFight.mp3", id:"upbeat"},
     {src:"weaponBar.png", id:"weaponBar"},
     {src:"healthPotion.png", id:"healthPotion"},
-    {src:"bone.png", id:"bones"}
+    {src:"bone.png", id:"bones"},
+	{src:"bearTrapSprite.png", id:"bearTrap"}
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -167,7 +168,7 @@ function loadProgress(evt)
 }
  
 var defaultTile, invalidTile, unavailableTile, forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
-var wispTemplate;
+var wispTemplate, bearTrap;
 var weaponBarGraphic, healthPotion, bones;
 function loadComplete(evt)
 {
@@ -181,6 +182,20 @@ function loadComplete(evt)
     bones = new createjs.Bitmap(queue.getResult("bones"));
     healthPotion = new createjs.Bitmap(queue.getResult("healthPotion"));
     
+	var bearTrap_Sheet = new createjs.SpriteSheet(
+	{
+	    images: [queue.getResult("bearTrap")],
+        frames: [[0,0,51,51,0,-0.05,0],[51,0,51,51,0,-0.05,0],[0,51,51,51,0,-0.05,0]],
+        animations:
+        {
+            enabled: [0, 0, "enabled"],
+            disabled: [1, 1, "disabled"],
+            hidden: [2, 2, "hidden"]
+        }
+	});
+	
+	bearTrap = new createjs.Sprite(bearTrap_Sheet); 
+	
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("default")],
@@ -405,7 +420,7 @@ function loadComplete(evt)
     level0Map[1] = $.csv.toArrays(levelRaws[0][1]);
     level0Map[2] = $.csv.toArrays(levelRaws[0][2]);
     level0Map[3] = $.csv.toArrays(levelRaws[0][3]);
-	level0Map[3] = $.csv.toArrays(levelRaws[0][4]);
+	level0Map[4] = $.csv.toArrays(levelRaws[0][4]);
     
     initLevels();
     addLevel(0);
@@ -459,7 +474,8 @@ function initBoard()
         board[i] = [];
         for(var j = 0; j < GameBoard.width; j++)
         {
-            board[i][j] = Tile("default", "none", ["none"], "none");
+			//graphicName, contentArray, triggrType, triggrState, entit
+            board[i][j] = Tile("default", ["none"], "none", "none", "none");
             board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
@@ -865,6 +881,23 @@ function killEnemy(enemy)
     console.log("enemy DEAD");
     enemy.graphic.visible = false;
     gameplayContainer.removeChild(enemy.graphic);
+		
+	if(enemy.state == PlayerStates.movingDown)
+	{
+		board[enemy.tileY + 1][enemy.tileX].isEntityMovingTo = false;
+	}
+	else if(enemy.state == PlayerStates.movingLeft)
+	{
+		board[enemy.tileY][enemy.tileX - 1].isEntityMovingTo = false;
+	}
+	else if(enemy.state == PlayerStates.movingRight)
+	{
+		board[enemy.tileY][enemy.tileX + 1].isEntityMovingTo = false;
+	}
+		else if(enemy.state == PlayerStates.movingUp)
+	{
+		board[enemy.tileY - 1][enemy.tileX].isEntityMovingTo = false;
+	}
 }
 function killPlayer()
 {
@@ -1300,9 +1333,7 @@ function resetGameplayScreen()
 		gameplayContainer.removeChild(triggers[i]);  
 	}
     
-	trigger = [];
-	
-    console.log(items);
+	triggers = [];
     
     resetGameTimer();
     loadLevelMap(0, 0, 0);
@@ -1629,7 +1660,7 @@ function onTileEntrance(tile)
 			{
 				if(triggers[i].x == player.graphic.x && triggers[i].y == player.graphic.y)
 				{
-					trigger[i].gotoAndPlay("disabled");
+					triggers[i].gotoAndPlay("disabled");
 					break;
 				}
 			}
