@@ -39,8 +39,10 @@ var GameBoard = Object.freeze({tileWidth: 50, tileHeight: 50, startX: 0, startY:
 var CollisionTiles = ["forest_DirtTree", "forest_GrassTree"];
 var PlayerStates = Object.freeze({idle:0, movingUp:1, movingDown: 2, movingLeft:3, movingRight:4, attacking:5});
 var Directions = Object.freeze({Up:0, Right:1, Down:2, Left:3});
+var LEVEL = Object.freeze({TG: 0, TC: 1, TTT:2, TTS:3, TE:4});
 var board;
 var levels;
+var activeLevel = {currentLevel: -1, currentMapX: -1, currentMapY: -1, maps: []};
 var queue;
 var player = Player();
 var enemies = [];
@@ -71,6 +73,17 @@ manifest = [
     {src:"Levels/currentLevel_TileTriggerStates.csv", id:"currentLevel_TTS", type:createjs.LoadQueue.TEXT},
     {src:"Levels/currentLevel_TileTriggerTypes.csv", id:"currentLevel_TTT", type:createjs.LoadQueue.TEXT},
     {src:"Levels/currentLevel_TileEntities.csv", id:"currentLevel_TE", type:createjs.LoadQueue.TEXT},
+	{src:"Levels/test_0-0_V1_Jeremy_TileContents.csv", id:"test_0-0_V1_Jeremy_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/test_0-0_V1_Jeremy_TileGraphics.csv", id:"test_0-0_V1_Jeremy_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/test_0-0_V1_Jeremy_TileTriggerStates.csv", id:"test_0-0_V1_Jeremy_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/test_0-0_V1_Jeremy_TileTriggerTypes.csv", id:"test_0-0_V1_Jeremy_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/test_0-0_V1_Jeremy_TileEntities.csv", id:"test_0-0_V1_Jeremy_TE", type:createjs.LoadQueue.TEXT},
+	{src:"Levels/test_0-1_V1_Jeremy_TileContents.csv", id:"test_0-1_V1_Jeremy_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/test_0-1_V1_Jeremy_TileGraphics.csv", id:"test_0-1_V1_Jeremy_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/test_0-1_V1_Jeremy_TileTriggerStates.csv", id:"test_0-1_V1_Jeremy_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/test_0-1_V1_Jeremy_TileTriggerTypes.csv", id:"test_0-1_V1_Jeremy_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/test_0-1_V1_Jeremy_TileEntities.csv", id:"test_0-1_V1_Jeremy_TE", type:createjs.LoadQueue.TEXT},
+	
     {src:"fog.png", id:"fogOfWar"},
     {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
     {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
@@ -180,6 +193,7 @@ function loadComplete(evt)
     fogOfWar = new createjs.Bitmap(queue.getResult("fogOfWar"));
     weaponBarGraphic = new createjs.Bitmap(queue.getResult("weaponBar"));
     bones = new createjs.Bitmap(queue.getResult("bones"));
+	bones.name = "bones"
     healthPotion = new createjs.Bitmap(queue.getResult("healthPotion"));
     
 	var bearTrap_Sheet = new createjs.SpriteSheet(
@@ -195,6 +209,7 @@ function loadComplete(evt)
 	});
 	
 	bearTrap = new createjs.Sprite(bearTrap_Sheet); 
+	bearTrap.name = "bearTrap";
 	
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
@@ -299,7 +314,8 @@ function loadComplete(evt)
         }
     });
     forest_GrassTree = new createjs.Sprite(forest_GrassTree_Sheet); 
-
+	forest_GrassTree.alpha = 0.80;
+	
     var forest_Exit_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_Exit")],
@@ -407,25 +423,64 @@ function loadComplete(evt)
     btnMenu = new createjs.Sprite(buttonSheet);
     btnContinue = new createjs.Sprite(buttonSheet);
 
-    levelRaws = [];
+    var levelRaws = [];
     levelRaws[0] = [];
-	levelRaws[0][0] = queue.getResult("currentLevel_TG");
-	levelRaws[0][1] = queue.getResult("currentLevel_TC");
-    levelRaws[0][2] = queue.getResult("currentLevel_TTT");
-	levelRaws[0][3] = queue.getResult("currentLevel_TTS");
-    levelRaws[0][4] = queue.getResult("currentLevel_TE");
+	levelRaws[0][0] = [];
+	levelRaws[0][0][0] = [];
+	levelRaws[1] = [];
+	levelRaws[1][0] = [];
+	levelRaws[1][0][0] = [];
+	levelRaws[1][0][1] = [];
+	//[LEVEL][MAP_X][MAP_Y][RAW_LOAD_TYPE]
+	levelRaws[0][0][0][LEVEL.TG] 		= queue.getResult("currentLevel_TG");
+	levelRaws[0][0][0][LEVEL.TC] 		= queue.getResult("currentLevel_TC");
+    levelRaws[0][0][0][LEVEL.TTT] 	= queue.getResult("currentLevel_TTT");
+	levelRaws[0][0][0][LEVEL.TTS] 	= queue.getResult("currentLevel_TTS");
+    levelRaws[0][0][0][LEVEL.TE]		= queue.getResult("currentLevel_TE");
+	levelRaws[1][0][0][LEVEL.TG] 		= queue.getResult("test_0-0_V1_Jeremy_TG");
+	levelRaws[1][0][0][LEVEL.TC] 		= queue.getResult("test_0-0_V1_Jeremy_TC");
+	levelRaws[1][0][0][LEVEL.TTT] 	= queue.getResult("test_0-0_V1_Jeremy_TTT");
+	levelRaws[1][0][0][LEVEL.TTS] 	= queue.getResult("test_0-0_V1_Jeremy_TTS");
+	levelRaws[1][0][0][LEVEL.TE] 		= queue.getResult("test_0-0_V1_Jeremy_TE");
+	levelRaws[1][0][1][LEVEL.TG]  	= queue.getResult("test_0-1_V1_Jeremy_TG");
+	levelRaws[1][0][1][LEVEL.TC]  	= queue.getResult("test_0-1_V1_Jeremy_TC");
+	levelRaws[1][0][1][LEVEL.TTT]	= queue.getResult("test_0-1_V1_Jeremy_TTT");
+	levelRaws[1][0][1][LEVEL.TTS]	= queue.getResult("test_0-1_V1_Jeremy_TTS");
+	levelRaws[1][0][1][LEVEL.TE]  	= queue.getResult("test_0-1_V1_Jeremy_TE");
 
-    level0Map = [];
-    level0Map[0] = $.csv.toArrays(levelRaws[0][0]);
-    level0Map[1] = $.csv.toArrays(levelRaws[0][1]);
-    level0Map[2] = $.csv.toArrays(levelRaws[0][2]);
-    level0Map[3] = $.csv.toArrays(levelRaws[0][3]);
-	level0Map[4] = $.csv.toArrays(levelRaws[0][4]);
-    
+    var preMap = [];
+	preMap[0] = [];
+	preMap[0][0] = [];
+	preMap[0][0][0] = [];
+	preMap[1] = [];
+	preMap[1][0] = [];
+	preMap[1][0][0] = [];
+	preMap[1][0][1] = [];
+	
+	preMap[0][0][0][LEVEL.TG] 		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TG])
+	preMap[0][0][0][LEVEL.TC] 		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TC])
+    preMap[0][0][0][LEVEL.TTT] 	= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TTT])
+	preMap[0][0][0][LEVEL.TTS] 	= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TTS])
+    preMap[0][0][0][LEVEL.TE]		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TE])
+	preMap[1][0][0][LEVEL.TG] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TG])
+	preMap[1][0][0][LEVEL.TC] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TC])
+	preMap[1][0][0][LEVEL.TTT] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTT])
+	preMap[1][0][0][LEVEL.TTS] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTS])
+	preMap[1][0][0][LEVEL.TE] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TE])
+	preMap[1][0][1][LEVEL.TG]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TG])
+	preMap[1][0][1][LEVEL.TC]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TC])
+	preMap[1][0][1][LEVEL.TTT]		= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTT])
+	preMap[1][0][1][LEVEL.TTS]	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTS])
+	preMap[1][0][1][LEVEL.TE]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TE])
+	
     initLevels();
     addLevel(0);
-    addLevelMap(0, 0, 0, level0Map[0], level0Map[1], level0Map[2], level0Map[3], level0Map[4]);
-
+    //addLevelMap(0, 0, 0, level0Map[0], level0Map[1], level0Map[2], level0Map[3], level0Map[4]);
+	addLevelMap(0, 0, 0, preMap[0][0][0]);
+	addLevel(1);
+	addLevelMap(1, 0, 0, preMap[1][0][0]);
+	addLevelMap(1, 0, 1, preMap[1][0][1]);
+	
     setupButtons();
     setupTitleScreen();
     setupGameOverScreen();
@@ -493,21 +548,39 @@ function addLevel(level)
     levels[level] = [];
 }
 
-function addLevelMap(level, x, y, graphicNames, contents, triggerTypes, triggerStates, entities)
+function addLevelMap(level, x, y, levelData)//graphicNames, contents, triggerTypes, triggerStates, entities)
 {
-    levels[level][x] = [];
-    levels[level][x][y] = Map(graphicNames, contents, triggerTypes, triggerStates, entities);
+	if(levels[level][x]  == null)
+	{
+		levels[level][x] = [];
+	}
+    levels[level][x][y] = Map(levelData[LEVEL.TG], levelData[LEVEL.TC], levelData[LEVEL.TTT], levelData[LEVEL.TTS], levelData[LEVEL.TE])
+	//graphicNames, contents, triggerTypes, triggerStates, entities);
 }
 
-function loadLevelMap(level, x, y)
+function loadLevelMap(level, x, y, _flag)
 {
+	clearThings();
+	console.log(level + " " + x + " " + y);
+	//if(activeLevel.number == level && activeLevel.maps[x][y] != null)
+	//{
+	//	loadActiveLevelMap(level, x, y);
+	//}
+	//else
+	//{
+		activeLevel.currentLevel = level;
+		activeLevel.currentMapX = x;
+		activeLevel.currentMapY = y;
+	//	clearActiveLevels();
+	//}
+
     var isPlayeStartFound = false;
     for(var i = 0; i < GameBoard.height; i++)
     {
         for(var j = 0; j < GameBoard.width; j++)
         {
             gameplayContainer.removeChild(board[i][j].graphic);
-            //board[i][j] = levels[level][x][y][i][j];
+            //board[i][j] = levels[x][y][i][j];
             board[i][j].contents = $.extend(true, [], levels[level][x][y][i][j].contents);
             board[i][j].triggerState = levels[level][x][y][i][j].triggerState;
 			board[i][j].triggerType = levels[level][x][y][i][j].triggerType;
@@ -518,7 +591,7 @@ function loadLevelMap(level, x, y)
             board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
             board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
             gameplayContainer.addChild(board[i][j].graphic);
-            if(!isPlayeStartFound && board[i][j].entity == "player")
+            if(!isPlayeStartFound && board[i][j].entity == "player" && _flag == null)
             {
                 isPlayeStartFound = true;
                 player.graphic.x = board[i][j].graphic.x;
@@ -578,6 +651,174 @@ function loadLevelMap(level, x, y)
     
     gameplayContainer.removeChild(player.graphic);
     gameplayContainer.addChild(player.graphic);
+}
+
+function clearActiveLevels()
+{
+	activeLevel.maps = [];
+}
+
+function loadActiveLevelMap(level, x, y)
+{
+	if(activeLevel.maps == null || activeLevel.maps[x] == null || activeLevel.maps[x][y] == null)
+	{
+		loadLevelMap(level, x, y, true);
+	}
+	else{
+	clearThings();
+	activeLevel.currentLevel = level;
+	activeLevel.currentMapX = x;
+	activeLevel.currentMapY = y;
+    for(var i = 0; i < GameBoard.height; i++)
+    {
+        for(var j = 0; j < GameBoard.width; j++)
+        {
+            gameplayContainer.removeChild(board[i][j].graphic);
+            board[i][j].contents = $.extend(true, [], activeLevel.maps[x][y][i][j].contents);
+            board[i][j].triggerState = activeLevel.maps[x][y][i][j].triggerState;
+			board[i][j].triggerType = activeLevel.maps[x][y][i][j].triggerType;
+            board[i][j].graphic = activeLevel.maps[x][y][i][j].graphic.clone();
+            board[i][j].entity = activeLevel.maps[x][y][i][j].entity;
+            board[i][j].isEntityMovingTo = activeLevel.maps[x][y][i][j].isEntityMovingTo;
+            
+            board[i][j].graphic.x = GameBoard.startX + (j * GameBoard.tileWidth);
+            board[i][j].graphic.y = GameBoard.startY + (i * GameBoard.tileHeight);
+            gameplayContainer.addChild(board[i][j].graphic);
+            
+			///////ITEMS/////////
+            for(var k = 0; k < board[i][j].contents.length; k++)
+            {
+                if(board[i][j].contents[k] == "healthPotion")
+                {
+                    items.push(healthPotion.clone());
+                    items[items.length-1].x = board[i][j].graphic.x;
+                    items[items.length-1].y = board[i][j].graphic.y;
+                    gameplayContainer.addChild(items[items.length-1]);
+                }
+                else if(board[i][j].contents[k] == "bones")
+                {
+                    items.push(bones.clone());
+                    items[items.length-1].x = board[i][j].graphic.x;
+                    items[items.length-1].y = board[i][j].graphic.y;
+                    gameplayContainer.addChild(items[items.length-1]);
+                }
+            }
+			
+            ///////TRIGGERS/////////
+			if(board[i][j].triggerType == "bearTrap")
+			{
+				triggers.push(bearTrap.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			
+			///////ENEMIES/////////
+            if(board[i][j].entity == "wisp")
+            {
+                enemies.push(new Enemy(board[i][j].entity));
+                enemies[enemies.length-1].graphic.x = board[i][j].graphic.x;
+                enemies[enemies.length-1].graphic.y = board[i][j].graphic.y;
+                enemies[enemies.length-1].tileX = j;
+                enemies[enemies.length-1].tileY = i;
+                enemies[enemies.length-1].tile = board[i][j];
+            }
+        }  
+    }
+    
+    for(var i = 0; i < enemies.length; i++)
+    {
+        //gameplayContainer.removeChild(player.graphic);
+        gameplayContainer.addChild(enemies[i].graphic);
+    }
+    
+    gameplayContainer.removeChild(player.graphic);
+    gameplayContainer.addChild(player.graphic);
+	}
+	
+	if(player.tileX == 0)
+	{
+	    player.graphic.x = board[player.tileY][GameBoard.width - 1].graphic.x;
+        player.graphic.y = board[player.tileY][GameBoard.width - 1].graphic.y;
+        player.tileX = GameBoard.width - 1;
+        player.tileY = player.tileY;
+        player.tile = board[player.tileY][player.tileX];
+	}
+	else if(player.tileX == GameBoard.width - 1)
+	{
+		player.graphic.x = board[player.tileY][0].graphic.x;
+        player.graphic.y = board[player.tileY][0].graphic.y;
+        player.tileX = 0;
+        player.tileY = player.tileY;
+        player.tile = board[player.tileY][player.tile];
+	}
+	else if(player.tileY == 0)
+	{
+		player.graphic.x = board[GameBoard.height - 1][player.tileX].graphic.x;
+        player.graphic.y = board[GameBoard.height - 1][player.tileX].graphic.y;
+        player.tileX = player.tileX;
+        player.tileY = GameBoard.height - 1;
+        player.tile = board[player.tileY][player.tileX];
+	}
+	else if(player.tileY ==  GameBoard.height - 1)
+	{
+		player.graphic.x = board[0][player.tileX].graphic.x;
+        player.graphic.y = board[0][player.tileX].graphic.y;
+        player.tileX = player.tileX;
+        player.tileY = 0;
+        player.tile = board[player.tileY][player.tileX];
+	}
+	else
+	{
+		console.log(player);
+		throw "Loading_Area_While_Player_Isnt_At_Edge_Exception";
+	}
+}
+
+function saveActiveLevelMap(level, x, y)
+{
+	if(activeLevel.maps == null)
+	{
+		activeLevel.maps = [];
+	}
+	
+	if(activeLevel.maps[x] == null)
+	{
+		activeLevel.maps[x] = [];
+	}
+	
+	activeLevel.maps[x][y] = [];
+	
+	activeLevel.maps[x][y] = $.extend(true, [], levels[level][x][y]);
+	
+	    for(var i = 0; i < GameBoard.height; i++)
+		{
+			for(var j = 0; j < GameBoard.width; j++)
+			{
+				activeLevel.maps[x][y][i][j].entity = "none"
+				activeLevel.maps[x][y][i][j].contents = ["none"];
+				activeLevel.maps[x][y][i][j].triggerType = "none";
+				activeLevel.maps[x][y][i][j].triggerState = "none";
+			}
+		}
+		
+		//////////////////////Only one item is carrying over atm/////////////////
+		for(var i = 0; i < items.length; i++)
+		{
+			activeLevel.maps[x][y][items[i].y / 50 - 1][items[i].x / 50 ].contents[0] = items[i].name;
+		}
+		
+		for(var i = 0; i < enemies.length; i++)
+		{
+			activeLevel.maps[x][y][enemies[i].tileY][enemies[i].tileX].entity = enemies[i].name;
+		}
+		
+		for(var i = 0; i < triggers.length; i++)
+		{
+			activeLevel.maps[x][y][triggers[i].y / 50 - 1][triggers[i].x / 50].triggerState = triggers[i].currentAnimation;
+			activeLevel.maps[x][y][triggers[i].y / 50 - 1][triggers[i].x / 50].triggerType = triggers[i].name;
+		}
 }
     
 function Map(graphicNames, contents, triggerTypes, triggerStates, entities)
@@ -692,6 +933,8 @@ function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
 		switch(triggrType)
 		{
 			case "bearTrap":
+				break;
+			case "jump":
 				break;
 			default:
 				console.log("Failed to load tile trigger type from string. Setting to none.");
@@ -1315,28 +1558,11 @@ function resetGameplayScreen()
 {
 	score = -1;
 	addScore(1);
-    for(var i = 0; i < enemies.length; i++)
-    {
-        gameplayContainer.removeChild(enemies[i].graphic);  
-    }
-    enemies = [];
-    
-    for(var i = 0; i < items.length; i++)
-    {
-        gameplayContainer.removeChild(items[i]);  
-    }
 	
-    items = [];
-	
-	for(var i = 0; i < triggers.length; i++)
-	{
-		gameplayContainer.removeChild(triggers[i]);  
-	}
-    
-	triggers = [];
-    
+	clearThings();
+
     resetGameTimer();
-    loadLevelMap(0, 0, 0);
+    loadLevelMap(1, 0, 1);
     gameplayContainer.removeChild(fogOfWar);
     gameplayContainer.addChild(fogOfWar);
     gameplayContainer.addChild(statContainer);
@@ -1346,6 +1572,43 @@ function resetGameplayScreen()
     resetFear();
     updateHealth();
     createjs.Sound.play("backGroundMus", {loop:-1});
+}
+
+function clearThings()
+{
+	clearEnemies();
+	clearItems();
+	clearTriggers();
+}
+	
+function clearEnemies()
+{
+	for(var i = 0; i < enemies.length; i++)
+	{
+		gameplayContainer.removeChild(enemies[i].graphic);  
+	}
+	enemies = [];
+}
+
+function clearItems()
+{
+	for(var i = 0; i < items.length; i++)
+	{
+		gameplayContainer.removeChild(items[i]);  
+	}
+	
+	items = [];
+}
+
+function clearTriggers()
+{
+	
+	for(var i = 0; i < triggers.length; i++)
+	{
+		gameplayContainer.removeChild(triggers[i]);  
+	}
+    
+	triggers = [];
 }
 //endregion
 /*----------------------------Game Over----------------------------*/
@@ -1646,15 +1909,50 @@ function onTileEntrance(tile)
         }
     }
     
-	////////////DOES NOT YET CHECK TRIGGER TYPE/////////////////////
+	if(tile.triggerState != "disabled" && tile.triggerState != "none")
+	{
+		switch(tile.triggerType)
+		{
+			case "bearTrap":
+			    player.health -= 10;
+				addFear(5);
+				updateHealth();
+				if(player.health <= 0)
+				{
+					//gameover
+					gameState = GameStates.gameOver;
+				}
+				 break;
+			case "jump":
+				saveActiveLevelMap(activeLevel.currentLevel, activeLevel.currentMapX, activeLevel.currentMapY);
+				if(player.tileX == 0)
+				{
+					loadActiveLevelMap(activeLevel.currentLevel, activeLevel.currentMapX - 1, activeLevel.currentMapY);
+				}
+				else if(player.tileX == GameBoard.width - 1)
+				{
+					loadActiveLevelMap(activeLevel.currentLevel, activeLevel.currentMapX + 1, activeLevel.currentMapY);
+				}
+				else if(player.tileY == 0)
+				{
+					loadActiveLevelMap(activeLevel.currentLevel, activeLevel.currentMapX, activeLevel.currentMapY - 1);
+
+				}
+				else if(player.tileY ==  GameBoard.height - 1)
+				{
+					loadActiveLevelMap(activeLevel.currentLevel, activeLevel.currentMapX, activeLevel.currentMapY + 1);
+				}
+				else
+				{
+					throw "Loading_Area_While_Player_Isnt_At_Edge_Exception_2";
+				}
+				break;
+		}
+	}	
+	
     switch(tile.triggerState)
     {
         case "enabled":
-            player.health -= 10;
-            addFear(5);
-            updateHealth();
-            //player.tile.trigger = "disabled";
-            //player.tile.graphic.gotoAndPlay("disabled");
 			player.tile.triggerState = "disabled";
 			for(var i = 0; i < triggers.length; i++)
 			{
@@ -1664,28 +1962,8 @@ function onTileEntrance(tile)
 					break;
 				}
 			}
-            if(player.health <= 0)
-            {
-                //gameover
-                gameState = GameStates.gameOver;
-            }
-            break;
-        case "permanent":
-            player.health -= 10;
-            addFear(5);
-            updateHealth();
-            if(player.health <= 0)
-            {
-                //gameover
-                gameState = GameStates.gameOver;
-            }
             break;
         case "hidden":
-            player.health -= 10;
-            addFear(5);
-            updateHealth();
-            //player.tile.trigger = "disabled";
-            //player.tile.graphic.gotoAndPlay("disabled");
 			player.tile.triggerState = "disabled";
 			for(var i = 0; i < triggers.length; i++)
 			{
@@ -1695,11 +1973,17 @@ function onTileEntrance(tile)
 					break;
 				}
 			}
-            if(player.health <= 0)
-            {
-                //gameover
-                gameState = GameStates.gameOver;
-            }
+            break;
+		case "hiddenToPermanent":
+			player.tile.triggerState = "permanent";
+			for(var i = 0; i < triggers.length; i++)
+			{
+				if(triggers[i].x == player.graphic.x && triggers[i].y == player.graphic.y)
+				{
+					trigger[i].gotoAndPlay("enabled");
+					break;
+				}
+			}
             break;
     }
     
