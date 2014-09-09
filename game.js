@@ -23,6 +23,7 @@ var KC_J = 74;
 var KC_SPACE = 32;
 var KC_SHIFT = 16;
 var KC_ENTER = 13;
+var KC_M = 77;
 var context;
 var canvasWidth = 800;
 var canvasHeight = 600;
@@ -66,22 +67,21 @@ manifest = [
     {src:"Textures/unavailable.png", id:"unavailable"},
     {src:"Textures/default.png", id:"default"},
     {src:"Textures/forest_Exit.png", id:"forest_Exit"},
-	
-	{src:"Textures/cave_rock.png", 					id:"cave_rock"},
-	{src:"Textures/cave_rockLight.png", 			id:"cave_rockLight"},
-	{src:"Textures/cave_rockDark.png", 			id:"cave_rockDark"},
-	{src:"Textures/cave_rockBoulder.png", 		id:"cave_rockBoulder"},
-	{src:"Textures/cave_rockHole.png", 			id:"cave_rockHole"},
-	{src:"Textures/cave_rockMossy.png", 			id:"cave_rockMossy"},
-	{src:"Textures/cave_rockWatery.png", 		id:"cave_rockWatery"},
-	{src:"Textures/cave_rockWaterPuddle.png",id:"cave_rockWaterPuddle"},
-	{src:"Textures/cave_rockBloody.png", 			id:"cave_rockBloody"},
-	{src:"Textures/cave_rockBloodPuddle.png", id:"cave_rockBloodPuddle"},
-	{src:"Textures/cave_rockLava.png", 			id:"cave_rockLava"},
-	{src:"Textures/cave_sandstone.png", 			id:"cave_sandstone"},
-	{src:"Textures/cave_sandstoneMossy.png",	id:"cave_sandstoneMossy"},
-	{src:"Textures/cave_sandstoneWatery.png",id:"cave_sandstoneWatery"},
-	{src:"Textures/cave_lava.png",						id:"cave_lava"},
+	{src:"Textures/cave_rock.png", 						id:"cave_rock"},
+	{src:"Textures/cave_rockLight.png", 				id:"cave_rockLight"},
+	{src:"Textures/cave_rockDark.png", 				id:"cave_rockDark"},
+	{src:"Textures/cave_rockBoulder.png", 			id:"cave_rockBoulder"},
+	{src:"Textures/cave_rockHole.png", 				id:"cave_rockHole"},
+	{src:"Textures/cave_rockMossy.png", 				id:"cave_rockMossy"},
+	{src:"Textures/cave_rockWatery.png", 			id:"cave_rockWatery"},
+	{src:"Textures/cave_rockWaterPuddle.png",	id:"cave_rockWaterPuddle"},
+	{src:"Textures/cave_rockBloody.png", 				id:"cave_rockBloody"},
+	{src:"Textures/cave_rockBloodPuddle.png", 	id:"cave_rockBloodPuddle"},
+	{src:"Textures/cave_rockLava.png", 				id:"cave_rockLava"},
+	{src:"Textures/cave_sandstone.png", 				id:"cave_sandstone"},
+	{src:"Textures/cave_sandstoneMossy.png",		id:"cave_sandstoneMossy"},
+	{src:"Textures/cave_sandstoneWatery.png",	id:"cave_sandstoneWatery"},
+	{src:"Textures/cave_lava.png",							id:"cave_lava"},
     {src:"playerKnight.png", id:"player"},
     {src:"wispSprite.png", id:"wisp"},
     {src:"Levels/currentLevel_TileContents.csv", id:"currentLevel_TC", type:createjs.LoadQueue.TEXT},
@@ -105,6 +105,7 @@ manifest = [
     {src:"Sounds/UpbeatFight.mp3", id:"upbeat"},
     {src:"weaponBar.png", id:"weaponBar"},
     {src:"healthPotion.png", id:"healthPotion"},
+	{src:"comfortSheepSmall.png", id:"comfortSheep"},
     {src:"bone.png", id:"bones"},
 	{src:"bearTrapSprite.png", id:"bearTrap"},
 	{src:"blankSprite.png", id:"blank"}
@@ -199,7 +200,7 @@ function loadProgress(evt)
 var defaultTile, invalidTile, unavailableTile, forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
 var cave_rock, cave_rockLight, cave_rockDark, cave_rockBoulder, cave_rockHole, cave_rockMossy, cave_rockWatery, cave_rockWaterPuddle, cave_rockBloody,cave_rockBloodPuddle, cave_rockLava, cave_sandstone, cave_sandstoneMossy,cave_sandstoneWatery, cave_lava;
 var wispTemplate, bearTrap;
-var weaponBarGraphic, healthPotion, bones, jump;
+var weaponBarGraphic, healthPotion, bones, jump, comfortSheep;
 function loadComplete(evt)
 {
     stage.removeChild(loadProgressLabel, loadingBarContainer);
@@ -213,7 +214,8 @@ function loadComplete(evt)
 	bones.name = "bones"
     healthPotion = new createjs.Bitmap(queue.getResult("healthPotion"));
 	healthPotion.name = "healthPotion";
-    
+	comfortSheep = new createjs.Bitmap(queue.getResult("comfortSheep"));
+    comfortSheep.name = "comfortSheep";
 	var bearTrap_Sheet = new createjs.SpriteSheet(
 	{
 	    images: [queue.getResult("bearTrap")],
@@ -340,7 +342,6 @@ function loadComplete(evt)
         }
     });
     forest_GrassTree = new createjs.Sprite(forest_GrassTree_Sheet); 
-	forest_GrassTree.alpha = 0.80;
 	
     var forest_Exit_Sheet = new createjs.SpriteSheet(
     {
@@ -823,6 +824,13 @@ function loadLevelMap(level, x, y, _flag)
                     items[items.length-1].y = board[i][j].graphic.y;
                     gameplayContainer.addChild(items[items.length-1]);
                 }
+				else if(board[i][j].contents[k] == "comfortSheep")
+                {
+                    items.push(comfortSheep.clone());
+                    items[items.length-1].x = board[i][j].graphic.x;
+                    items[items.length-1].y = board[i][j].graphic.y;
+                    gameplayContainer.addChild(items[items.length-1]);
+                }
             }
 			
             ///////TRIGGERS/////////
@@ -911,6 +919,13 @@ function loadActiveLevelMap(level, x, y)
                 else if(board[i][j].contents[k] == "bones")
                 {
                     items.push(bones.clone());
+                    items[items.length-1].x = board[i][j].graphic.x;
+                    items[items.length-1].y = board[i][j].graphic.y;
+                    gameplayContainer.addChild(items[items.length-1]);
+                }
+				else if(board[i][j].contents[k] == "comfortSheep")
+                {
+                    items.push(comfortSheep.clone());
                     items[items.length-1].x = board[i][j].graphic.x;
                     items[items.length-1].y = board[i][j].graphic.y;
                     gameplayContainer.addChild(items[items.length-1]);
@@ -1639,6 +1654,16 @@ function handleKeyUp(evt)
         case KC_SPACE: break;
         case KC_SHIFT: break;
         case KC_ENTER: break;
+		case KC_M:
+		    if(backGroundMus.getMute() !== 0)
+            {
+                backGroundMus.setMute(0);
+            }
+            else
+            {
+                backGroundMus.setMute(1);
+            }
+            break;
     }
 }
 
@@ -1850,6 +1875,8 @@ function setupGameplayScreen()
     stage.addChild(gameplayContainer);
     gameplayContainer.visible = false;
 }
+
+var backGroundMus;
 function resetGameplayScreen()
 {
 	score = -1;
@@ -1867,7 +1894,7 @@ function resetGameplayScreen()
     player.graphic.gotoAndPlay("idleUp");
     resetFear();
     updateHealth();
-    createjs.Sound.play("backGroundMus", {loop:-1});
+    backGroundMus = createjs.Sound.play("backGroundMus", {loop:-1});
 }
 
 function clearThings()
@@ -2179,6 +2206,9 @@ function onTileEntrance(tile)
         switch(tile.contents[i])   
         {
             case "comfortSheep":
+                tile.contents[i] = "none";
+                //player.fear += 50;
+                addFear(-50);
                 break;
             case "healthPotion":
                 tile.contents[i] = "none";
@@ -2316,6 +2346,10 @@ function addFear(percent)
     {
         player.fear = 100;
     }
+	else if(player.fear < 0)
+	{
+		player.fear = 0;
+	}
     
     statContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
     statContainer.getChildByName("fearFill").graphics.clear().beginFill("yellowgreen").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
