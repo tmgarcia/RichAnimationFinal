@@ -36,7 +36,7 @@ var frameCount, gameTimer;
 var mouseX, mouseY;
 var GameStates = Object.freeze({gameTitle:0, gameInstructions:1, gamePlay:2, gameOver:3});
 var GameBoard = Object.freeze({tileWidth: 50, tileHeight: 50, startX: 0, startY: 50, width: 16, height: 11});
-var CollisionTiles = ["forest_DirtTree", "forest_GrassTree"];
+var CollisionTiles = ["forest_DirtTree", "forest_GrassTree", "cave_rockBoulder", "cave_rockHole", "cave_lava"];
 var PlayerStates = Object.freeze({idle:0, movingUp:1, movingDown: 2, movingLeft:3, movingRight:4, attacking:5});
 var Directions = Object.freeze({Up:0, Right:1, Down:2, Left:3});
 var LEVEL = Object.freeze({TG: 0, TC: 1, TTT:2, TTS:3, TE:4});
@@ -66,6 +66,22 @@ manifest = [
     {src:"Textures/unavailable.png", id:"unavailable"},
     {src:"Textures/default.png", id:"default"},
     {src:"Textures/forest_Exit.png", id:"forest_Exit"},
+	
+	{src:"Textures/cave_rock.png", 					id:"cave_rock"},
+	{src:"Textures/cave_rockLight.png", 			id:"cave_rockLight"},
+	{src:"Textures/cave_rockDark.png", 			id:"cave_rockDark"},
+	{src:"Textures/cave_rockBoulder.png", 		id:"cave_rockBoulder"},
+	{src:"Textures/cave_rockHole.png", 			id:"cave_rockHole"},
+	{src:"Textures/cave_rockMossy.png", 			id:"cave_rockMossy"},
+	{src:"Textures/cave_rockWatery.png", 		id:"cave_rockWatery"},
+	{src:"Textures/cave_rockWaterPuddle.png",id:"cave_rockWaterPuddle"},
+	{src:"Textures/cave_rockBloody.png", 			id:"cave_rockBloody"},
+	{src:"Textures/cave_rockBloodPuddle.png", id:"cave_rockBloodPuddle"},
+	{src:"Textures/cave_rockLava.png", 			id:"cave_rockLava"},
+	{src:"Textures/cave_sandstone.png", 			id:"cave_sandstone"},
+	{src:"Textures/cave_sandstoneMossy.png",	id:"cave_sandstoneMossy"},
+	{src:"Textures/cave_sandstoneWatery.png",id:"cave_sandstoneWatery"},
+	{src:"Textures/cave_lava.png",						id:"cave_lava"},
     {src:"playerKnight.png", id:"player"},
     {src:"wispSprite.png", id:"wisp"},
     {src:"Levels/currentLevel_TileContents.csv", id:"currentLevel_TC", type:createjs.LoadQueue.TEXT},
@@ -83,7 +99,6 @@ manifest = [
     {src:"Levels/test_0-1_V1_Jeremy_TileTriggerStates.csv", id:"test_0-1_V1_Jeremy_TTS", type:createjs.LoadQueue.TEXT},
     {src:"Levels/test_0-1_V1_Jeremy_TileTriggerTypes.csv", id:"test_0-1_V1_Jeremy_TTT", type:createjs.LoadQueue.TEXT},
     {src:"Levels/test_0-1_V1_Jeremy_TileEntities.csv", id:"test_0-1_V1_Jeremy_TE", type:createjs.LoadQueue.TEXT},
-	
     {src:"fog.png", id:"fogOfWar"},
     {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
     {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
@@ -91,7 +106,8 @@ manifest = [
     {src:"weaponBar.png", id:"weaponBar"},
     {src:"healthPotion.png", id:"healthPotion"},
     {src:"bone.png", id:"bones"},
-	{src:"bearTrapSprite.png", id:"bearTrap"}
+	{src:"bearTrapSprite.png", id:"bearTrap"},
+	{src:"blankSprite.png", id:"blank"}
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -181,8 +197,9 @@ function loadProgress(evt)
 }
  
 var defaultTile, invalidTile, unavailableTile, forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
+var cave_rock, cave_rockLight, cave_rockDark, cave_rockBoulder, cave_rockHole, cave_rockMossy, cave_rockWatery, cave_rockWaterPuddle, cave_rockBloody,cave_rockBloodPuddle, cave_rockLava, cave_sandstone, cave_sandstoneMossy,cave_sandstoneWatery, cave_lava;
 var wispTemplate, bearTrap;
-var weaponBarGraphic, healthPotion, bones;
+var weaponBarGraphic, healthPotion, bones, jump;
 function loadComplete(evt)
 {
     stage.removeChild(loadProgressLabel, loadingBarContainer);
@@ -195,6 +212,7 @@ function loadComplete(evt)
     bones = new createjs.Bitmap(queue.getResult("bones"));
 	bones.name = "bones"
     healthPotion = new createjs.Bitmap(queue.getResult("healthPotion"));
+	healthPotion.name = "healthPotion";
     
 	var bearTrap_Sheet = new createjs.SpriteSheet(
 	{
@@ -211,15 +229,29 @@ function loadComplete(evt)
 	bearTrap = new createjs.Sprite(bearTrap_Sheet); 
 	bearTrap.name = "bearTrap";
 	
+	var blank_Sheet = new createjs.SpriteSheet(
+	{
+		images: [queue.getResult("blank")],
+        frames: [[0,0,51,51,0,-0.05,0],[51,0,51,51,0,-0.05,0],[0,51,51,51,0,-0.05,0]],
+        animations:
+        {
+            enabled: [0, 0, "enabled"],
+            disabled: [1, 1, "disabled"],
+            hidden: [2, 2, "hidden"]
+        }
+	});
+	
+	jump = new createjs.Sprite(blank_Sheet);
+	jump.name = "jump";
+	
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("default")],
         frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
     defaultTile = new createjs.Sprite(defaultTile_Sheet); 
@@ -227,12 +259,11 @@ function loadComplete(evt)
     var forest_Dirt_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_Dirt")],
-        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
     forest_Dirt = new createjs.Sprite(forest_Dirt_Sheet); 
@@ -240,12 +271,11 @@ function loadComplete(evt)
     var forest_DirtPath_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_DirtPath")],
-        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
     forest_DirtPath = new createjs.Sprite(forest_DirtPath_Sheet); 
@@ -253,12 +283,11 @@ function loadComplete(evt)
     var forest_DirtTree_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_DirtTree")],
-        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
     forest_DirtTree = new createjs.Sprite(forest_DirtTree_Sheet); 
@@ -266,12 +295,11 @@ function loadComplete(evt)
     var forest_DirtyGrass_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_DirtyGrass")],
-        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
     forest_DirtyGrass = new createjs.Sprite(forest_DirtyGrass_Sheet); 
@@ -279,12 +307,11 @@ function loadComplete(evt)
     var forest_Grass_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_Grass")],
-        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
     forest_Grass = new createjs.Sprite(forest_Grass_Sheet); 
@@ -292,25 +319,24 @@ function loadComplete(evt)
     var forest_GrassPath_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_GrassPath")],
-        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
+	
     forest_GrassPath = new createjs.Sprite(forest_GrassPath_Sheet); 
 
     var forest_GrassTree_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_GrassTree")],
-        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
     forest_GrassTree = new createjs.Sprite(forest_GrassTree_Sheet); 
@@ -319,15 +345,194 @@ function loadComplete(evt)
     var forest_Exit_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("forest_Exit")],
-        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0]],
         animations:
         {
-            none: [0, 0, "none"],
-            enabled: [1, 1, "enabled"],
-            disabled: [2, 2, "disabled"]
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
         }
     });
     forest_Exit = new createjs.Sprite(forest_Exit_Sheet); 
+
+    var cave_rock_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rock")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rock = new createjs.Sprite(cave_rock_Sheet); 
+	
+	var cave_rockLight_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockLight")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockLight = new createjs.Sprite(cave_rockLight_Sheet); 
+	
+	var cave_rockDark_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockDark")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockDark = new createjs.Sprite(cave_rockDark_Sheet); 
+	
+	var cave_rockBoulder_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockBoulder")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockBoulder = new createjs.Sprite(cave_rockBoulder_Sheet); 
+	
+	var cave_rockHole_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockHole")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockHole = new createjs.Sprite(cave_rockHole_Sheet); 
+	
+	var cave_rockMossy_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockMossy")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockMossy = new createjs.Sprite(cave_rockMossy_Sheet); 
+	
+	var cave_rockWatery_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockWatery")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockWatery = new createjs.Sprite(cave_rockWatery_Sheet); 
+	
+	var cave_rockWaterPuddle_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockWaterPuddle")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockWaterPuddle = new createjs.Sprite(cave_rockWaterPuddle_Sheet); 
+	
+	var cave_rockBloody_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockBloody")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockBloody = new createjs.Sprite(cave_rockBloody_Sheet); 
+	
+	var cave_rockBloodPuddle_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockBloodPuddle")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockBloodPuddle = new createjs.Sprite(cave_rockBloodPuddle_Sheet); 
+	
+	var cave_rockLava_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_rockLava")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_rockLava = new createjs.Sprite(cave_rockLava_Sheet); 
+	
+	var cave_sandstone_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_sandstone")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_sandstone = new createjs.Sprite(cave_sandstone_Sheet); 
+	
+	var cave_sandstoneMossy_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_sandstoneMossy")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_sandstoneMossy = new createjs.Sprite(cave_sandstoneMossy_Sheet); 
+	
+	var cave_sandstoneWatery_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_sandstoneWatery")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_sandstoneWatery = new createjs.Sprite(cave_sandstoneWatery_Sheet); 
+	
+	var cave_lava_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_lava")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 0, "still"],
+            enabled: [0, 0, "animated"]
+        }
+    });
+    cave_lava = new createjs.Sprite(cave_lava_Sheet); 
 
     var invalidTile_Sheet = new createjs.SpriteSheet(
     {
@@ -629,6 +834,14 @@ function loadLevelMap(level, x, y, _flag)
                 triggers[triggers.length-1].y = board[i][j].graphic.y;
                 gameplayContainer.addChild(triggers[triggers.length-1]);
 			}
+			else if(board[i][j].triggerType == "jump")
+			{
+				triggers.push(jump.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
 			
 			///////ENEMIES/////////
             if(board[i][j].entity == "wisp")
@@ -708,6 +921,14 @@ function loadActiveLevelMap(level, x, y)
 			if(board[i][j].triggerType == "bearTrap")
 			{
 				triggers.push(bearTrap.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "jump")
+			{
+				triggers.push(jump.clone());
 				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
 				triggers[triggers.length-1].x = board[i][j].graphic.x;
                 triggers[triggers.length-1].y = board[i][j].graphic.y;
@@ -896,7 +1117,82 @@ function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
             tileGraphic = forest_Exit.clone();
             tileGraphic.name = "forest_Exit";
             break;
-            
+
+        case "cave_rock":
+            tileGraphic = cave_rock.clone();
+            tileGraphic.name = "cave_rock";
+            break;			
+  
+         case "cave_rockLight":
+            tileGraphic = cave_rockLight.clone();
+            tileGraphic.name = "cave_rockLight";
+            break;
+			
+        case "cave_rockDark":
+            tileGraphic = cave_rockDark.clone();
+            tileGraphic.name = "cave_rockDark";
+            break;
+			
+        case "cave_rockBoulder":
+            tileGraphic = cave_rockBoulder.clone();
+            tileGraphic.name = "cave_rockBoulder";
+            break;
+			
+        case "cave_rockHole":
+            tileGraphic = cave_rockHole.clone();
+            tileGraphic.name = "cave_rockHole";
+            break;
+			
+        case "cave_rockMossy":
+            tileGraphic = cave_rockMossy.clone();
+            tileGraphic.name = "cave_rockMossy";
+            break;
+			
+        case "cave_rockWatery":
+            tileGraphic = cave_rockWatery.clone();
+            tileGraphic.name = "cave_rockWatery";
+            break;
+			
+        case "cave_rockWaterPuddle":
+            tileGraphic = cave_rockWaterPuddle.clone();
+            tileGraphic.name = "cave_rockWaterPuddle";
+            break;
+			
+        case "cave_rockBloody":
+            tileGraphic = cave_rockBloody.clone();
+            tileGraphic.name = "cave_rockBloody";
+            break;
+			
+        case "cave_rockBloodPuddle":
+            tileGraphic = cave_rockBloodPuddle.clone();
+            tileGraphic.name = "cave_rockBloodPuddle";
+            break;
+			
+        case "cave_rockLava":
+            tileGraphic = cave_rockLava.clone();
+            tileGraphic.name = "cave_rockLava";
+            break;
+			
+        case "cave_sandstone":
+            tileGraphic = cave_sandstone.clone();
+            tileGraphic.name = "cave_sandstone";
+            break;
+			
+        case "cave_sandstoneMossy":
+            tileGraphic = cave_sandstoneMossy.clone();
+            tileGraphic.name = "cave_sandstoneMossy";
+            break;
+			
+        case "cave_sandstoneWatery":
+            tileGraphic = cave_sandstoneWatery .clone();
+            tileGraphic.name = "cave_sandstoneWatery ";
+            break;
+			
+        case "cave_lava":
+            tileGraphic = cave_lava.clone();
+            tileGraphic.name = "cave_lava";
+            break;					
+	
         case "default":
             tileGraphic = defaultTile.clone();
             tileGraphic.name = "default";
