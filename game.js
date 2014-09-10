@@ -2537,7 +2537,7 @@ function onTileEntrance(tile)
 			{
 				if(triggers[i].x == player.graphic.x && triggers[i].y == player.graphic.y)
 				{
-					trigger[i].gotoAndPlay("disabled");
+					triggers[i].gotoAndPlay("disabled");
 					break;
 				}
 			}
