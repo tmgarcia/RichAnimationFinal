@@ -986,9 +986,9 @@ function loadComplete(evt)
         frames: {width:50, height:50, count:60, regX:25, regY:25},
         animations:
         {
-            idle: [0, 29, "idle"],
-            walk: [30, 44, "walk"],
-            attack: [45, 59, "attack"],
+            idle: [0, 29, "idle", .75],
+            walk: [30, 44, "walk", .75],
+            attack: [45, 59, "attack", .75],
         }
     });
     skeletonBlueRed = new createjs.Sprite(skeletonBlueRed_sheet);
@@ -1001,9 +1001,9 @@ function loadComplete(evt)
         frames: {width:50, height:50, count:60, regX:25, regY:25},
         animations:
         {
-            idle: [0, 29, "idle"],
-            walk: [30, 44, "walk"],
-            attack: [45, 59, "attack"],
+            idle: [0, 29, "idle", .75],
+            walk: [30, 44, "walk", .75],
+            attack: [45, 59, "attack", .75],
         }
     });
     skeletonDark = new createjs.Sprite(skeletonDark_sheet);
@@ -1016,9 +1016,9 @@ function loadComplete(evt)
         frames: {width:50, height:50, count:60, regX:25, regY:25},
         animations:
         {
-            idle: [0, 29, "idle"],
-            walk: [30, 44, "walk"],
-            attack: [45, 59, "attack"],
+            idle: [0, 29, "idle", .75],
+            walk: [30, 44, "walk", .75],
+            attack: [45, 59, "attack", .75],
         }
     });
     skeletonGold = new createjs.Sprite(skeletonGold_sheet);
@@ -1031,9 +1031,9 @@ function loadComplete(evt)
         frames: {width:50, height:50, count:60, regX:25, regY:25},
         animations:
         {
-            idle: [0, 29, "idle"],
-            walk: [30, 44, "walk"],
-            attack: [45, 59, "attack"],
+            idle: [0, 29, "idle", .75],
+            walk: [30, 44, "walk", .75],
+            attack: [45, 59, "attack", .75],
         }
     });
     skeletonGray = new createjs.Sprite(skeletonGray_sheet);
@@ -1045,17 +1045,17 @@ function loadComplete(evt)
 		var crawlerTan_sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("crawlerTan")],
-        frames: {width:50, height:50, count:60, regX:25, regY:25},
+        frames: {width:50, height:50, count:75, regX:25, regY:25},
         animations:
         {
-            idle: [0, 29, "idle"],
-            walk: [30, 50, "walk"],
-            attack: [60, 74, "attack"],
+            idle: [0, 29, "idle", .5],
+            walk: [30, 59, "walk", .5],
+            attack: [60, 74, "attack", .5],
         }
     });
     crawlerTan = new createjs.Sprite(crawlerTan_sheet);
     crawlerTan.gotoAndPlay("idle");
-	crawlerTan.name = "ground";
+	crawlerTan.name = "crawlerTan";
 	
 	/////////////////////////////////
 	
@@ -3390,7 +3390,14 @@ function handleEnemyMovement()
                 break;
             case PlayerStates.movingDown:
 				//enemies[i].graphic.rotation = 180;
-                enemies[i].graphic.y += 5;
+				if(enemies[i].graphic.name === "crawlerTan")
+				{
+					enemies[i].graphic.y += 1;
+				}
+				else
+				{
+					enemies[i].graphic.y += 5;
+				}
                 if(enemies[i].graphic.y - 25 == board[enemies[i].tileY + 1][enemies[i].tileX].graphic.y)
                 {
                     enemies[i].tile = board[enemies[i].tileY + 1][enemies[i].tileX];
@@ -3402,7 +3409,14 @@ function handleEnemyMovement()
                 break;
             case PlayerStates.movingLeft:
 			//enemies[i].graphic.rotation = 90;
-                enemies[i].graphic.x -= 5;
+				if(enemies[i].graphic.name === "crawlerTan")
+				{
+					enemies[i].graphic.x -= 1;
+				}
+				else
+				{
+					enemies[i].graphic.x -= 5;
+				}
                 if(enemies[i].graphic.x - 25 == board[enemies[i].tileY][enemies[i].tileX - 1].graphic.x)
                 {
                     enemies[i].tile = board[enemies[i].tileY][enemies[i].tileX - 1];
@@ -3414,7 +3428,15 @@ function handleEnemyMovement()
                 break;
             case PlayerStates.movingRight:
 				//enemies[i].graphic.rotation = 270;
-                enemies[i].graphic.x += 5;
+                
+				if(enemies[i].graphic.name === "crawlerTan")
+				{
+					enemies[i].graphic.x += 1;
+				}
+				else
+				{
+					enemies[i].graphic.x += 5;
+				}
                 if(enemies[i].graphic.x - 25 == board[enemies[i].tileY][enemies[i].tileX + 1].graphic.x)
                 {
                     enemies[i].tile = board[enemies[i].tileY][enemies[i].tileX + 1];
@@ -3426,7 +3448,15 @@ function handleEnemyMovement()
                 break;
             case PlayerStates.movingUp:
 			//enemies[i].graphic.rotation = 0;
-                enemies[i].graphic.y -= 5;
+				if(enemies[i].graphic.name === "crawlerTan")
+				{
+				console.log("called");
+					enemies[i].graphic.y -= 1;
+				}
+				else
+				{
+					enemies[i].graphic.y -= 5;
+				}
                 if(enemies[i].graphic.y - 25 == board[enemies[i].tileY - 1][enemies[i].tileX].graphic.y)
                 {
                     enemies[i].tile = board[enemies[i].tileY - 1][enemies[i].tileX];
@@ -3447,11 +3477,7 @@ function enemyUp(enemy)
 {
     if(isTileMoveAllowed(enemy.tileX, enemy.tileY - 1, enemy.isFlying))
     {
-		var ex = enemy.x;
-		var ey = enemies.y;
 		enemy.graphic.rotation = 0;
-		enemy.x = ex;
-		enemies.y = ey;
         enemy.state = PlayerStates.movingUp;
         enemy.graphic.gotoAndPlay("walk");
 		enemy.wantsToMove = false;
@@ -3462,11 +3488,7 @@ function enemyDown(enemy)
 {
     if(isTileMoveAllowed(enemy.tileX, enemy.tileY + 1, enemy.isFlying))
     {
-		var ex = enemy.x;
-		var ey = enemies.y;
 		enemy.graphic.rotation = 180;
-		enemy.x = ex;
-		enemies.y = ey;
         enemy.state = PlayerStates.movingDown;
         enemy.graphic.gotoAndPlay("walk");
 		enemy.wantsToMove = false;
@@ -3477,11 +3499,7 @@ function enemyLeft(enemy)
 {
     if(isTileMoveAllowed(enemy.tileX - 1, enemy.tileY, enemy.isFlying))
     {
-		var ex = enemy.x;
-		var ey = enemies.y;
-		enemy.graphic.rotation = 90;
-		enemy.x = ex;
-		enemies.y = ey;
+		enemy.graphic.rotation = 270;
         enemy.state = PlayerStates.movingLeft;
         enemy.graphic.gotoAndPlay("walk");
 		enemy.wantsToMove = false;
@@ -3494,7 +3512,7 @@ function enemyRight(enemy)
     {
 		var ex = enemy.x;
 		var ey = enemies.y;
-		enemy.graphic.rotation = 270;
+		enemy.graphic.rotation = 90;
 		enemy.x = ex;
 		enemies.y = ey;
 
