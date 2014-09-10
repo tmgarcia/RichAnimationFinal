@@ -86,11 +86,69 @@ manifest = [
 	{src:"Textures/cave_sandstoneWatery.png",		id:"cave_sandstoneWatery"},
 	{src:"Textures/cave_lava.png",					id:"cave_lava"},
     {src:"playerKnight.png", id:"player"},
-    {src:"Levels/currentLevel_TileContents.csv", id:"currentLevel_TC", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/currentLevel_TileGraphics.csv", id:"currentLevel_TG", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/currentLevel_TileTriggerStates.csv", id:"currentLevel_TTS", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/currentLevel_TileTriggerTypes.csv", id:"currentLevel_TTT", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/currentLevel_TileEntities.csv", id:"currentLevel_TE", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level0_0-0_TileContents.csv", id:"level0_0-0_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level0_0-0_TileGraphics.csv", id:"level0_0-0_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level0_0-0_TileTriggerStates.csv", id:"level0_0-0_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level0_0-0_TileTriggerTypes.csv", id:"level0_0-0_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level0_0-0_TileEntities.csv", id:"level0_0-0_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level1_0-0_TileContents.csv", id:"level1_0-0_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_0-0_TileGraphics.csv", id:"level1_0-0_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_0-0_TileTriggerStates.csv", id:"level1_0-0_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_0-0_TileTriggerTypes.csv", id:"level1_0-0_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_0-0_TileEntities.csv", id:"level1_0-0_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level1_0-1_TileContents.csv", id:"level1_0-1_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_0-1_TileGraphics.csv", id:"level1_0-1_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_0-1_TileTriggerStates.csv", id:"level1_0-1_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_0-1_TileTriggerTypes.csv", id:"level1_0-1_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_0-1_TileEntities.csv", id:"level1_0-1_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level1_1-0_TileContents.csv", id:"level1_1-0_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_1-0_TileGraphics.csv", id:"level1_1-0_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_1-0_TileTriggerStates.csv", id:"level1_1-0_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_1-0_TileTriggerTypes.csv", id:"level1_1-0_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_1-0_TileEntities.csv", id:"level1_1-0_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level1_1-1_TileContents.csv", id:"level1_1-1_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_1-1_TileGraphics.csv", id:"level1_1-1_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_1-1_TileTriggerStates.csv", id:"level1_1-1_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_1-1_TileTriggerTypes.csv", id:"level1_1-1_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level1_1-1_TileEntities.csv", id:"level1_1-1_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level2_0-1_TileContents.csv", id:"level2_0-1_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_0-1_TileGraphics.csv", id:"level2_0-1_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_0-1_TileTriggerStates.csv", id:"level2_0-1_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_0-1_TileTriggerTypes.csv", id:"level2_0-1_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_0-1_TileEntities.csv", id:"level2_0-1_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level2_1-1_TileContents.csv", id:"level2_1-1_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-1_TileGraphics.csv", id:"level2_1-1_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-1_TileTriggerStates.csv", id:"level2_1-1_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-1_TileTriggerTypes.csv", id:"level2_1-1_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-1_TileEntities.csv", id:"level2_1-1_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level2_1-0_TileContents.csv", id:"level2_1-0_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-0_TileGraphics.csv", id:"level2_1-0_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-0_TileTriggerStates.csv", id:"level2_1-0_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-0_TileTriggerTypes.csv", id:"level2_1-0_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-0_TileEntities.csv", id:"level2_1-0_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level2_2-1_TileContents.csv", id:"level2_2-1_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_2-1_TileGraphics.csv", id:"level2_2-1_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_2-1_TileTriggerStates.csv", id:"level2_2-1_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_2-1_TileTriggerTypes.csv", id:"level2_2-1_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_2-1_TileEntities.csv", id:"level2_2-1_TE", type:createjs.LoadQueue.TEXT},
+	
+	{src:"Levels/level2_1-2_TileContents.csv", id:"level2_1-2_TC", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-2_TileGraphics.csv", id:"level2_1-2_TG", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-2_TileTriggerStates.csv", id:"level2_1-2_TTS", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-2_TileTriggerTypes.csv", id:"level2_1-2_TTT", type:createjs.LoadQueue.TEXT},
+    {src:"Levels/level2_1-2_TileEntities.csv", id:"level2_1-2_TE", type:createjs.LoadQueue.TEXT},
+	
+	
+	//yellow final
+	
     {src:"fogSprite.png", id:"fogOfWar"},
 	{src:"Credits.png", id:"Credits"},
     {src:"weaponBar.png", id:"weaponBar"},
@@ -1090,55 +1148,98 @@ function loadComplete(evt)
 	levelRaws[1][0] = [];
 	levelRaws[1][0][0] = [];
 	levelRaws[1][0][1] = [];
+	levelRaws[1][1] = [];
+	levelRaws[1][1][0]= [];	
+	levelRaws[1][1][1]= [];	
+	levelRaws[2] = [];
+	levelRaws[2][0] = [];
+	levelRaws[2][1] = [];
+	levelRaws[2][0][0] = [];
+	levelRaws[2][0][1] = [];
+	levelRaws[2][1][1] = [];
+	levelRaws[2][1][0] = [];
+	
+	
+	
 	//[LEVEL][MAP_X][MAP_Y][RAW_LOAD_TYPE]
-	levelRaws[0][0][0][LEVEL.TG] 		= queue.getResult("currentLevel_TG");
-	levelRaws[0][0][0][LEVEL.TC] 		= queue.getResult("currentLevel_TC");
-    levelRaws[0][0][0][LEVEL.TTT] 	= queue.getResult("currentLevel_TTT");
-	levelRaws[0][0][0][LEVEL.TTS] 	= queue.getResult("currentLevel_TTS");
-    levelRaws[0][0][0][LEVEL.TE]		= queue.getResult("currentLevel_TE");
-	//levelRaws[1][0][0][LEVEL.TG] 		= queue.getResult("test_0-0_V1_Jeremy_TG");
-	//levelRaws[1][0][0][LEVEL.TC] 		= queue.getResult("test_0-0_V1_Jeremy_TC");
-	//levelRaws[1][0][0][LEVEL.TTT] 	= queue.getResult("test_0-0_V1_Jeremy_TTT");
-	//levelRaws[1][0][0][LEVEL.TTS] 	= queue.getResult("test_0-0_V1_Jeremy_TTS");
-	//levelRaws[1][0][0][LEVEL.TE] 		= queue.getResult("test_0-0_V1_Jeremy_TE");
-	//levelRaws[1][0][1][LEVEL.TG]  	= queue.getResult("test_0-1_V1_Jeremy_TG");
-	//levelRaws[1][0][1][LEVEL.TC]  	= queue.getResult("test_0-1_V1_Jeremy_TC");
-	//levelRaws[1][0][1][LEVEL.TTT]	= queue.getResult("test_0-1_V1_Jeremy_TTT");
-	//levelRaws[1][0][1][LEVEL.TTS]	= queue.getResult("test_0-1_V1_Jeremy_TTS");
-	//levelRaws[1][0][1][LEVEL.TE]  	= queue.getResult("test_0-1_V1_Jeremy_TE");
+	levelRaws[0][0][0][LEVEL.TG] 		= queue.getResult("level0_0-0_TG")    ;
+	levelRaws[0][0][0][LEVEL.TC] 		= queue.getResult("level0_0-0_TC")    ;
+    levelRaws[0][0][0][LEVEL.TTT] 	= queue.getResult("level0_0-0_TTT")   ;
+	levelRaws[0][0][0][LEVEL.TTS] 	= queue.getResult("level0_0-0_TTS")  ;
+    levelRaws[0][0][0][LEVEL.TE]		= queue.getResult("level0_0-0_TE")    ;
+	levelRaws[1][0][0][LEVEL.TG] 	= queue.getResult("level1_0-0_TG")        ;
+	levelRaws[1][0][0][LEVEL.TC] 	= queue.getResult	("level1_0-0_TC")    ;
+	levelRaws[1][0][0][LEVEL.TTT] 	= queue.getResult("level1_0-0_TTT")   ;
+	levelRaws[1][0][0][LEVEL.TTS] 	= queue.getResult("level1_0-0_TTS")  ;
+	levelRaws[1][0][0][LEVEL.TE] 	= queue.getResult	("level1_0-0_TE")     ;
+	levelRaws[1][1][0][LEVEL.TG]  	= queue.getResult("level1_1-0_TG")    ;
+	levelRaws[1][1][0][LEVEL.TC]  	= queue.getResult("level1_1-0_TC")    ;
+	levelRaws[1][1][0][LEVEL.TTT]	= queue.getResult("level1_1-0_TTT")   ;
+	levelRaws[1][1][0][LEVEL.TTS]	= queue.getResult("level1_1-0_TTS")  ;
+	levelRaws[1][1][0][LEVEL.TE]  	= queue.getResult("level1_1-0_TE")    ;
+	levelRaws[1][0][1][LEVEL.TG]  	= queue.getResult("level1_0-1_TG")    ;
+	levelRaws[1][0][1][LEVEL.TC]  	= queue.getResult("level1_0-1_TC")    ;
+	levelRaws[1][0][1][LEVEL.TTT]	= queue.getResult("level1_0-1_TTT")   ;
+	levelRaws[1][0][1][LEVEL.TTS]	= queue.getResult("level1_0-1_TTS")  ;
+	levelRaws[1][0][1][LEVEL.TE]  	= queue.getResult("level1_0-1_TE")    ;
+	
+	levelRaws[2][0][1][LEVEL.TG]  	= queue.getResult("level2_0-1_TG")    ;
+	levelRaws[2][0][1][LEVEL.TC]  	= queue.getResult("level2_0-1_TC")    ;
+	levelRaws[2][0][1][LEVEL.TTT]	= queue.getResult("level2_0-1_TTT")   ;
+	levelRaws[2][0][1][LEVEL.TTS]	= queue.getResult("level2_0-1_TTS")  ;
+	levelRaws[2][0][1][LEVEL.TE]  	= queue.getResult("level2_0-1_TE")    ;
+
 
     var preMap = [];
 	preMap[0] = [];
 	preMap[0][0] = [];
 	preMap[0][0][0] = [];
-	//preMap[1] = [];
-	//preMap[1][0] = [];
-	//preMap[1][0][0] = [];
-	//preMap[1][0][1] = [];
+	preMap[1] = [];
+	preMap[1][0] = [];
+	preMap[1][0][0] = [];
+	preMap[1][0][1] = [];
+	 preMap  [1][1] = [];
+	 preMap  [1][1][0]= [];	
+	 preMap  [1][1][1]= [];	
+	 preMap  [2] = [];
+	 preMap  [2][0] = [];
+	 preMap  [2][1] = [];
+	 preMap  [2][0][0] = [];
+	 preMap  [2][1][1] = [];
+	 preMap  [2][1][0] = [];
+	 preMap  [2][0][1] = [];
+	
 	
 	preMap[0][0][0][LEVEL.TG] 		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TG])
 	preMap[0][0][0][LEVEL.TC] 		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TC])
     preMap[0][0][0][LEVEL.TTT] 	= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TTT])
 	preMap[0][0][0][LEVEL.TTS] 	= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TTS])
     preMap[0][0][0][LEVEL.TE]		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TE])
-	//preMap[1][0][0][LEVEL.TG] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TG])
-	//preMap[1][0][0][LEVEL.TC] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TC])
-	//preMap[1][0][0][LEVEL.TTT] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTT])
-	//preMap[1][0][0][LEVEL.TTS] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTS])
-	//preMap[1][0][0][LEVEL.TE] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TE])
-	//preMap[1][0][1][LEVEL.TG]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TG])
-	//preMap[1][0][1][LEVEL.TC]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TC])
-	//preMap[1][0][1][LEVEL.TTT]		= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTT])
-	//preMap[1][0][1][LEVEL.TTS]	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTS])
-	//preMap[1][0][1][LEVEL.TE]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TE])
+	preMap[1][0][0][LEVEL.TG] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TG])
+	preMap[1][0][0][LEVEL.TC] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TC])
+	preMap[1][0][0][LEVEL.TTT] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTT])
+	preMap[1][0][0][LEVEL.TTS] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTS])
+	preMap[1][0][0][LEVEL.TE] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TE])
+	preMap[1][0][1][LEVEL.TG]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TG])
+	preMap[1][0][1][LEVEL.TC]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TC])
+	preMap[1][0][1][LEVEL.TTT]		= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTT])
+	preMap[1][0][1][LEVEL.TTS]	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTS])
+	preMap[1][0][1][LEVEL.TE]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TE])
+	
+	preMap[2][0][1][LEVEL.TG]  	= $.csv.toArrays(levelRaws[2][0][1][LEVEL.TG])
+	preMap[2][0][1][LEVEL.TC]  	= $.csv.toArrays(levelRaws[2][0][1][LEVEL.TC])
+	preMap[2][0][1][LEVEL.TTT]		= $.csv.toArrays(levelRaws[2][0][1][LEVEL.TTT])
+	preMap[2][0][1][LEVEL.TTS]	= $.csv.toArrays(levelRaws[2][0][1][LEVEL.TTS])
+	preMap[2][0][1][LEVEL.TE]  	= $.csv.toArrays(levelRaws[2][0][1][LEVEL.TE])
 	
     initLevels();
     addLevel(0);
-    //addLevelMap(0, 0, 0, level0Map[0], level0Map[1], level0Map[2], level0Map[3], level0Map[4]);
 	addLevelMap(0, 0, 0, preMap[0][0][0]);
-	//addLevel(1);
-	//addLevelMap(1, 0, 0, preMap[1][0][0]);
-	//addLevelMap(1, 0, 1, preMap[1][0][1]);
+	addLevel(1);
+	addLevelMap(1, 0, 0, preMap[1][0][0]);
+	addLevelMap(1, 0, 1, preMap[1][0][1]);
+	addLevel(2);
+	addLevelMap(2, 0, 1, preMap[2][0][1]);
 	
     setupButtons();
     setupTitleScreen();
@@ -1593,10 +1694,10 @@ function Map(graphicNames, contents, triggerTypes, triggerStates, entities)
         }  
     }
     
-   if(!isPlayerStartDefined)
-   {
-		throw "Map_With_Undefined_Player_Starting_Tile_Exception";
-   }
+  // if(!isPlayerStartDefined)
+   //{
+		//throw "Map_With_Undefined_Player_Starting_Tile_Exception";
+   //}
 
     return gameMap;
 }
@@ -2488,6 +2589,7 @@ function runGameTimer()
     }
 }
 
+var lastLevel = false;
 var lastGameState;
 function gameStateAction()
 {
@@ -2509,6 +2611,11 @@ function gameStateAction()
             updateEntityHealth();
             handlePlayerMovement();
             handleEnemyMovement();
+			if(lastLevel && enemies.length< 1)
+			{
+				gameState = GameStates.gameOver;
+				gameoverText.text = "YOU WIN \n" + gameoverText.text;
+			}
             //if(end game condition)
             //{
             // gameState = GameStates.gameOver;
@@ -2674,14 +2781,21 @@ function clearTriggers()
 //endregion
 /*----------------------------Game Over----------------------------*/
 //region Title
+var gameoverText;
 function setupGameOverScreen()
 {
+		var credits = "JEREMY JONES - CHEIF PROGRAMMER \n COREY GILLENWATER - SOUND AND MUSIC \n TAYLOR GARCIA - GRAPHICS";
+	    gameoverText = new createjs.Text(credits,"20px Arial","white");
+		gameoverText.x = (canvasWidth/2);
+		gameoverText.y = (canvasHeight/2);
+		gameoverText.textAlign = "center";
+
     btnContinue.x = (canvasWidth/2)-140;
     btnContinue.y = (canvasHeight/2);
 	btnContinue.rotation = 45;
     
     gameOverContainer = new createjs.Container();
-    gameOverContainer.addChild(gameOverScreen, btnContinue);
+    gameOverContainer.addChild(gameOverScreen, btnContinue, gameoverText);
     stage.addChild(gameOverContainer);
     gameOverContainer.visible = false;
 }
@@ -3540,11 +3654,12 @@ function goToNextLevel(level)
 
 	if(level == 1)
 	{
-	
+		loadLevelMap(1,0,0);
 	}
 	else if(level == 2)
 	{
-	
+		loadLevelMap(2,0,1);
+		lastLevel = true;
 	}
 	else if (level == 3)
 	{
