@@ -199,7 +199,7 @@ function loadProgress(evt)
  
 var defaultTile, invalidTile, unavailableTile, forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
 var cave_rock, cave_rockLight, cave_rockDark, cave_rockBoulder, cave_rockHole, cave_rockMossy, cave_rockWatery, cave_rockWaterPuddle, cave_rockBloody,cave_rockBloodPuddle, cave_rockLava, cave_sandstone, cave_sandstoneMossy,cave_sandstoneWatery, cave_lava;
-var wispTemplate, bearTrap;
+var wispTemplate, bearTrap, cursedBearTrap, teleporter, spikes, slowMovement, bomb;
 var weaponBarGraphic, healthPotion, bones, jump, comfortSheep;
 function loadComplete(evt)
 {
@@ -245,6 +245,8 @@ function loadComplete(evt)
 	
 	jump = new createjs.Sprite(blank_Sheet);
 	jump.name = "jump";
+	
+	//cursedBearTrap, teleporter, spikes, slowMovement, bomb;
 	
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
@@ -850,6 +852,46 @@ function loadLevelMap(level, x, y, _flag)
                 triggers[triggers.length-1].y = board[i][j].graphic.y;
                 gameplayContainer.addChild(triggers[triggers.length-1]);
 			}
+			else if(board[i][j].triggerType == "teleporter")
+			{
+				triggers.push(jump.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "spikes")
+			{
+				triggers.push(spikes.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "slowMovement")
+			{
+				triggers.push(slowMovement.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "bomb")
+			{
+				triggers.push(slowMovement.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.cursedBearTrap-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "cursedBearTrap")
+			{
+				triggers.push(cursedBearTrap.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
 			
 			///////ENEMIES/////////
             if(board[i][j].entity == "wisp")
@@ -944,6 +986,46 @@ function loadActiveLevelMap(level, x, y)
 			else if(board[i][j].triggerType == "jump")
 			{
 				triggers.push(jump.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "teleporter")
+			{
+				triggers.push(jump.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "spikes")
+			{
+				triggers.push(spikes.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "slowMovement")
+			{
+				triggers.push(slowMovement.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.length-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "bomb")
+			{
+				triggers.push(slowMovement.clone());
+				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
+				triggers[triggers.length-1].x = board[i][j].graphic.x;
+                triggers[triggers.cursedBearTrap-1].y = board[i][j].graphic.y;
+                gameplayContainer.addChild(triggers[triggers.length-1]);
+			}
+			else if(board[i][j].triggerType == "cursedBearTrap")
+			{
+				triggers.push(cursedBearTrap.clone());
 				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
 				triggers[triggers.length-1].x = board[i][j].graphic.x;
                 triggers[triggers.length-1].y = board[i][j].graphic.y;
@@ -1528,7 +1610,7 @@ function handleKeyDown(evt)
                 movementTicks = 0;
             }
             
-            if(!wDown)
+            if(!wDown && playerStoppedTicks < 1)
             {  
                 wDown = true;
                 movementKeys.push("W");
@@ -1541,7 +1623,7 @@ function handleKeyDown(evt)
                 movementTicks = 0;
             }
             
-            if(!aDown)
+            if(!aDown && playerStoppedTicks < 1)
             {
                 movementKeys.push("A");
                 //player.graphic.gotoAndPlay("left");
@@ -1554,10 +1636,9 @@ function handleKeyDown(evt)
                 movementTicks = 0;
             }
             
-            if(!sDown)
+            if(!sDown && playerStoppedTicks < 1)
             {
                 movementKeys.push("S");
-                //player.graphic.gotoAndPlay("down");
                 sDown = true;
             }
             return false;
@@ -1567,10 +1648,9 @@ function handleKeyDown(evt)
                 movementTicks = 0;
             }
             
-            if(!dDown)
+            if(!dDown && playerStoppedTicks < 1)
             {
                 movementKeys.push("D");
-                //player.graphic.gotoAndPlay("right");
                 dDown = true;
             }
             return false;
@@ -1727,6 +1807,7 @@ function resetGameTimer()
     gameTimer = 0;
     fearTimer = 0;
     enemyTimer = 0;
+	playerStoppedTicks = 0;
 }
 function runGameTimer()
 {
@@ -1745,6 +1826,11 @@ function runGameTimer()
     {
         addFear(1);
     }
+	
+	if(playerStoppedTicks > 0)
+	{
+		playerStoppedTicks -= 1;
+	}
     
     enemyTimer++;
     if(enemyTimer%(30) == 0)
@@ -2199,6 +2285,7 @@ function pickMovementState()
     }
 }
 
+var playerStoppedTicks = 0;
 function onTileEntrance(tile)
 {
     for(var i = 0; i < tile.contents.length; i++)
@@ -2272,6 +2359,56 @@ function onTileEntrance(tile)
 				{
 					throw "Loading_Area_While_Player_Isnt_At_Edge_Exception_2";
 				}
+				break;
+			case "teleporter":
+				var newY = Math.floor(Math.random(0, GameBoard.width));
+				var newX = Math.floor(Math.random(0, GameBoard.height));
+				
+				while(!isTileMoveAllowed(newX, newY))
+				{
+					var newY = Math.floor(Math.random(0, GameBoard.width));
+					var newX = Math.floor(Math.random(0, GameBoard.height));
+				}
+				
+				player.graphic.x = board[newY][newX].graphic.x;
+				player.graphic.y = board[newY][newX].graphic.y;
+				player.tileX = newX;
+				player.tileY = newYl
+				player.tile = board[player.tileY][player.tileX];
+				break;
+			case "spikes":
+				player.health -= 15;
+				addFear(30);
+				updateHealth();
+				if(player.health <= 0)
+				{
+					//gameover
+					gameState = GameStates.gameOver;
+				}
+				break;
+			case "slowMovement":
+				playerStoppedTicks += 30 * 4;
+				break;
+			case "bomb":
+				player.health -= 50;
+				addFear(20);
+				updateHealth();
+				if(player.health <= 0)
+				{
+					//gameover
+					gameState = GameStates.gameOver;
+				}
+				break;
+			case "cursedBearTrap":
+				player.health -= 10;
+				addFear(5);
+				updateHealth();
+				if(player.health <= 0)
+				{
+					//gameover
+					gameState = GameStates.gameOver;
+				}
+				playerStoppedTicks += 30;
 				break;
 		}
 	}	
