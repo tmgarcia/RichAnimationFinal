@@ -100,7 +100,7 @@ manifest = [
     {src:"Levels/test_0-1_V1_Jeremy_TileTriggerStates.csv", id:"test_0-1_V1_Jeremy_TTS", type:createjs.LoadQueue.TEXT},
     {src:"Levels/test_0-1_V1_Jeremy_TileTriggerTypes.csv", id:"test_0-1_V1_Jeremy_TTT", type:createjs.LoadQueue.TEXT},
     {src:"Levels/test_0-1_V1_Jeremy_TileEntities.csv", id:"test_0-1_V1_Jeremy_TE", type:createjs.LoadQueue.TEXT},
-    {src:"fog.png", id:"fogOfWar"},
+    {src:"fogSprite.png", id:"fogOfWar"},
     {src:"weaponBar.png", id:"weaponBar"},
     {src:"healthPotion.png", id:"healthPotion"},
 	{src:"comfortSheepSmall.png", id:"comfortSheep"},
@@ -225,7 +225,6 @@ function loadComplete(evt)
     instructionScreen = new createjs.Bitmap(queue.getResult("instructionScreen"));
     gameplayScreen = new createjs.Bitmap(queue.getResult("gameplayScreen"));
     gameOverScreen = new createjs.Bitmap(queue.getResult("gameOverScreen"));
-    fogOfWar = new createjs.Bitmap(queue.getResult("fogOfWar"));
     weaponBarGraphic = new createjs.Bitmap(queue.getResult("weaponBar"));
     bones = new createjs.Bitmap(queue.getResult("bones"));
 	bones.name = "bones"
@@ -233,6 +232,36 @@ function loadComplete(evt)
 	healthPotion.name = "healthPotion";
 	comfortSheep = new createjs.Bitmap(queue.getResult("comfortSheep"));
     comfortSheep.name = "comfortSheep";
+	
+	var fogOfWar_Sheet = new createjs.SpriteSheet(
+	{
+		images: [queue.getResult("fogOfWar")],
+		frames: [[0,0,1600,1200,0,800,600],[1600,0,1600,1200,0,800,600],[3200,0,1600,1200,0,800,600],[4800,0,1600,1200,0,800,600],[6400,0,1600,1200,0,800,600],[0,1200,1600,1200,0,800,600],[1600,1200,1600,1200,0,800,600],[3200,1200,1600,1200,0,800,600],[4800,1200,1600,1200,0,800,600],[6400,1200,1600,1200,0,800,600],[0,2400,1600,1200,0,800,600],[1600,2400,1600,1200,0,800,600],[3200,2400,1600,1200,0,800,600],[4800,2400,1600,1200,0,800,600],[6400,2400,1600,1200,0,800,600],[0,3600,1600,1200,0,800,600],[1600,3600,1600,1200,0,800,600],[3200,3600,1600,1200,0,800,600],[4800,3600,1600,1200,0,800,600],[6400,3600,1600,1200,0,800,600],[0,4800,1600,1200,0,800,600],[1600,4800,1600,1200,0,800,600]],
+		animations:
+		{
+			p1: [0, 0, "p1"],
+			p1_p2: [0, 3, "p1_p2"],
+			p2: [3, 3, "p2"],
+			p2_p3: [3, 6, "p2_p3"],
+			p3: [6, 6, "p3"],
+			p3_p4: [6, 9, "p3_p4"],
+			p4: [9, 9, "p4"],
+			p4_p5: [9, 12, "p4_p5"],
+			p5: [12, 12, "p5"],
+			p5_p6: [12, 15, "p5_p6"],
+			p6: [15, 15, "p6"],
+			p6_p7: [15, 18, "p6_p7"],
+			p7: [18, 18, "p7"],
+			p7_p8: [18, 21, "p7_p8"],
+			p8: [21, 21, "p8"], 
+		}
+	});
+	
+	fogOfWar = new createjs.Sprite(fogOfWar_Sheet); 
+	fogOfWar.regX = -25;
+    fogOfWar.regY = -25;
+	fogOfWar.alpha = 1.0;
+	
 	var bearTrap_Sheet = new createjs.SpriteSheet(
 	{
 	    images: [queue.getResult("bearTrap")],
@@ -711,13 +740,7 @@ function loadComplete(evt)
     setupTitleScreen();
     setupGameOverScreen();
     setupGameplayScreen();
-    setupInstructionScreen();
-    
-    fogOfWar.regX = fogOfWar.width/2;
-    fogOfWar.regY = fogOfWar.height/2;
-    fogOfWar.x = player.graphic.x;
-    fogOfWar.y = player.graphic.y;
-        
+    setupInstructionScreen();      
 }
 function setupButtons()
 {
@@ -1758,7 +1781,7 @@ function handleKeyUp(evt)
 			}
 			else
 			{
-				fogOfWar.alpha = 0.8;
+				fogOfWar.alpha = 1;
 				updateHealth();
 			}
         case KC_SPACE: break;
@@ -2501,11 +2524,8 @@ function onTileEntrance(tile)
 
 function controlFog()
 {   
-    fogOfWar.regX = 780;
-    fogOfWar.regY = 580;
     fogOfWar.x = player.graphic.x;
     fogOfWar.y = player.graphic.y;
-    fogOfWar.alpha = 0.4;
 }
 
 //endregion
