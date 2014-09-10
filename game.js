@@ -273,6 +273,8 @@ function loadComplete(evt)
             enabled: [0, 0, "enabled"],
             disabled: [4, 4, "disabled"],
             hidden: [5, 5, "hidden"],
+			hiddenToPermanent: [5, 5, "hiddenToPermanent"],
+			permanent: [0, 0, "permanent"],
 			closing: [0, 4, "closing"]
         }
 	});
@@ -1355,6 +1357,8 @@ function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
             break;
         case "hidden":
             break;
+		case "hiddenToPermanent":
+			break;
 		case "none":
 			triggrType = "none";
             break;
@@ -2397,12 +2401,33 @@ function onTileEntrance(tile)
 		switch(tile.triggerType)
 		{
 			case "bearTrap":
-				tile.triggerState = "closing";
+				//tile.triggerState = "closing";
 				for(var i = 0; i < triggers.length; i++)
 				{
 					if(triggers[i].x == tile.graphic.x && triggers[i].y == tile.graphic.y)
 					{
-						triggers[i].on("animationend", function(evt){board[this.y / 50 - 1][this.x / 50 ].triggerState = "disabled"; this.gotoAndPlay("disabled");evt.remove();});
+						triggers[i].on("animationend", function(evt)
+						{
+						console.log(board[this.y / 50 - 1][this.x / 50 ].triggerState);
+							if(board[this.y / 50 - 1][this.x / 50 ].triggerState == "hiddenToPermanent")
+							{
+								board[this.y / 50 - 1][this.x / 50 ].triggerState = "permanent"; 
+								this.gotoAndPlay("permanent");
+							}
+							else if(board[this.y / 50 - 1][this.x / 50 ].triggerState == "permanent")
+							{
+								board[this.y / 50 - 1][this.x / 50].triggerState = "permanent"; 
+								this.gotoAndPlay("permanent");
+							}
+							else
+							{
+								board[this.y / 50 - 1][this.x / 50 ].triggerState = "disabled"; 
+								this.gotoAndPlay("disabled");
+							}
+							
+							
+							evt.remove();
+						});
 						triggers[i].gotoAndPlay("closing");
 						break;
 					}
@@ -2523,7 +2548,7 @@ function onTileEntrance(tile)
 			{
 				if(triggers[i].x == player.graphic.x && triggers[i].y == player.graphic.y)
 				{
-					trigger[i].gotoAndPlay("enabled");
+					triggers[i].gotoAndPlay("permanent");
 					break;
 				}
 			}
