@@ -86,7 +86,6 @@ manifest = [
 	{src:"Textures/cave_sandstoneWatery.png",	id:"cave_sandstoneWatery"},
 	{src:"Textures/cave_lava.png",							id:"cave_lava"},
     {src:"playerKnight.png", id:"player"},
-    {src:"Mobs/wispWhiteBlue.png", id:"wisp"},
     {src:"Levels/currentLevel_TileContents.csv", id:"currentLevel_TC", type:createjs.LoadQueue.TEXT},
     {src:"Levels/currentLevel_TileGraphics.csv", id:"currentLevel_TG", type:createjs.LoadQueue.TEXT},
     {src:"Levels/currentLevel_TileTriggerStates.csv", id:"currentLevel_TTS", type:createjs.LoadQueue.TEXT},
@@ -99,6 +98,10 @@ manifest = [
 	{src:"comfortSheepSmall.png", id:"comfortSheep"},
     {src:"bone.png", id:"bones"},
 	{src:"bearTrapSprite.png", id:"bearTrap"},
+	{src:"Traps/bearTrap.png", id:"cursedBearTrap"},
+	{src:"Traps/hands.png", id:"slowMovement"},
+	{src:"Traps/portal.png", id:"telporter"},
+	{src:"Traps/spikes.png", id:"spikes"},
 	{src:"blankSprite.png", id:"blank"},
 	{src:"Sounds/Wind.mp3", id:"TeleportTrapSnd"},
 	{src:"Sounds/UpbeatBoss.mp3", id:"upbeat"},
@@ -128,9 +131,26 @@ manifest = [
 	{src:"Textures/cave_exitShineCyan.png", id:"cave_exitShineCyan"},
 	{src:"Textures/cave_exitShineBlue.png", id:"cave_exitShineBlue"},
 	{src:"Textures/cave_exitShineBlack.png", id:"cave_exitShineBlack"},
+	{src:"Mobs/crawlerTan.png", id:"crawlerTan"},
+	{src:"Mobs/skeletonBlueRed.png", id:"skeletonBlueRed"},
+	{src:"Mobs/skeletonDark.png", id:"skeletonDark"},
+	{src:"Mobs/skeletonGold.png", id:"skeletonGold"},
+	{src:"Mobs/skeletonGray.png", id:"skeletonGray"},
+	{src:"Mobs/wispBlackBlue.png", id:"wispBlackBlue"},
+	{src:"Mobs/wispBlackGreen.png", id:"wispBlackGreen"},
+	{src:"Mobs/wispBlackPurple.png", id:"wispBlackPurple"},
+	{src:"Mobs/wispBlackRed.png", id:"wispBlackRed"},
+	{src:"Mobs/wispWhiteBlue.png", id:"wispWhiteBlue"},
+	{src:"Mobs/wispWhiteGreen.png", id:"wispWhiteGreen"},
+	{src:"Mobs/wispWhitePurple.png", id:"wispWhitePurple"},
+	{src:"Mobs/wispWhiteRed.png", id:"wispWhiteRed"},
 ];
 
 var cave_exitShineYellow, cave_exitShineWhite, cave_exitShineRed, cave_exitShinePurple, cave_exitShineOrange, cave_exitShineGreen, cave_exitShineCyan, cave_exitShineBlue, cave_exitShineBlack;
+
+var crawlerTan, skeletonBlueRed, skeletonDark, skeletonGold, skeletonGray,
+wispBlackBlue, wispBlackGreen, wispBlackPurple, wispBlackRed, wispWhiteBlue,
+wispWhiteGreen, wispWhitePurple, wispWhiteRed;
 
 /*------------------------------Setup------------------------------*/
 //region Setup
@@ -220,7 +240,7 @@ function loadProgress(evt)
  
 var defaultTile, invalidTile, unavailableTile, forest_Dirt, forest_GrassPath, forest_DirtPath, forest_DirtTree, forest_GrassTree, forest_Grass, forest_DirtyGrass, forest_Exit;
 var cave_rock, cave_rockLight, cave_rockDark, cave_rockBoulder, cave_rockHole, cave_rockMossy, cave_rockWatery, cave_rockWaterPuddle, cave_rockBloody,cave_rockBloodPuddle, cave_rockLava, cave_sandstone, cave_sandstoneMossy,cave_sandstoneWatery, cave_lava;
-var wispTemplate, bearTrap, cursedBearTrap, teleporter, spikes, slowMovement, bomb;
+var wispTemplate, bearTrap, cursedBearTrap, telporter, spikes, slowMovement;
 var weaponBarGraphic, healthPotion, bones, jump, comfortSheep;
 function loadComplete(evt)
 {
@@ -299,9 +319,78 @@ function loadComplete(evt)
 			closing: [0, 4, "closing"]
         }
 	});
-	
 	bearTrap = new createjs.Sprite(bearTrap_Sheet); 
 	bearTrap.name = "bearTrap";
+	
+	///////////////
+	
+	var cursedBearTrap_Sheet = new createjs.SpriteSheet(
+	{
+	    images: [queue.getResult("cursedBearTrap")],
+        frames: [[0,0,70,70,0,9.95,9.65],[70,0,70,70,0,9.95,9.65],[140,0,70,70,0,9.95,9.65],[0,70,70,70,0,9.95,9.65],[70,70,70,70,0,9.95,9.65],[140,70,70,70,0,9.95,9.65]],
+        animations:
+        {
+            enabled: [0, 0, "enabled"],
+            disabled: [4, 4, "disabled"],
+            hidden: [5, 5, "hidden"],
+			hiddenToPermanent: [5, 5, "hiddenToPermanent"],
+			permanent: [0, 0, "permanent"],
+			closing: [0, 4, "closing"]
+        }
+	});
+	cursedBearTrap = new createjs.Sprite(cursedBearTrap_Sheet); 
+	cursedBearTrap.name = "cursedBearTrap";
+	
+	var slowMovement_Sheet = new createjs.SpriteSheet(
+	{
+	    images: [queue.getResult("slowMovement")],
+        frames: [[0,0,51,51,0,-0.05,-0.05],[51,0,51,51,0,-0.05,-0.05],[0,51,51,51,0,-0.05,-0.05]],
+        animations:
+        {
+            enabled: [0, 0, "enabled"],
+            disabled: [1, 1, "disabled"],
+            hidden: [2, 2, "hidden"],
+			hiddenToPermanent: [2, 2, "hiddenToPermanent"],
+			permanent: [0, 0, "permanent"],
+        }
+	});
+	slowMovement = new createjs.Sprite(bearTrap_Sheet); 
+	slowMovement.name = "slowMovement";
+	
+	var telporter_Sheet = new createjs.SpriteSheet(
+	{
+	    images: [queue.getResult("telporter")],
+        frames: [[0,0,51,51,0,-0.1,-0.1],[51,0,51,51,0,-0.1,-0.1],[102,0,51,51,0,-0.1,-0.1],[153,0,51,51,0,-0.1,-0.1],[204,0,51,51,0,-0.1,-0.1],[0,51,51,51,0,-0.1,-0.1],[51,51,51,51,0,-0.1,-0.1],[102,51,51,51,0,-0.1,-0.1],[153,51,51,51,0,-0.1,-0.1],[204,51,51,51,0,-0.1,-0.1],[0,102,51,51,0,-0.1,-0.1],[51,102,51,51,0,-0.1,-0.1],[102,102,51,51,0,-0.1,-0.1],[153,102,51,51,0,-0.1,-0.1],[204,102,51,51,0,-0.1,-0.1],[0,153,51,51,0,-0.1,-0.1],[51,153,51,51,0,-0.1,-0.1],[102,153,51,51,0,-0.1,-0.1],[153,153,51,51,0,-0.1,-0.1],[204,153,51,51,0,-0.1,-0.1],[0,204,51,51,0,-0.1,-0.1],[51,204,51,51,0,-0.1,-0.1],[102,204,51,51,0,-0.1,-0.1],[153,204,51,51,0,-0.1,-0.1],[204,204,51,51,0,-0.1,-0.1],[0,255,51,51,0,-0.1,-0.1],[51,255,51,51,0,-0.1,-0.1],[102,255,51,51,0,-0.1,-0.1],[153,255,51,51,0,-0.1,-0.1],[204,255,51,51,0,-0.1,-0.1],[0,306,51,51,0,-0.1,-0.1],[51,306,51,51,0,-0.1,-0.1],[102,306,51,51,0,-0.1,-0.1],[153,306,51,51,0,-0.1,-0.1],[204,306,51,51,0,-0.1,-0.1],[0,357,51,51,0,-0.1,-0.1]],
+        animations:
+        {
+            enabled: [0, 36, "enabled"],
+            disabled: [0, 36, "disabled"],
+            hidden: [0, 36, "hidden"],
+			hiddenToPermanent: [0, 36, "hiddenToPermanent"],
+			permanent: [0, 36, "permanent"],
+        }
+	});
+	telporter = new createjs.Sprite(telporter_Sheet); 
+	telporter.name = "telporter";
+	
+	var spikes_Sheet = new createjs.SpriteSheet(
+	{
+	    images: [queue.getResult("spikes")],
+        frames: [[0,0,51,50,0,-0.05,0],[51,0,51,50,0,-0.05,0],[0,50,51,50,0,-0.05,0]],
+        animations:
+        {
+            enabled: [0, 0, "enabled"],
+            disabled: [1, 1, "disabled"],
+            hidden: [2, 2, "hidden"],
+			hiddenToPermanent: [2, 2, "hiddenToPermanent"],
+			permanent: [0, 0, "permanent"],
+        }
+	});
+	spikes = new createjs.Sprite(spikes_Sheet); 
+	spikes.name = "spikes";
+	
+	
+	/////////////////
 	
 	var blank_Sheet = new createjs.SpriteSheet(
 	{
@@ -318,7 +407,7 @@ function loadComplete(evt)
 	jump = new createjs.Sprite(blank_Sheet);
 	jump.name = "jump";
 	
-	//cursedBearTrap, teleporter, spikes, slowMovement, bomb;
+	//cursedBearTrap, telporter, spikes, slowMovement;
 	
     var defaultTile_Sheet = new createjs.SpriteSheet(
     {
@@ -613,7 +702,7 @@ function loadComplete(evt)
 	var cave_exitShineBlack_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShineBlack")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -625,7 +714,7 @@ function loadComplete(evt)
 	var cave_exitShineBlue_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShineBlue")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -637,7 +726,7 @@ function loadComplete(evt)
 		var cave_exitShineCyan_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShineCyan")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -649,7 +738,7 @@ function loadComplete(evt)
 		var cave_exitShineGreen_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShineGreen")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -661,7 +750,7 @@ function loadComplete(evt)
 		var cave_exitShineOrange_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShineOrange")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -673,7 +762,7 @@ function loadComplete(evt)
 		var cave_exitShinePurple_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShinePurple")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -685,7 +774,7 @@ function loadComplete(evt)
 		var cave_exitShineRed_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShineRed")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -697,7 +786,7 @@ function loadComplete(evt)
 		var cave_exitShineWhite_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShineWhite")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -709,7 +798,7 @@ function loadComplete(evt)
 		var cave_exitShineYellow_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("cave_exitShineYellow")],
-        frames: [[0,0,50,50,0,0,0]],
+        frames: [[0,0,50,50,0,0,0],[50,0,50,50,0,0,0],[0,50,50,50,0,0,0],[50,50,50,50,0,0,0]],
         animations:
         {
             none: [0, 3, "still"],
@@ -767,29 +856,209 @@ function loadComplete(evt)
     });
     player.graphic = new createjs.Sprite(player_Sheet);
 
-    var wisp_Sheet = new createjs.SpriteSheet(
+
+	//////////////////////////
+	var wispBlackBlue_sheet = new createjs.SpriteSheet(
     {
-        images: [queue.getResult("wisp")],
-        frames: {width:50, height:50, count:30, regX:0, regY:0},
+        images: [queue.getResult("wispBlackBlue")],
+        frames: {width:50, height:50, count:30, regX:25, regY:25},
         animations:
         {
-            idleUp: [0, 14, "idleUp"],
-            walkUp: [0, 14, "walkUp"],
-            attackUp: [15, 29, "attackUp"],
-            idleRight: [0, 14, "idleRight"],
-            walkRight: [0, 14, "walkRight"],
-            attackRight: [15, 29, "attackRight"],
-            idleDown: [0, 14, "idleDown"],
-            walkDown: [0, 14, "walkDown"],
-            attackDown: [15, 29, "attackDown"],
-            idleLeft: [0, 14, "idleLeft"],
-            walkLeft: [0, 14, "walkLeft"],
-            attackLeft: [15, 29, "attackLeft"],
+            idle: [0, 14, "idle"],
+            walk: [0, 14, "walk"],
+            attack: [15, 29, "attack"],
         }
     });
-    wispTemplate = new createjs.Sprite(wisp_Sheet);
-    wispTemplate.gotoAndPlay("idleUp");
+    wispBlackBlue = new createjs.Sprite(wispBlackBlue_sheet);
+    wispBlackBlue.gotoAndPlay("idle");
+	wispBlackBlue.name = "fly";
+	
+	var wispBlackGreen_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("wispBlackGreen")],
+        frames: {width:50, height:50, count:30, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 14, "idle"],
+            walk: [0, 14, "walk"],
+            attack: [15, 29, "attack"],
+        }
+    });
+    wispBlackGreen = new createjs.Sprite(wispBlackGreen_sheet);
+    wispBlackGreen.gotoAndPlay("idle");
+	wispBlackGreen.name = "fly";
+	
+	var wispBlackPurple_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("wispBlackPurple")],
+        frames: {width:50, height:50, count:30, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 14, "idle"],
+            walk: [0, 14, "walk"],
+            attack: [15, 29, "attack"],
+        }
+    });
+    wispBlackPurple = new createjs.Sprite(wispBlackPurple_sheet);
+    wispBlackPurple.gotoAndPlay("idle");
+	wispBlackPurple.name = "fly";
+	
+		var wispBlackRed_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("wispBlackRed")],
+        frames: {width:50, height:50, count:30, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 14, "idle"],
+            walk: [0, 14, "walk"],
+            attack: [15, 29, "attack"],
+        }
+    });
+    wispBlackRed = new createjs.Sprite(wispBlackRed_sheet);
+    wispBlackRed.gotoAndPlay("idle");
+	wispBlackRed.name = "fly";
+	
+		var wispWhiteBlue_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("wispWhiteBlue")],
+        frames: {width:50, height:50, count:30, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 14, "idle"],
+            walk: [0, 14, "walk"],
+            attack: [15, 29, "attack"],
+        }
+    });
+    wispWhiteBlue = new createjs.Sprite(wispWhiteBlue_sheet);
+    wispWhiteBlue.gotoAndPlay("idle");
+	wispWhiteBlue.name = "fly";
+	
+		var wispWhiteGreen_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("wispWhiteGreen")],
+        frames: {width:50, height:50, count:30, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 14, "idle"],
+            walk: [0, 14, "walk"],
+            attack: [15, 29, "attack"],
+        }
+    });
+    wispWhiteGreen = new createjs.Sprite(wispWhiteGreen_sheet);
+    wispWhiteGreen.gotoAndPlay("idle");
+	wispWhiteGreen.name = "fly";
+	
+		var wispWhitePurple_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("wispWhitePurple")],
+        frames: {width:50, height:50, count:30, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 14, "idle"],
+            walk: [0, 14, "walk"],
+            attack: [15, 29, "attack"],
+        }
+    });
+    wispWhitePurple = new createjs.Sprite(wispWhitePurple_sheet);
+    wispWhitePurple.gotoAndPlay("idle");
+	wispWhitePurple.name = "fly";
+	
+	var wispWhiteRed_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("wispWhiteRed")],
+        frames: {width:50, height:50, count:30, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 14, "idle"],
+            walk: [0, 14, "walk"],
+            attack: [15, 29, "attack"],
+        }
+    });
+    wispWhiteRed = new createjs.Sprite(wispWhiteRed_sheet);
+    wispWhiteRed.gotoAndPlay("idle");
+	wispWhiteRed.name = "fly";
+	
+	/////////////////////////////////
+	
+	var skeletonBlueRed_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("skeletonBlueRed")],
+        frames: {width:50, height:50, count:60, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 29, "idle"],
+            walk: [30, 44, "walk"],
+            attack: [45, 59, "attack"],
+        }
+    });
+    skeletonBlueRed = new createjs.Sprite(skeletonBlueRed_sheet);
+    skeletonBlueRed.gotoAndPlay("idle");
+	skeletonBlueRed.name = "ground";
+	
+		var skeletonDark_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("skeletonDark")],
+        frames: {width:50, height:50, count:60, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 29, "idle"],
+            walk: [30, 44, "walk"],
+            attack: [45, 59, "attack"],
+        }
+    });
+    skeletonDark = new createjs.Sprite(skeletonDark_sheet);
+    skeletonDark.gotoAndPlay("idle");
+	skeletonDark.name = "ground";
+	
+		var skeletonGold_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("skeletonGold")],
+        frames: {width:50, height:50, count:60, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 29, "idle"],
+            walk: [30, 44, "walk"],
+            attack: [45, 59, "attack"],
+        }
+    });
+    skeletonGold = new createjs.Sprite(skeletonGold_sheet);
+    skeletonGold.gotoAndPlay("idle");
+	skeletonGold.name = "ground";
+	
+		var skeletonGray_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("skeletonGray")],
+        frames: {width:50, height:50, count:60, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 29, "idle"],
+            walk: [30, 44, "walk"],
+            attack: [45, 59, "attack"],
+        }
+    });
+    skeletonGray = new createjs.Sprite(skeletonGray_sheet);
+    skeletonGray.gotoAndPlay("idle");
+	skeletonGray.name = "ground";
+	
+	/////////////////////////////////
     
+		var crawlerTan_sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("crawlerTan")],
+        frames: {width:50, height:50, count:60, regX:25, regY:25},
+        animations:
+        {
+            idle: [0, 29, "idle"],
+            walk: [30, 50, "walk"],
+            attack: [60, 74, "attack"],
+        }
+    });
+    crawlerTan = new createjs.Sprite(crawlerTan_sheet);
+    crawlerTan.gotoAndPlay("idle");
+	crawlerTan.name = "ground";
+	
+	/////////////////////////////////
+	
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
         frames: {width: 285, height: 98, regX: 142, regY: 49},
@@ -827,49 +1096,49 @@ function loadComplete(evt)
     levelRaws[0][0][0][LEVEL.TTT] 	= queue.getResult("currentLevel_TTT");
 	levelRaws[0][0][0][LEVEL.TTS] 	= queue.getResult("currentLevel_TTS");
     levelRaws[0][0][0][LEVEL.TE]		= queue.getResult("currentLevel_TE");
-	levelRaws[1][0][0][LEVEL.TG] 		= queue.getResult("test_0-0_V1_Jeremy_TG");
-	levelRaws[1][0][0][LEVEL.TC] 		= queue.getResult("test_0-0_V1_Jeremy_TC");
-	levelRaws[1][0][0][LEVEL.TTT] 	= queue.getResult("test_0-0_V1_Jeremy_TTT");
-	levelRaws[1][0][0][LEVEL.TTS] 	= queue.getResult("test_0-0_V1_Jeremy_TTS");
-	levelRaws[1][0][0][LEVEL.TE] 		= queue.getResult("test_0-0_V1_Jeremy_TE");
-	levelRaws[1][0][1][LEVEL.TG]  	= queue.getResult("test_0-1_V1_Jeremy_TG");
-	levelRaws[1][0][1][LEVEL.TC]  	= queue.getResult("test_0-1_V1_Jeremy_TC");
-	levelRaws[1][0][1][LEVEL.TTT]	= queue.getResult("test_0-1_V1_Jeremy_TTT");
-	levelRaws[1][0][1][LEVEL.TTS]	= queue.getResult("test_0-1_V1_Jeremy_TTS");
-	levelRaws[1][0][1][LEVEL.TE]  	= queue.getResult("test_0-1_V1_Jeremy_TE");
+	//levelRaws[1][0][0][LEVEL.TG] 		= queue.getResult("test_0-0_V1_Jeremy_TG");
+	//levelRaws[1][0][0][LEVEL.TC] 		= queue.getResult("test_0-0_V1_Jeremy_TC");
+	//levelRaws[1][0][0][LEVEL.TTT] 	= queue.getResult("test_0-0_V1_Jeremy_TTT");
+	//levelRaws[1][0][0][LEVEL.TTS] 	= queue.getResult("test_0-0_V1_Jeremy_TTS");
+	//levelRaws[1][0][0][LEVEL.TE] 		= queue.getResult("test_0-0_V1_Jeremy_TE");
+	//levelRaws[1][0][1][LEVEL.TG]  	= queue.getResult("test_0-1_V1_Jeremy_TG");
+	//levelRaws[1][0][1][LEVEL.TC]  	= queue.getResult("test_0-1_V1_Jeremy_TC");
+	//levelRaws[1][0][1][LEVEL.TTT]	= queue.getResult("test_0-1_V1_Jeremy_TTT");
+	//levelRaws[1][0][1][LEVEL.TTS]	= queue.getResult("test_0-1_V1_Jeremy_TTS");
+	//levelRaws[1][0][1][LEVEL.TE]  	= queue.getResult("test_0-1_V1_Jeremy_TE");
 
     var preMap = [];
 	preMap[0] = [];
 	preMap[0][0] = [];
 	preMap[0][0][0] = [];
-	preMap[1] = [];
-	preMap[1][0] = [];
-	preMap[1][0][0] = [];
-	preMap[1][0][1] = [];
+	//preMap[1] = [];
+	//preMap[1][0] = [];
+	//preMap[1][0][0] = [];
+	//preMap[1][0][1] = [];
 	
 	preMap[0][0][0][LEVEL.TG] 		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TG])
 	preMap[0][0][0][LEVEL.TC] 		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TC])
     preMap[0][0][0][LEVEL.TTT] 	= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TTT])
 	preMap[0][0][0][LEVEL.TTS] 	= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TTS])
     preMap[0][0][0][LEVEL.TE]		= $.csv.toArrays(levelRaws[0][0][0][LEVEL.TE])
-	preMap[1][0][0][LEVEL.TG] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TG])
-	preMap[1][0][0][LEVEL.TC] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TC])
-	preMap[1][0][0][LEVEL.TTT] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTT])
-	preMap[1][0][0][LEVEL.TTS] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTS])
-	preMap[1][0][0][LEVEL.TE] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TE])
-	preMap[1][0][1][LEVEL.TG]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TG])
-	preMap[1][0][1][LEVEL.TC]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TC])
-	preMap[1][0][1][LEVEL.TTT]		= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTT])
-	preMap[1][0][1][LEVEL.TTS]	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTS])
-	preMap[1][0][1][LEVEL.TE]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TE])
+	//preMap[1][0][0][LEVEL.TG] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TG])
+	//preMap[1][0][0][LEVEL.TC] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TC])
+	//preMap[1][0][0][LEVEL.TTT] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTT])
+	//preMap[1][0][0][LEVEL.TTS] 	= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TTS])
+	//preMap[1][0][0][LEVEL.TE] 		= $.csv.toArrays(levelRaws[1][0][0][LEVEL.TE])
+	//preMap[1][0][1][LEVEL.TG]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TG])
+	//preMap[1][0][1][LEVEL.TC]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TC])
+	//preMap[1][0][1][LEVEL.TTT]		= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTT])
+	//preMap[1][0][1][LEVEL.TTS]	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TTS])
+	//preMap[1][0][1][LEVEL.TE]  	= $.csv.toArrays(levelRaws[1][0][1][LEVEL.TE])
 	
     initLevels();
     addLevel(0);
     //addLevelMap(0, 0, 0, level0Map[0], level0Map[1], level0Map[2], level0Map[3], level0Map[4]);
 	addLevelMap(0, 0, 0, preMap[0][0][0]);
-	addLevel(1);
-	addLevelMap(1, 0, 0, preMap[1][0][0]);
-	addLevelMap(1, 0, 1, preMap[1][0][1]);
+	//addLevel(1);
+	//addLevelMap(1, 0, 0, preMap[1][0][0]);
+	//addLevelMap(1, 0, 1, preMap[1][0][1]);
 	
     setupButtons();
     setupTitleScreen();
@@ -945,7 +1214,7 @@ function addLevelMap(level, x, y, levelData)//graphicNames, contents, triggerTyp
 function loadLevelMap(level, x, y, _flag)
 {
 	clearThings();
-	console.log(level + " " + x + " " + y);
+	//console.log(level + " " + x + " " + y);
 	//if(activeLevel.number == level && activeLevel.maps[x][y] != null)
 	//{
 	//	loadActiveLevelMap(level, x, y);
@@ -1028,7 +1297,7 @@ function loadLevelMap(level, x, y, _flag)
                 triggers[triggers.length-1].y = board[i][j].graphic.y;
                 gameplayContainer.addChild(triggers[triggers.length-1]);
 			}
-			else if(board[i][j].triggerType == "teleporter")
+			else if(board[i][j].triggerType == "telporter")
 			{
 				triggers.push(jump.clone());
 				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
@@ -1052,14 +1321,6 @@ function loadLevelMap(level, x, y, _flag)
                 triggers[triggers.length-1].y = board[i][j].graphic.y;
                 gameplayContainer.addChild(triggers[triggers.length-1]);
 			}
-			else if(board[i][j].triggerType == "bomb")
-			{
-				triggers.push(slowMovement.clone());
-				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
-				triggers[triggers.length-1].x = board[i][j].graphic.x;
-                triggers[triggers.cursedBearTrap-1].y = board[i][j].graphic.y;
-                gameplayContainer.addChild(triggers[triggers.length-1]);
-			}
 			else if(board[i][j].triggerType == "cursedBearTrap")
 			{
 				triggers.push(cursedBearTrap.clone());
@@ -1070,11 +1331,12 @@ function loadLevelMap(level, x, y, _flag)
 			}
 			
 			///////ENEMIES/////////
-            if(board[i][j].entity == "wisp")
+            if(board[i][j].entity !== "none" && board[i][j].entity !== "player")
             {
                 enemies.push(new Enemy(board[i][j].entity));
-                enemies[enemies.length-1].graphic.x = board[i][j].graphic.x;
-                enemies[enemies.length-1].graphic.y = board[i][j].graphic.y;
+				console.log(enemies[enemies.length-1]);
+                enemies[enemies.length-1].graphic.x = board[i][j].graphic.x + 25;
+                enemies[enemies.length-1].graphic.y = board[i][j].graphic.y + 25;
                 enemies[enemies.length-1].tileX = j;
                 enemies[enemies.length-1].tileY = i;
                 enemies[enemies.length-1].tile = board[i][j];
@@ -1167,7 +1429,7 @@ function loadActiveLevelMap(level, x, y)
                 triggers[triggers.length-1].y = board[i][j].graphic.y;
                 gameplayContainer.addChild(triggers[triggers.length-1]);
 			}
-			else if(board[i][j].triggerType == "teleporter")
+			else if(board[i][j].triggerType == "telporter")
 			{
 				triggers.push(jump.clone());
 				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
@@ -1191,14 +1453,6 @@ function loadActiveLevelMap(level, x, y)
                 triggers[triggers.length-1].y = board[i][j].graphic.y;
                 gameplayContainer.addChild(triggers[triggers.length-1]);
 			}
-			else if(board[i][j].triggerType == "bomb")
-			{
-				triggers.push(slowMovement.clone());
-				triggers[triggers.length-1].gotoAndPlay(board[i][j].triggerState);
-				triggers[triggers.length-1].x = board[i][j].graphic.x;
-                triggers[triggers.cursedBearTrap-1].y = board[i][j].graphic.y;
-                gameplayContainer.addChild(triggers[triggers.length-1]);
-			}
 			else if(board[i][j].triggerType == "cursedBearTrap")
 			{
 				triggers.push(cursedBearTrap.clone());
@@ -1209,11 +1463,12 @@ function loadActiveLevelMap(level, x, y)
 			}
 			
 			///////ENEMIES/////////
-            if(board[i][j].entity == "wisp")
+            if(board[i][j].entity !== "none" && board[i][j].entity !== "player")
             {
+				console.log(board[i][j].entity);
                 enemies.push(new Enemy(board[i][j].entity));
-                enemies[enemies.length-1].graphic.x = board[i][j].graphic.x;
-                enemies[enemies.length-1].graphic.y = board[i][j].graphic.y;
+                enemies[enemies.length-1].graphic.x = board[i][j].graphic.x + 25;
+                enemies[enemies.length-1].graphic.y = board[i][j].graphic.y + 25;
                 enemies[enemies.length-1].tileX = j;
                 enemies[enemies.length-1].tileY = i;
                 enemies[enemies.length-1].tile = board[i][j];
@@ -1552,6 +1807,14 @@ function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
 				break;
 			case "jump":
 				break;
+			case "cursedBearTrap":
+				break;
+			case "spikes":
+				break;
+			case "telporter":
+				break;
+			case "slowMovement":
+				break;
 			default:
 				console.log("Failed to load tile trigger type from string. Setting to none.");
 				triggrState = "none";
@@ -1576,14 +1839,52 @@ function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
                 console.log("Player starting tile cannot have trigger in it. Changing trigger type and state to none.");
             }
             break;
-        case "wisp":
-            break;    
         case "none":
             break;
         default:
-            console.log("Failed to load tile entity from string. Setting to none.");
+            console.log("Failed to load tile entity from string. Setting to none: " + entiti);
             entiti = "none";
             break;
+			
+			case "crawlerTan":
+
+				break;
+							case "skeletonBlueRed":
+
+				break;
+							case "skeletonDark":
+
+				break;
+							case "skeletonGold":
+
+				break;
+							case "skeletonGray":
+
+				break;	
+            case "wispBlackBlue":
+
+                break;
+        case "wispBlackGreen":
+
+                break;
+        case "wispBlackPurple":
+
+                break;
+        case "wispBlackRed":
+     
+                break;
+        case "wispWhiteBlue":
+
+                break;
+        case "wispWhiteGreen":
+
+                break;
+        case "wispWhitePurple":
+ 
+                break;
+        case "wispWhiteRed":
+
+                break;	
     }
     
     var tile = {graphic: tileGraphic, contents: contentArray, triggerType: triggrType, triggerState: triggrState, entity: entiti, isEntityMovingTo: false};
@@ -1615,18 +1916,126 @@ function Enemy(enemyName)
     {
         switch(enemyName)
         {
-            case "wisp":
-                enemy = Wisp();
+			case "crawlerTan":
+				enemy = CrawlerTan();
+				break;
+							case "skeletonBlueRed":
+				enemy = SkeletonBlueRed();
+				break;
+							case "skeletonDark":
+				enemy = SkeletonDark();
+				break;
+							case "skeletonGold":
+				enemy = SkeletonGold();
+				break;
+							case "skeletonGray":
+				enemy = SkeletonGray();
+				break;	
+            case "wispBlackBlue":
+                enemy = WispBlackBlue();
                 break;
+        case "wispBlackGreen":
+                enemy = WispBlackGreen();
+                break;
+        case "wispBlackPurple":
+                enemy = WispBlackPurple();
+                break;
+        case "wispBlackRed":
+                enemy = WispBlackRed();
+                break;
+        case "wispWhiteBlue":
+                enemy = WispWhiteBlue();
+                break;
+        case "wispWhiteGreen":
+                enemy = WispWhiteGreen();
+                break;
+        case "wispWhitePurple":
+                enemy = WispWhitePurple();
+                break;
+        case "wispWhiteRed":
+                enemy = WispWhiteRed();
+                break;				
         }
     }
-    
+	
     return enemy;
 }
 
-function Wisp()
+function WispBlackBlue()
 {
-     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispTemplate.clone(), tile:null, wantsToMove:false, isFlying: true};
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispBlackBlue.clone(), tile:null, wantsToMove:false, isFlying: true};
+    return wisp;
+}
+
+function WispBlackGreen()
+{
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispBlackGreen.clone(), tile:null, wantsToMove:false, isFlying: true};
+    return wisp;
+}
+
+function WispBlackPurple()
+{
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispBlackPurple.clone(), tile:null, wantsToMove:false, isFlying: true};
+    return wisp;
+}
+
+function WispBlackRed()
+{
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispBlackRed.clone(), tile:null, wantsToMove:false, isFlying: true};
+    return wisp;
+}
+
+function WispWhiteBlue()
+{
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispWhiteBlue.clone(), tile:null, wantsToMove:false, isFlying: true};
+    return wisp;
+}
+
+function WispWhiteGreen()
+{
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispWhiteGreen.clone(), tile:null, wantsToMove:false, isFlying: true};
+    return wisp;
+}
+
+function WispWhitePurple()
+{
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispWhitePurple.clone(), tile:null, wantsToMove:false, isFlying: true};
+    return wisp;
+}
+
+function WispWhiteRed()
+{
+     var wisp = {health: 10, attack: 5, tileX:0, tileY:0, state: PlayerStates.idle, graphic:wispWhiteRed.clone(), tile:null, wantsToMove:false, isFlying: true};
+    return wisp;
+}
+
+function SkeletonBlueRed()
+{
+     var wisp = {health: 20, attack: 10, tileX:0, tileY:0, state: PlayerStates.idle, graphic:skeletonBlueRed.clone(), tile:null, wantsToMove:false, isFlying: false};
+    return wisp;
+}
+
+function SkeletonDark()
+{
+     var wisp = {health: 20, attack: 10, tileX:0, tileY:0, state: PlayerStates.idle, graphic:skeletonDark.clone(), tile:null, wantsToMove:false, isFlying: false};
+    return wisp;
+}
+
+function SkeletonGold()
+{
+     var wisp = {health: 20, attack: 10, tileX:0, tileY:0, state: PlayerStates.idle, graphic:skeletonGold.clone(), tile:null, wantsToMove:false, isFlying: false};
+    return wisp;
+}
+
+function SkeletonGray()
+{
+     var wisp = {health: 20, attack: 10, tileX:0, tileY:0, state: PlayerStates.idle, graphic:skeletonGray.clone(), tile:null, wantsToMove:false, isFlying: false};
+    return wisp;
+}
+
+function CrawlerTan()
+{
+     var wisp = {health: 40, attack: 20, tileX:0, tileY:0, state: PlayerStates.idle, graphic:crawlerTan.clone(), tile:null, wantsToMove:false, isFlying: false};
     return wisp;
 }
 
@@ -2207,7 +2616,6 @@ function resetGameplayScreen()
 	addScore(1);
 	
 	clearThings();
-	console.log("called");
 	resetFear();
 	FOG_STATE = "p1";
 	fogFearControl();
@@ -2307,7 +2715,6 @@ function isTileMoveAllowed(boardX, boardY, _isFlyingCreature)
     }
     else if(board[boardY][boardX].isEntityMovingTo)
     {
-        console.log("Tile move safety check called");
         isAllowed = false;
     }
     return isAllowed;
@@ -2585,7 +2992,6 @@ function onTileEntrance(tile)
 					{
 						triggers[i].on("animationend", function(evt)
 						{
-						console.log(board[this.y / 50 - 1][this.x / 50 ].triggerState);
 							if(board[this.y / 50 - 1][this.x / 50 ].triggerState == "hiddenToPermanent")
 							{
 								board[this.y / 50 - 1][this.x / 50 ].triggerState = "permanent"; 
@@ -2642,7 +3048,7 @@ function onTileEntrance(tile)
 					throw "Loading_Area_While_Player_Isnt_At_Edge_Exception_2";
 				}
 				break;
-			case "teleporter":
+			case "telporter":
 				var newY = Math.floor(Math.random(0, GameBoard.width));
 				var newX = Math.floor(Math.random(0, GameBoard.height));
 				
@@ -2670,16 +3076,6 @@ function onTileEntrance(tile)
 				break;
 			case "slowMovement":
 				playerStoppedTicks += 30 * 4;
-				break;
-			case "bomb":
-				player.health -= 50;
-				addFear(20);
-				updateHealth();
-				if(player.health <= 0)
-				{
-					//gameover
-					gameState = GameStates.gameOver;
-				}
 				break;
 			case "cursedBearTrap":
 				player.health -= 10;
@@ -2735,7 +3131,7 @@ function onTileEntrance(tile)
     switch(tile.graphic.name)
     {
         case "forest_Exit":
-            gameState = GameStates.gameOver;
+            goToNextLevel(1);
             break;
 		case "cave_exitShineBlack":
 		    gameState = GameStates.gameOver;
@@ -2750,7 +3146,7 @@ function onTileEntrance(tile)
 		    gameState = GameStates.gameOver;
             break;
 					case "cave_exitShineOrange":
-		    gameState = GameStates.gameOver;
+		    goToNextLevel(2);
             break;
 					case "cave_exitShinePurple":
 		    gameState = GameStates.gameOver;
@@ -2958,9 +3354,10 @@ function handleEnemyMovement()
                 if(up!==null || right!==null || down!==null || left!==null)
                 {
                     enemies[i].state = PlayerStates.attacking;
-                    enemies[i].graphic.gotoAndPlay("attackUp");
+					console.log("getting called");
+                    enemies[i].graphic.gotoAndPlay("attack");
                     var en = enemies[i];
-                    enemies[i].graphic.on("animationend", function(evt){console.log(evt);en.state = PlayerStates.idle; en.graphic.gotoAndPlay("idleUp"); evt.remove();                     if((player.state == PlayerStates.idle || player.state == PlayerStates.attacking) && (playerAtTile(en.tileY-1,en.tileX) != null || playerAtTile(en.tileY,en.tileX+1) != null || playerAtTile(en.tileY+1,en.tileX) != null || playerAtTile(en.tileY,en.tileX-1)))
+                    enemies[i].graphic.on("animationend", function(evt){console.log(evt);en.state = PlayerStates.idle; en.graphic.gotoAndPlay("idle"); evt.remove();                     if((player.state == PlayerStates.idle || player.state == PlayerStates.attacking) && (playerAtTile(en.tileY-1,en.tileX) != null || playerAtTile(en.tileY,en.tileX+1) != null || playerAtTile(en.tileY+1,en.tileX) != null || playerAtTile(en.tileY,en.tileX-1)))
                     {
                         player.health-=en.attack;
                     }});
@@ -2992,47 +3389,51 @@ function handleEnemyMovement()
 				}
                 break;
             case PlayerStates.movingDown:
+				//enemies[i].graphic.rotation = 180;
                 enemies[i].graphic.y += 5;
-                if(enemies[i].graphic.y == board[enemies[i].tileY + 1][enemies[i].tileX].graphic.y)
+                if(enemies[i].graphic.y - 25 == board[enemies[i].tileY + 1][enemies[i].tileX].graphic.y)
                 {
                     enemies[i].tile = board[enemies[i].tileY + 1][enemies[i].tileX];
                     enemies[i].tileY++;
                     board[enemies[i].tileY][enemies[i].tileX].isEntityMovingTo = false;
                     enemies[i].state = PlayerStates.idle;
-                    enemies[i].graphic.gotoAndPlay("idleDown");
+                    enemies[i].graphic.gotoAndPlay("idle");
                 }
                 break;
             case PlayerStates.movingLeft:
+			//enemies[i].graphic.rotation = 90;
                 enemies[i].graphic.x -= 5;
-                if(enemies[i].graphic.x == board[enemies[i].tileY][enemies[i].tileX - 1].graphic.x)
+                if(enemies[i].graphic.x - 25 == board[enemies[i].tileY][enemies[i].tileX - 1].graphic.x)
                 {
                     enemies[i].tile = board[enemies[i].tileY][enemies[i].tileX - 1];
                     enemies[i].tileX--;
                     board[enemies[i].tileY][enemies[i].tileX].isEntityMovingTo = false;
                     enemies[i].state = PlayerStates.idle;
-                    enemies[i].graphic.gotoAndPlay("idleLeft");  
+                    enemies[i].graphic.gotoAndPlay("idle");  
                 }
                 break;
             case PlayerStates.movingRight:
+				//enemies[i].graphic.rotation = 270;
                 enemies[i].graphic.x += 5;
-                if(enemies[i].graphic.x == board[enemies[i].tileY][enemies[i].tileX + 1].graphic.x)
+                if(enemies[i].graphic.x - 25 == board[enemies[i].tileY][enemies[i].tileX + 1].graphic.x)
                 {
                     enemies[i].tile = board[enemies[i].tileY][enemies[i].tileX + 1];
                     enemies[i].tileX++;
                     board[enemies[i].tileY][enemies[i].tileX].isEntityMovingTo = false;
 					enemies[i].state = PlayerStates.idle;
-                    enemies[i].graphic.gotoAndPlay("idleRight");
+                    enemies[i].graphic.gotoAndPlay("idle");
                 }
                 break;
             case PlayerStates.movingUp:
+			//enemies[i].graphic.rotation = 0;
                 enemies[i].graphic.y -= 5;
-                if(enemies[i].graphic.y == board[enemies[i].tileY - 1][enemies[i].tileX].graphic.y)
+                if(enemies[i].graphic.y - 25 == board[enemies[i].tileY - 1][enemies[i].tileX].graphic.y)
                 {
                     enemies[i].tile = board[enemies[i].tileY - 1][enemies[i].tileX];
                     enemies[i].tileY--;
                     board[enemies[i].tileY][enemies[i].tileX].isEntityMovingTo = false;
                     enemies[i].state = PlayerStates.idle;
-                    enemies[i].graphic.gotoAndPlay("idleUp");
+                    enemies[i].graphic.gotoAndPlay("idle");
                 }
                 break;
             case PlayerStates.attacking:
@@ -3046,8 +3447,13 @@ function enemyUp(enemy)
 {
     if(isTileMoveAllowed(enemy.tileX, enemy.tileY - 1, enemy.isFlying))
     {
+		var ex = enemy.x;
+		var ey = enemies.y;
+		enemy.graphic.rotation = 0;
+		enemy.x = ex;
+		enemies.y = ey;
         enemy.state = PlayerStates.movingUp;
-        enemy.graphic.gotoAndPlay("walkUp");
+        enemy.graphic.gotoAndPlay("walk");
 		enemy.wantsToMove = false;
         board[enemy.tileY - 1][enemy.tileX].isEntityMovingTo = true;
     }
@@ -3056,8 +3462,13 @@ function enemyDown(enemy)
 {
     if(isTileMoveAllowed(enemy.tileX, enemy.tileY + 1, enemy.isFlying))
     {
+		var ex = enemy.x;
+		var ey = enemies.y;
+		enemy.graphic.rotation = 180;
+		enemy.x = ex;
+		enemies.y = ey;
         enemy.state = PlayerStates.movingDown;
-        enemy.graphic.gotoAndPlay("walkDown");
+        enemy.graphic.gotoAndPlay("walk");
 		enemy.wantsToMove = false;
         board[enemy.tileY + 1][enemy.tileX].isEntityMovingTo = true;
     }
@@ -3066,8 +3477,13 @@ function enemyLeft(enemy)
 {
     if(isTileMoveAllowed(enemy.tileX - 1, enemy.tileY, enemy.isFlying))
     {
+		var ex = enemy.x;
+		var ey = enemies.y;
+		enemy.graphic.rotation = 90;
+		enemy.x = ex;
+		enemies.y = ey;
         enemy.state = PlayerStates.movingLeft;
-        enemy.graphic.gotoAndPlay("walkLeft");
+        enemy.graphic.gotoAndPlay("walk");
 		enemy.wantsToMove = false;
         board[enemy.tileY][enemy.tileX - 1].isEntityMovingTo = true;
     }
@@ -3076,8 +3492,14 @@ function enemyRight(enemy)
 {
     if(isTileMoveAllowed(enemy.tileX + 1, enemy.tileY, enemy.isFlying))
     {
+		var ex = enemy.x;
+		var ey = enemies.y;
+		enemy.graphic.rotation = 270;
+		enemy.x = ex;
+		enemies.y = ey;
+
         enemy.state = PlayerStates.movingRight;
-        enemy.graphic.gotoAndPlay("walkRight");
+        enemy.graphic.gotoAndPlay("walk");
 		enemy.wantsToMove = false;
         board[enemy.tileY][enemy.tileX + 1].isEntityMovingTo = true;
     }
