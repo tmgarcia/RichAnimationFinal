@@ -37,7 +37,7 @@ var frameCount, gameTimer;
 var mouseX, mouseY;
 var GameStates = Object.freeze({gameTitle:0, gameInstructions:1, gamePlay:2, gameOver:3});
 var GameBoard = Object.freeze({tileWidth: 50, tileHeight: 50, startX: 0, startY: 50, width: 16, height: 11});
-var CollisionTiles = ["forest_DirtTree", "forest_GrassTree", "cave_rockBoulder", "cave_rockHole", "cave_lava"];
+var CollisionTiles = ["forest_DirtTree", "forest_GrassTree", "cave_rockBoulder", "cave_rockHole", "cave_lava", "cave_rockLava"];
 var PlayerStates = Object.freeze({idle:0, movingUp:1, movingDown: 2, movingLeft:3, movingRight:4, attacking:5});
 var Directions = Object.freeze({Up:0, Right:1, Down:2, Left:3});
 var LEVEL = Object.freeze({TG: 0, TC: 1, TTT:2, TTS:3, TE:4});
@@ -83,7 +83,7 @@ manifest = [
 	{src:"Textures/cave_sandstoneWatery.png",	id:"cave_sandstoneWatery"},
 	{src:"Textures/cave_lava.png",							id:"cave_lava"},
     {src:"playerKnight.png", id:"player"},
-    {src:"wispSprite.png", id:"wisp"},
+    {src:"Mobs/wispWhiteBlue.png", id:"wisp"},
     {src:"Levels/currentLevel_TileContents.csv", id:"currentLevel_TC", type:createjs.LoadQueue.TEXT},
     {src:"Levels/currentLevel_TileGraphics.csv", id:"currentLevel_TG", type:createjs.LoadQueue.TEXT},
     {src:"Levels/currentLevel_TileTriggerStates.csv", id:"currentLevel_TTS", type:createjs.LoadQueue.TEXT},
@@ -1296,7 +1296,7 @@ function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
             break;
             
         default:
-            console.log("Failed to load tile graphic from string.");
+            console.log("Failed to load tile graphic from string: " +  graphicName);
             tileGraphic = invalidTile.clone();
             tileGraphic.name = "invalidNameString";
             break;
@@ -1971,7 +1971,7 @@ function resetGameplayScreen()
 	clearThings();
 
     resetGameTimer();
-    loadLevelMap(1, 0, 1);
+    loadLevelMap(0, 0, 0);
     gameplayContainer.removeChild(fogOfWar);
     gameplayContainer.addChild(fogOfWar);
     gameplayContainer.addChild(statContainer);
