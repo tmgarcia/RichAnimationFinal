@@ -91,16 +91,6 @@ manifest = [
     {src:"Levels/currentLevel_TileTriggerStates.csv", id:"currentLevel_TTS", type:createjs.LoadQueue.TEXT},
     {src:"Levels/currentLevel_TileTriggerTypes.csv", id:"currentLevel_TTT", type:createjs.LoadQueue.TEXT},
     {src:"Levels/currentLevel_TileEntities.csv", id:"currentLevel_TE", type:createjs.LoadQueue.TEXT},
-	{src:"Levels/test_0-0_V1_Jeremy_TileContents.csv", id:"test_0-0_V1_Jeremy_TC", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/test_0-0_V1_Jeremy_TileGraphics.csv", id:"test_0-0_V1_Jeremy_TG", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/test_0-0_V1_Jeremy_TileTriggerStates.csv", id:"test_0-0_V1_Jeremy_TTS", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/test_0-0_V1_Jeremy_TileTriggerTypes.csv", id:"test_0-0_V1_Jeremy_TTT", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/test_0-0_V1_Jeremy_TileEntities.csv", id:"test_0-0_V1_Jeremy_TE", type:createjs.LoadQueue.TEXT},
-	{src:"Levels/test_0-1_V1_Jeremy_TileContents.csv", id:"test_0-1_V1_Jeremy_TC", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/test_0-1_V1_Jeremy_TileGraphics.csv", id:"test_0-1_V1_Jeremy_TG", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/test_0-1_V1_Jeremy_TileTriggerStates.csv", id:"test_0-1_V1_Jeremy_TTS", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/test_0-1_V1_Jeremy_TileTriggerTypes.csv", id:"test_0-1_V1_Jeremy_TTT", type:createjs.LoadQueue.TEXT},
-    {src:"Levels/test_0-1_V1_Jeremy_TileEntities.csv", id:"test_0-1_V1_Jeremy_TE", type:createjs.LoadQueue.TEXT},
     {src:"fogSprite.png", id:"fogOfWar"},
     {src:"weaponBar.png", id:"weaponBar"},
     {src:"healthPotion.png", id:"healthPotion"},
@@ -126,9 +116,19 @@ manifest = [
 	{src:"Sounds/Bomb.mp3", id:"BombSnd"},
 	{src:"Sounds/BGround.mp3", id:"backGroundMus"},
 	{src:"Sounds/BearTrap.mp3", id:"BearSnd"},
-	{src:"Sounds/gameOver.mp3", id:"gameOverSnd"}
-	
+	{src:"Sounds/gameOver.mp3", id:"gameOverSnd"},
+	{src:"Textures/cave_exitShineYellow.png", id:"cave_exitShineYellow"},
+	{src:"Textures/cave_exitShineWhite.png", id:"cave_exitShineWhite"},
+	{src:"Textures/cave_exitShineRed.png", id:"cave_exitShineRed"},
+	{src:"Textures/cave_exitShinePurple.png", id:"cave_exitShinePurple"},
+	{src:"Textures/cave_exitShineOrange.png", id:"cave_exitShineOrange"},
+	{src:"Textures/cave_exitShineGreen.png", id:"cave_exitShineGreen"},
+	{src:"Textures/cave_exitShineCyan.png", id:"cave_exitShineCyan"},
+	{src:"Textures/cave_exitShineBlue.png", id:"cave_exitShineBlue"},
+	{src:"Textures/cave_exitShineBlack.png", id:"cave_exitShineBlack"},
 ];
+
+var cave_exitShineYellow, cave_exitShineWhite, cave_exitShineRed, cave_exitShinePurple, cave_exitShineOrange, cave_exitShineGreen, cave_exitShineCyan, cave_exitShineBlue, cave_exitShineBlack;
 
 /*------------------------------Setup------------------------------*/
 //region Setup
@@ -587,7 +587,117 @@ function loadComplete(evt)
         }
     });
     cave_lava = new createjs.Sprite(cave_lava_Sheet); 
-
+//////////////////////
+	
+	var cave_exitShineBlack_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShineBlack")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShineBlack = new createjs.Sprite(cave_exitShineBlack_Sheet); 
+	
+	var cave_exitShineBlue_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShineBlue")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShineBlue = new createjs.Sprite(cave_exitShineBlue_Sheet); 
+	
+		var cave_exitShineCyan_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShineCyan")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShineCyan = new createjs.Sprite(cave_exitShineCyan_Sheet); 
+	
+		var cave_exitShineGreen_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShineGreen")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShineGreen = new createjs.Sprite(cave_exitShineGreen_Sheet); 
+	
+		var cave_exitShineOrange_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShineOrange")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShineOrange = new createjs.Sprite(cave_exitShineOrange_Sheet); 
+	
+		var cave_exitShinePurple_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShinePurple")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShinePurple = new createjs.Sprite(cave_exitShinePurple_Sheet); 
+	
+		var cave_exitShineRed_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShineRed")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShineRed = new createjs.Sprite(cave_exitShineRed_Sheet); 
+	
+		var cave_exitShineWhite_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShineWhite")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShineWhite = new createjs.Sprite(cave_exitShineWhite_Sheet); 
+	
+		var cave_exitShineYellow_Sheet = new createjs.SpriteSheet(
+    {
+        images: [queue.getResult("cave_exitShineYellow")],
+        frames: [[0,0,50,50,0,0,0]],
+        animations:
+        {
+            none: [0, 3, "still"],
+            enabled: [0, 3, "animated"]
+        }
+    });
+	cave_exitShineYellow = new createjs.Sprite(cave_exitShineYellow_Sheet); 
+	
+	///////
     var invalidTile_Sheet = new createjs.SpriteSheet(
     {
         images: [queue.getResult("invalid")],
@@ -1339,6 +1449,51 @@ function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
             tileGraphic = defaultTile.clone();
             tileGraphic.name = "default";
             break;
+		
+		case "cave_exitShineBlack":
+			tileGraphic = cave_exitShineBlack.clone();
+            tileGraphic.name = "cave_exitShineBlack";
+			break;
+			
+					case "cave_exitShineBlue":
+			tileGraphic = cave_exitShineBlue.clone();
+            tileGraphic.name = "cave_exitShineBlue";
+			break;
+			
+					case "cave_exitShineCyan":
+			tileGraphic = cave_exitShineCyan.clone();
+            tileGraphic.name = "cave_exitShineCyan";
+			break;
+			
+					case "cave_exitShineGreen":
+			tileGraphic = cave_exitShineGreen.clone();
+            tileGraphic.name = "cave_exitShineGreen";
+			break;
+			
+					case "cave_exitShineOrange":
+			tileGraphic = cave_exitShineOrange.clone();
+            tileGraphic.name = "cave_exitShineOrange";
+			break;
+			
+					case "cave_exitShinePurple":
+			tileGraphic = cave_exitShinePurple.clone();
+            tileGraphic.name = "cave_exitShinePurple";
+			break;
+			
+					case "cave_exitShineRed":
+			tileGraphic = cave_exitShineRed.clone();
+            tileGraphic.name = "cave_exitShineRed";
+			break;
+			
+					case "cave_exitShineWhite":
+			tileGraphic = cave_exitShineWhite.clone();
+            tileGraphic.name = "cave_exitShineWhite";
+			break;
+			
+					case "cave_exitShineYellow":
+			tileGraphic = cave_exitShineYellow.clone();
+            tileGraphic.name = "cave_exitShineYellow";
+			break;
             
         default:
             console.log("Failed to load tile graphic from string: " +  graphicName);
@@ -2559,8 +2714,34 @@ function onTileEntrance(tile)
     switch(tile.graphic.name)
     {
         case "forest_Exit":
-            //next level
             gameState = GameStates.gameOver;
+            break;
+		case "cave_exitShineBlack":
+		    gameState = GameStates.gameOver;
+            break;
+					case "cave_exitShineBlue":
+		    gameState = GameStates.gameOver;
+            break;
+					case "cave_exitShineCyan":
+		    gameState = GameStates.gameOver;
+            break;
+					case "cave_exitShineGreen":
+		    gameState = GameStates.gameOver;
+            break;
+					case "cave_exitShineOrange":
+		    gameState = GameStates.gameOver;
+            break;
+					case "cave_exitShinePurple":
+		    gameState = GameStates.gameOver;
+            break;
+					case "cave_exitShineRed":
+		    gameState = GameStates.gameOver;
+            break;
+					case "cave_exitShineWhite":
+		    gameState = GameStates.gameOver;
+            break;
+					case "cave_exitShineYellow":
+		    gameState = GameStates.gameOver;
             break;
     }
 }
@@ -2879,4 +3060,26 @@ function enemyRight(enemy)
 		enemy.wantsToMove = false;
         board[enemy.tileY][enemy.tileX + 1].isEntityMovingTo = true;
     }
+}
+
+function goToNextLevel(level)
+{
+	clearThings();
+
+	if(level == 1)
+	{
+	
+	}
+	else if(level == 2)
+	{
+	
+	}
+	else if (level == 3)
+	{
+	
+	}
+	else if (level == 4)
+	{
+	
+	}
 }
