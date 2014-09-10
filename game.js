@@ -241,19 +241,19 @@ function loadComplete(evt)
 		animations:
 		{
 			p1: [0, 0, "p1"],
-			p1_p2: [0, 3, "p1_p2"],
+			p1_p2: [0, 3, "p1_p2", .4],
 			p2: [3, 3, "p2"],
-			p2_p3: [3, 6, "p2_p3"],
+			p2_p3: [3, 6, "p2_p3", .4],
 			p3: [6, 6, "p3"],
-			p3_p4: [6, 9, "p3_p4"],
+			p3_p4: [6, 9, "p3_p4", .4],
 			p4: [9, 9, "p4"],
-			p4_p5: [9, 12, "p4_p5"],
+			p4_p5: [9, 12, "p4_p5", .4],
 			p5: [12, 12, "p5"],
-			p5_p6: [12, 15, "p5_p6"],
+			p5_p6: [12, 15, "p5_p6", .4],
 			p6: [15, 15, "p6"],
-			p6_p7: [15, 18, "p6_p7"],
+			p6_p7: [15, 18, "p6_p7", .4],
 			p7: [18, 18, "p7"],
-			p7_p8: [18, 21, "p7_p8"],
+			p7_p8: [18, 21, "p7_p8", .4],
 			p8: [21, 21, "p8"], 
 		}
 	});
@@ -2026,6 +2026,10 @@ function resetGameplayScreen()
 	addScore(1);
 	
 	clearThings();
+	console.log("called");
+	resetFear();
+	FOG_STATE = "p1";
+	fogFearControl();
 
     resetGameTimer();
     loadLevelMap(0, 0, 0);
@@ -2033,10 +2037,8 @@ function resetGameplayScreen()
     gameplayContainer.addChild(fogOfWar);
     gameplayContainer.addChild(statContainer);
     player.health = 100;
-	FOG_STATE = "p1";
     player.state = PlayerStates.idle;
     player.graphic.gotoAndPlay("idleUp");
-    resetFear();
     updateHealth();
 }
 
@@ -2579,50 +2581,118 @@ function addScore(number)
 
 function fogFearControl()
 {
-	if(fear < 40)
+	if(FOG_STATE != "ANIMATING")
 	{
-		FOG_STATE = "p1";
-	}
-	
-	if(fear > 39 && fear < 50)
-	{
-		fogOfWar.gotoAndPlay("p1_p2");
-		FOG_STATE = "p2";
-	}
-	
-	if(fear > 49 && fear < 60)
-	{
-		fogOfWar.gotoAndPlay("p2_p3");
-		FOG_STATE = "p3";
-	}
-	
-	if(fear > 59 && fear < 70)	{
-		fogOfWar.gotoAndPlay("p3_p4");
-		FOG_STATE = "p4";
-	}
-	
-	if(fear > 69 && fear < 80)
-	{
-		fogOfWar.gotoAndPlay("p4_p5");
-		FOG_STATE = "p5";
-	}
-	
-	if(fear > 79 && fear < 90)
-	{
-		fogOfWar.gotoAndPlay("p5_p6");
-		FOG_STATE = "p6";
-	}
-	
-	if(fear > 89 && fear < 100)
-	{
-		fogOfWar.gotoAndPlay("p6_p7");
-		FOG_STATE = "p7";
-	}
-	
-	if(fear === 100)
-	{
-		fogOfWar.gotoAndPlay("p7_p8");
-		FOG_STATE = "p8";
+		if(player.fear < 40)
+		{
+			FOG_STATE = "p1";
+			fogOfWar.gotoAndPlay("p1");
+		}
+		
+		if(player.fear >= 40 && player.fear < 50)
+		{
+			if(FOG_STATE == "p1")
+			{
+				fogOfWar.on("animationend", function(evt){fogOfWar.gotoAndPlay("p2"); FOG_STATE = "p2"; evt.remove();});
+				FOG_STATE = "ANIMATING";
+				fogOfWar.gotoAndPlay("p1_p2");
+			}
+			else
+			{
+				fogOfWar.gotoAndPlay("p2");
+				FOG_STATE = "p2";
+			}
+		}
+		
+		if(player.fear >= 50 && player.fear < 60)
+		{
+			if(FOG_STATE == "p2")
+			{
+				fogOfWar.on("animationend", function(evt){FOG_STATE = "p3";  fogOfWar.gotoAndPlay(FOG_STATE); evt.remove();});
+				FOG_STATE = "ANIMATING";
+				fogOfWar.gotoAndPlay("p2_p3");
+			}
+			else
+			{
+				FOG_STATE = "p3";
+				fogOfWar.gotoAndPlay(FOG_STATE);
+			}
+		}
+		
+		if(player.fear >= 60 && player.fear < 70)
+		{
+			if(FOG_STATE == "p3")
+			{
+				fogOfWar.on("animationend", function(evt){FOG_STATE = "p4";  fogOfWar.gotoAndPlay(FOG_STATE); evt.remove();});
+				FOG_STATE = "ANIMATING";
+				fogOfWar.gotoAndPlay("p3_p4");
+			}
+			else
+			{
+				FOG_STATE = "p4";
+				fogOfWar.gotoAndPlay(FOG_STATE);
+			}
+		}
+		
+		if(player.fear >= 70 && player.fear < 80)
+		{
+			if(FOG_STATE == "p4")
+			{
+				fogOfWar.on("animationend", function(evt){FOG_STATE = "p5";  fogOfWar.gotoAndPlay(FOG_STATE); evt.remove();});
+				FOG_STATE = "ANIMATING";
+				fogOfWar.gotoAndPlay("p4_p5");
+			}
+			else
+			{
+				FOG_STATE = "p5";
+				fogOfWar.gotoAndPlay(FOG_STATE);
+			}
+		}
+		
+		if(player.fear >= 80 && player.fear < 90)
+		{
+			if(FOG_STATE == "p5")
+			{
+				fogOfWar.on("animationend", function(evt){FOG_STATE = "p6";  fogOfWar.gotoAndPlay(FOG_STATE); evt.remove();});
+				FOG_STATE = "ANIMATING";
+				fogOfWar.gotoAndPlay("p5_p6");
+			}
+			else
+			{
+				FOG_STATE == "p6";
+				fogOfWar.gotoAndPlay(FOG_STATE);
+			}
+		}
+		
+		if(player.fear >= 90 && player.fear < 100)
+		{
+			if(FOG_STATE == "p6")
+			{
+				fogOfWar.on("animationend", function(evt){FOG_STATE = "p7";  fogOfWar.gotoAndPlay(FOG_STATE); evt.remove();});
+				FOG_STATE = "ANIMATING";
+				fogOfWar.gotoAndPlay("p6_p7");
+			}
+			else
+			{
+				FOG_STATE = "p7";
+				fogOfWar.gotoAndPlay(FOG_STATE);
+			}
+		}
+		
+		if(player.fear === 100)
+		{
+			if(FOG_STATE == "p7")
+			{
+				fogOfWar.on("animationend", function(evt){FOG_STATE = "p8";  fogOfWar.gotoAndPlay(FOG_STATE); evt.remove();});
+				FOG_STATE = "ANIMATING";
+				fogOfWar.gotoAndPlay("p7_p8");
+			}
+			else
+			{
+				FOG_STATE = "p8";
+				fogOfWar.gotoAndPlay(FOG_STATE);
+			}
+		}
 	}
 
 }
