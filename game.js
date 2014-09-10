@@ -1406,7 +1406,7 @@ function Tile(graphicName, contentArray, triggrType, triggrState, entiti)
     }
     
     var tile = {graphic: tileGraphic, contents: contentArray, triggerType: triggrType, triggerState: triggrState, entity: entiti, isEntityMovingTo: false};
-    
+
     return tile;
 }
 
@@ -2008,13 +2008,15 @@ function resetInstructionScreen()
 //region Title
 function setupGameplayScreen()
 {
+	console.log("setupGameplayScreen");
     gameplayContainer = new createjs.Container();
     gameplayContainer.addChild(gameplayScreen);
     initBoard();
     gameplayContainer.addChild(fogOfWar);
     setupBars();
     stage.addChild(gameplayContainer);
-    gameplayContainer.visible = false;
+	gameplayContainer.visible = false;
+	backGroundMus = createjs.Sound.play("backGroundMus", {loop:-1});
 }
 
 var backGroundMus;
@@ -2036,7 +2038,6 @@ function resetGameplayScreen()
     player.graphic.gotoAndPlay("idleUp");
     resetFear();
     updateHealth();
-    backGroundMus = createjs.Sound.play("backGroundMus", {loop:-1});
 }
 
 function clearThings()
