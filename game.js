@@ -2161,6 +2161,7 @@ function enemyAtTile(boardY, boardX)
 //endregion
 /*----------------------------Player----------------------------*/
 //region Player Movement
+var isPlaying = false;
 function handlePlayerMovement()
 {
     switch(player.state)
@@ -2275,9 +2276,18 @@ function handlePlayerMovement()
             }
             break;
         case PlayerStates.attacking:
-            createjs.Sound.play("atkSound");
+			if(!isPlaying)
+			{
+				isPlaying = true;
+				createjs.Sound.play("atkSound");
+			}
             break;
     }
+	
+	if(player.state != PlayerStates.attacking)
+	{
+		isPlaying = false;
+	}
     
     controlFog();
 }
