@@ -125,7 +125,8 @@ manifest = [
 	{src:"Sounds/Credits.mp3", id:"CreditSnd"},
 	{src:"Sounds/Bomb.mp3", id:"BombSnd"},
 	{src:"Sounds/BGround.mp3", id:"backGroundMus"},
-	{src:"Sounds/BearTrap.mp3", id:"BearSnd"}
+	{src:"Sounds/BearTrap.mp3", id:"BearSnd"},
+	{src:"Sounds/gameOver.mp3", id:"gameOverSnd"}
 	
 ];
 
@@ -2275,7 +2276,7 @@ function handlePlayerMovement()
             }
             break;
         case PlayerStates.attacking:
-            createjs.Sound.play("atkSound");
+			createjs.Sound.play("atkSound");
             break;
     }
     
@@ -2797,7 +2798,7 @@ function handleEnemyMovement()
                 }
                 break;
             case PlayerStates.attacking:
-                createjs.Sound.play("atkSound");
+                //createjs.Sound.play("atkSound");
                 break;
         }
     }
