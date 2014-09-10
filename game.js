@@ -219,13 +219,13 @@ function loadComplete(evt)
 	var bearTrap_Sheet = new createjs.SpriteSheet(
 	{
 	    images: [queue.getResult("bearTrap")],
-        frames: [[0,0,51,51,0,-0.05,-0.1],[51,0,51,51,0,-0.05,-0.1],[0,51,51,51,0,-0.05,-0.1],[51,51,51,51,0,-0.05,-0.1],[0,102,51,51,0,-0.05,-0.1],[51,102,51,51,0,-0.05,-0.1]],
+        frames: [[0,0,70,70,0,9.95,9.65],[70,0,70,70,0,9.95,9.65],[140,0,70,70,0,9.95,9.65],[0,70,70,70,0,9.95,9.65],[70,70,70,70,0,9.95,9.65],[140,70,70,70,0,9.95,9.65]],
         animations:
         {
             enabled: [0, 0, "enabled"],
-            disabled: [1, 1, "disabled"],
-            hidden: [2, 2, "hidden"],
-			closing: [0,4, "closing"]
+            disabled: [4, 4, "disabled"],
+            hidden: [5, 5, "hidden"],
+			closing: [0, 4, "closing"]
         }
 	});
 	
@@ -2328,6 +2328,16 @@ function onTileEntrance(tile)
 		switch(tile.triggerType)
 		{
 			case "bearTrap":
+				tile.triggerState = "closing";
+				for(var i = 0; i < triggers.length; i++)
+				{
+					if(triggers[i].x == tile.graphic.x && triggers[i].y == tile.graphic.y)
+					{
+						triggers[i].on("animationend", function(evt){board[this.y / 50 - 1][this.x / 50 ].triggerState = "disabled"; this.gotoAndPlay("disabled");evt.remove();});
+						triggers[i].gotoAndPlay("closing");
+						break;
+					}
+				}
 			    player.health -= 10;
 				addFear(5);
 				updateHealth();
