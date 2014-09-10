@@ -219,12 +219,13 @@ function loadComplete(evt)
 	var bearTrap_Sheet = new createjs.SpriteSheet(
 	{
 	    images: [queue.getResult("bearTrap")],
-        frames: [[0,0,51,51,0,-0.05,0],[51,0,51,51,0,-0.05,0],[0,51,51,51,0,-0.05,0]],
+        frames: [[0,0,51,51,0,-0.05,-0.1],[51,0,51,51,0,-0.05,-0.1],[0,51,51,51,0,-0.05,-0.1],[51,51,51,51,0,-0.05,-0.1],[0,102,51,51,0,-0.05,-0.1],[51,102,51,51,0,-0.05,-0.1]],
         animations:
         {
             enabled: [0, 0, "enabled"],
             disabled: [1, 1, "disabled"],
-            hidden: [2, 2, "hidden"]
+            hidden: [2, 2, "hidden"],
+			closing: [0,4, "closing"]
         }
 	});
 	
