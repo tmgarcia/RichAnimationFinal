@@ -10,6 +10,7 @@ var fear = 0;
 var MAX_FEAR = 100;
 var statContainer;
 var fogOfWar;
+var jMode = false;
 //-------------------//
 var KC_LEFT = 37;
 var KC_UP = 38;
@@ -100,15 +101,31 @@ manifest = [
     {src:"Levels/test_0-1_V1_Jeremy_TileTriggerTypes.csv", id:"test_0-1_V1_Jeremy_TTT", type:createjs.LoadQueue.TEXT},
     {src:"Levels/test_0-1_V1_Jeremy_TileEntities.csv", id:"test_0-1_V1_Jeremy_TE", type:createjs.LoadQueue.TEXT},
     {src:"fog.png", id:"fogOfWar"},
-    {src:"Sounds/SwordSwing.mp3", id:"atkSound"},
-    {src:"Sounds/BackgroundSample.mp3", id:"backGroundMus"},
-    {src:"Sounds/UpbeatFight.mp3", id:"upbeat"},
     {src:"weaponBar.png", id:"weaponBar"},
     {src:"healthPotion.png", id:"healthPotion"},
 	{src:"comfortSheepSmall.png", id:"comfortSheep"},
     {src:"bone.png", id:"bones"},
 	{src:"bearTrapSprite.png", id:"bearTrap"},
-	{src:"blankSprite.png", id:"blank"}
+	{src:"blankSprite.png", id:"blank"},
+	{src:"Sounds/Wind.mp3", id:"TeleportTrapSnd"},
+	{src:"Sounds/UpbeatBoss.mp3", id:"upbeat"},
+	{src:"Sounds/SwordSwing.mp3", id:"atkSound"},
+	{src:"Sounds/Sticky.mp3", id:"StickySnd"},
+	{src:"Sounds/Spikes.mp3", id:"SpikeSnd"},
+	{src:"Sounds/metalSwing.mp3", id:"enemyAtkSnd"},
+	{src:"Sounds/MainMenu.mp3", id:"mainMenuSnd"},
+	{src:"Sounds/Heartbeat1.mp3", id:"heart1Snd"},
+	{src:"Sounds/Heartbeat2.mp3", id:"heart2Snd"},
+	{src:"Sounds/Heartbeat3.mp3", id:"heart3Snd"},
+	{src:"Sounds/Heartbeat4.mp3", id:"heart4Snd"},
+	{src:"Sounds/Heartbeat5.mp3", id:"heart5Snd"},
+	{src:"Sounds/GotHIt.mp3", id:"hitSnd"},
+	{src:"Sounds/GenClick.mp3", id:"BtnSnd"},
+	{src:"Sounds/Credits.mp3", id:"CreditSnd"},
+	{src:"Sounds/Bomb.mp3", id:"BombSnd"},
+	{src:"Sounds/BGround.mp3", id:"backGroundMus"},
+	{src:"Sounds/BearTrap.mp3", id:"BearSnd"}
+	
 ];
 
 /*------------------------------Setup------------------------------*/
@@ -1731,7 +1748,19 @@ function handleKeyUp(evt)
                 movementTicks = null;
             }
             break;
-        case KC_J: break;
+        case KC_J:
+			jMode = !jMode;
+			if(jMode)
+			{
+				player.health = 100;
+				fogOfWar.alpha = 0.0;
+				updateHealth();
+			}
+			else
+			{
+				fogOfWar.alpha = 0.8;
+				updateHealth();
+			}
         case KC_SPACE: break;
         case KC_SHIFT: break;
         case KC_ENTER: break;
@@ -2217,7 +2246,7 @@ function handlePlayerMovement()
             }
             break;
         case PlayerStates.attacking:
-            //createjs.Sound.play("atkSound", {loop: -1});
+            createjs.Sound.play("atkSound");
             break;
     }
     
@@ -2616,7 +2645,7 @@ function handleEnemyMovement()
                 }
                 break;
             case PlayerStates.attacking:
-                //createjs.Sound.play("atkSound", {loop: -1});
+                createjs.Sound.play("atkSound");
                 break;
         }
     }
