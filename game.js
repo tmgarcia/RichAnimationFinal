@@ -2527,6 +2527,7 @@ function gameStateSwitch()
     {
         case GameStates.gameOver:
             resetGameOverScreen();
+			createjs.Sound.play("gameOverSnd");
             titleContainer.visible = false;
             instructionContainer.visible = false;
             gameplayContainer.visible = false;
@@ -2541,6 +2542,7 @@ function gameStateSwitch()
         break;
         case GameStates.gamePlay:
             resetGameplayScreen();
+			createjs.Sound.play("backGroundMus", {loop: -1});
             titleContainer.visible = false;
             instructionContainer.visible = false;
             gameplayContainer.visible = true;
@@ -2561,6 +2563,8 @@ function gameStateSwitch()
 //region Title
 function setupTitleScreen()
 {
+	createjs.Sound.stop("backGroundMus");
+	createjs.Sound.play("mainMenuSnd", {loop: -1});
     btnPlay.x = 142;
     btnPlay.y = canvasHeight/2;
     
@@ -2574,7 +2578,8 @@ function setupTitleScreen()
 }
 function resetTitleScreen()
 {
-    
+    createjs.Sound.stop("backGroundMus");
+	createjs.Sound.play("mainMenuSnd", {loop: -1});
 }
 //endregion
 /*---------------------------Instructions---------------------------*/
@@ -2591,7 +2596,6 @@ function setupInstructionScreen()
 }
 function resetInstructionScreen()
 {
-    
 }
 //endregion
 /*----------------------------Game Play----------------------------*/
@@ -2606,15 +2610,15 @@ function setupGameplayScreen()
     setupBars();
     stage.addChild(gameplayContainer);
 	gameplayContainer.visible = false;
-	backGroundMus = createjs.Sound.play("backGroundMus", {loop:-1});
 }
 
 var backGroundMus;
 function resetGameplayScreen()
 {
+	createjs.Sound.play("backGroundMus", {loop: -1});
+	createjs.Sound.stop("mainMenuSnd");
 	score = -1;
 	addScore(1);
-	
 	clearThings();
 	resetFear();
 	FOG_STATE = "p1";
@@ -2683,7 +2687,9 @@ function setupGameOverScreen()
 }
 function resetGameOverScreen()
 {
-    
+	createjs.Sound.play("gameOverSnd");
+	createjs.Sound.stop("hitSnd");
+    createjs.Sound.stop("backGroundMus");
 }
 //endregion
 /*----------------------------Collision----------------------------*/
@@ -3012,6 +3018,7 @@ function onTileEntrance(tile)
 							evt.remove();
 						});
 						triggers[i].gotoAndPlay("closing");
+						createjs.Sound.play("BearSnd");
 						break;
 					}
 				}
@@ -3049,6 +3056,7 @@ function onTileEntrance(tile)
 				}
 				break;
 			case "telporter":
+				createjs.Sound.play("TeleportTrapSnd");
 				var newY = Math.floor(Math.random(0, GameBoard.width));
 				var newX = Math.floor(Math.random(0, GameBoard.height));
 				
@@ -3065,6 +3073,7 @@ function onTileEntrance(tile)
 				player.tile = board[player.tileY][player.tileX];
 				break;
 			case "spikes":
+				createjs.Sound.play("SpikeSnd");
 				player.health -= 15;
 				addFear(30);
 				updateHealth();
@@ -3078,6 +3087,7 @@ function onTileEntrance(tile)
 				playerStoppedTicks += 30 * 4;
 				break;
 			case "cursedBearTrap":
+				createjs.Sound.play("BearSnd");
 				player.health -= 10;
 				addFear(5);
 				updateHealth();
@@ -3360,6 +3370,7 @@ function handleEnemyMovement()
                     enemies[i].graphic.on("animationend", function(evt){console.log(evt);en.state = PlayerStates.idle; en.graphic.gotoAndPlay("idle"); evt.remove();                     if((player.state == PlayerStates.idle || player.state == PlayerStates.attacking) && (playerAtTile(en.tileY-1,en.tileX) != null || playerAtTile(en.tileY,en.tileX+1) != null || playerAtTile(en.tileY+1,en.tileX) != null || playerAtTile(en.tileY,en.tileX-1)))
                     {
                         player.health-=en.attack;
+						createjs.Sound.play("hitSnd");
                     }});
                     //if((player.state == PlayerStates.idle || player.state == PlayerStates.attacking) && (playerAtTile(enemies[i].tileY-1,enemies[i].tileX) != null || playerAtTile(enemies[i].tileY,enemies[i].tileX+1) != null || playerAtTile(enemies[i].tileY+1,enemies[i].tileX) != null || playerAtTile(enemies[i].tileY,enemies[i].tileX-1)))
                     //{
