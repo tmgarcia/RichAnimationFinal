@@ -11,6 +11,7 @@ var MAX_FEAR = 100;
 var statContainer;
 var fogOfWar;
 var jMode = false;
+var FOG_STATE;
 //-------------------//
 var KC_LEFT = 37;
 var KC_UP = 38;
@@ -1448,6 +1449,7 @@ function Wisp()
     return wisp;
 }
 
+
 //---------------------------Health and Fear Bars----------------------------//
 statContainer = new createjs.Container();
 var healthBar =
@@ -1875,7 +1877,7 @@ function runGameTimer()
     }
     
     fearTimer += 1;
-    if(fearTimer%(150) === 0)
+    if(fearTimer%(90) === 0)
     {
         addFear(1);
     }
@@ -2029,6 +2031,7 @@ function resetGameplayScreen()
     gameplayContainer.addChild(fogOfWar);
     gameplayContainer.addChild(statContainer);
     player.health = 100;
+	FOG_STATE = "p1";
     player.state = PlayerStates.idle;
     player.graphic.gotoAndPlay("idleUp");
     resetFear();
@@ -2547,6 +2550,8 @@ function addFear(percent)
 	{
 		player.fear = 0;
 	}
+	
+	fogFearControl();
     
     statContainer.getChildByName("fearText").text = "Fear: " + player.fear + "/" + MAX_FEAR;
     statContainer.getChildByName("fearFill").graphics.clear().beginFill("yellowgreen").drawRect(fearBar.x, fearBar.y, fearBar.width * player.fear / MAX_FEAR, fearBar.height);
@@ -2568,6 +2573,62 @@ function addScore(number)
     }
     statContainer.getChildByName("scoreText").text = score;
 }
+
+//---------------------------------------FEAR AND FOG COHERANCE CONTROL----------------------------//
+
+function fogFearControl()
+{
+	if(fear < 40)
+	{
+		FOG_STATE = "p1";
+	}
+	
+	if(fear > 39 && fear < 50)
+	{
+		fogOfWar.gotoAndPlay("p1_p2");
+		FOG_STATE = "p2";
+	}
+	
+	if(fear > 49 && fear < 60)
+	{
+		fogOfWar.gotoAndPlay("p2_p3");
+		FOG_STATE = "p3";
+	}
+	
+	if(fear > 59 && fear < 70)	{
+		fogOfWar.gotoAndPlay("p3_p4");
+		FOG_STATE = "p4";
+	}
+	
+	if(fear > 69 && fear < 80)
+	{
+		fogOfWar.gotoAndPlay("p4_p5");
+		FOG_STATE = "p5";
+	}
+	
+	if(fear > 79 && fear < 90)
+	{
+		fogOfWar.gotoAndPlay("p5_p6");
+		FOG_STATE = "p6";
+	}
+	
+	if(fear > 89 && fear < 100)
+	{
+		fogOfWar.gotoAndPlay("p6_p7");
+		FOG_STATE = "p7";
+	}
+	
+	if(fear === 100)
+	{
+		fogOfWar.gotoAndPlay("p7_p8");
+		FOG_STATE = "p8";
+	}
+
+}
+//-------------------------------------------------------------------------------------------------//
+
+
+
 
 /*----------------------------Enemy----------------------------*/
 //functioning only for wisps right now
