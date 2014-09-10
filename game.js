@@ -661,7 +661,7 @@ function loadComplete(evt)
     
     var buttonSheet = new createjs.SpriteSheet({
         images: [queue.getResult("button")],
-        frames: {width: 93, height: 33, regX: 46, regY: 15},
+        frames: {width: 285, height: 98, regX: 142, regY: 49},
         animations: {
             playUp: [0, 0, "playUp"],
             playOver: [1, 1, "playOver"],
@@ -1976,11 +1976,11 @@ function gameStateSwitch()
 //region Title
 function setupTitleScreen()
 {
-    btnPlay.x = canvasWidth/2;
+    btnPlay.x = 142;
     btnPlay.y = canvasHeight/2;
     
-    btnInstruct.x = (canvasWidth/2);
-    btnInstruct.y = (canvasHeight/2)+50;
+    btnInstruct.x = (canvasWidth-150);
+    btnInstruct.y = (canvasHeight/2)
     
     titleContainer = new createjs.Container();
     titleContainer.addChild(titleScreen, btnPlay, btnInstruct);
@@ -1996,8 +1996,8 @@ function resetTitleScreen()
 //region Title
 function setupInstructionScreen()
 {
-    btnMenu.x = canvasWidth/2;
-    btnMenu.y = canvasHeight-80;
+    btnMenu.x = 145;
+    btnMenu.y = canvasHeight/3;
     
     instructionContainer = new createjs.Container();
     instructionContainer.addChild(instructionScreen, btnMenu);
@@ -2088,8 +2088,9 @@ function clearTriggers()
 //region Title
 function setupGameOverScreen()
 {
-    btnContinue.x = canvasWidth/2;
-    btnContinue.y = canvasHeight/2+100;
+    btnContinue.x = (canvasWidth/2)-140;
+    btnContinue.y = (canvasHeight/2);
+	btnContinue.rotation = 45;
     
     gameOverContainer = new createjs.Container();
     gameOverContainer.addChild(gameOverScreen, btnContinue);
