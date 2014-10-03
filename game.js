@@ -2611,10 +2611,11 @@ function gameStateAction()
             updateEntityHealth();
             handlePlayerMovement();
             handleEnemyMovement();
-			if(lastLevel && enemies.length< 1)
+			if(lastLevel )
 			{
-				gameState = GameStates.gameOver;
+				createjs.Sound.play("CreditSnd");
 				gameoverText.text = "YOU WIN \n" + gameoverText.text;
+				gameState = GameStates.gameOver;
 			}
             //if(end game condition)
             //{
@@ -2801,7 +2802,15 @@ function setupGameOverScreen()
 }
 function resetGameOverScreen()
 {
-	createjs.Sound.play("gameOverSnd");
+
+	if(lastLevel)
+	{
+	createjs.Sound.play("CreditSnd");
+	}
+	else
+	{
+		createjs.Sound.play("gameOverSnd");
+	}
 	createjs.Sound.stop("hitSnd");
     createjs.Sound.stop("backGroundMus");
 }
